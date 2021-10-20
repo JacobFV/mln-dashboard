@@ -4,7 +4,7 @@ import appinfo from "../common/appInfo";
 export default function AppIcon(props: any) {
     return (
         <IconButton href="/">
-            <Box component="img" sx={{ m: 1 }}  src='icon.svg' />
+            <Box component="img" sx={{ m: 1 }}  src="/favicon.ico" />
         </IconButton>
     );
 }
