@@ -1,10 +1,15 @@
-# Multilayer network analysis tool
+# Multilayer Network Dashboard
 
 Nile & David: I will have a QT-demo ready by the meeting Friday
 
 ## Getting Started
 
-First, run the development server:
+First, install the node packages:
+```bash
+npm install
+```
+
+Then, run the server:
 
 ```bash
 npm run dev
@@ -26,18 +31,25 @@ This project is organized by
 │   ├── styles: stylesheets
 │   ├── server_js: server-side code (javascript)
 |   └── server_py: server-side code (python)
-| README: documentation for internal and (future) anaymous developers
-| LICENSE: MIT License 
-| ...staticly compiled files and directories
-| ...npm stuff
-| ...github stuff
+├─ README: documentation for internal and (future) anaymous developers
+├─ LICENSE: MIT License 
+├─ ...staticly compiled files and directories
+├─ ...npm stuff
+└─ ...github stuff
 ```
 
-You can start editing the page by modifying `pages/index.tsx`. The page auto-updates as you edit the file.
+### Frontend
+
+Pages are defined in `pages/` directory and written in ReactJS (mostly typescript).
 
 ### Backend server
 
 We haven't decided yet how to handle the backend server.
+
+**TODO**. Explain and justify graphQL is used as the interface for all backend API calls.
+- flexible to data. show how python data is effortlessly serialized and reconstructed.
+- flexible to growth. explain how it can be grown
+- flexible to platform. find python and nodejs solutions.
 
 #### javascript
 
@@ -45,3 +57,4 @@ The javscript backend component of the server is managed by nextjs. [API routes]
 
 #### Python
 
+Nothing yet.
