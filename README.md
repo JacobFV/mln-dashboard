@@ -38,6 +38,12 @@ This project is organized by
 └─ ...github stuff
 ```
 
+### Client
+
+TODO:
+[ ] add a client-side dashboard
+[ ] use `next/Link` instead of `mui/link` to precache pages
+
 ### Frontend
 
 Pages are defined in `pages/` directory and written in ReactJS (mostly typescript).
