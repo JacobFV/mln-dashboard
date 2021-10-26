@@ -1,0 +1,11 @@
+[
+    {
+        "username": "jacob",
+        "name": {
+            "first": "Jacob",
+            "last": "Valdez"
+        },
+        "email": "jacobfv123@gmail.com",
+        "hash": "TODO"
+    }
+]

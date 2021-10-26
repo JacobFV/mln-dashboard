@@ -43,6 +43,7 @@ This project is organized by
 TODO:
 [ ] add a client-side dashboard
 [ ] use `next/Link` instead of `mui/link` to precache pages
+[ ] do full-on 3-teir architecture for simplicity (maybe the middle teir can move to the client)
 
 ### Frontend
 

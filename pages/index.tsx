@@ -5,6 +5,7 @@ import styles from '../styles/Home.module.css'
 
 import Login from './login'
 
-const Home: NextPage = Login;
+// Dr. Sharma wants to login page to be the home page
+const Home: NextPage = Login; 
 
 export default Home;
