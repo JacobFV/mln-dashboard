@@ -14,9 +14,10 @@ import Typography from '@mui/material/Typography';
 import Container from '@mui/material/Container';
 import { createTheme, ThemeProvider } from '@mui/material/styles';
 
-import Copyright from '../components/copyright';
-import AppIcon from '../components/appIcon';
+import Copyright from '../../components/copyright';
+import AppIcon from '../../components/appIcon';
 
+import { useSession, signIn, signOut } from "next-auth/react"
 
 const theme = createTheme();
 
@@ -82,12 +83,12 @@ const Login: NextPage = () => {
             </Button>
             <Grid container>
               <Grid item xs>
-                <Link href="/forgot_password" variant="body2">
+                <Link href="/auth/forgot_password" variant="body2">
                   Forgot password?
                 </Link>
               </Grid>
               <Grid item>
-                <Link href="/create_account" variant="body2">
+                <Link href="/auth/create_account" variant="body2">
                   Don't have an account? Create one
                 </Link>
               </Grid>

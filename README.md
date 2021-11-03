@@ -26,10 +26,10 @@ This project is organized by
 ├── src
 │   ├── common: common functions and data
 │   ├── components: useful ReactJS components
+│   ├── data: JSON files for storing auth data
 │   ├── pages: next ReactJS pages
 │   ├── public: static files
 │   ├── styles: stylesheets
-│   ├── server_js: server-side code (javascript)
 |   └── server_py: server-side code (python)
 ├─ README: documentation for internal and (future) anaymous developers
 ├─ LICENSE: MIT License 

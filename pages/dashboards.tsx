@@ -5,11 +5,10 @@ import Image from 'next/image'
 import styles from '../styles/Home.module.css'
 
 import Layout from '../components/panelLayout/panelLayout'
-import useUser from '../lib/useUser'
 
 const Dashboards: NextPage = () => {
 
-    const { user } = useUser({ redirectTo: '/login' })
+    const [ session, loading ] = useSession()
 
     // Server-render loading state
     if (!user || user.isLoggedIn === false) {

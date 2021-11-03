@@ -1,4 +1,5 @@
 import * as React from 'react';
+import type { NextPage } from 'next'
 
 import Avatar from '@mui/material/Avatar';
 import Button from '@mui/material/Button';
@@ -14,12 +15,12 @@ import Container from '@mui/material/Container';
 import { createTheme, ThemeProvider } from '@mui/material/styles';
 import LockOutlinedIcon from '@mui/icons-material/LockOutlined';
 
-import Copyright from '../components/copyright';
-import AppIcon from '../components/appIcon';
+import Copyright from '../../components/copyright';
+import AppIcon from '../../components/appIcon';
 
 const theme = createTheme();
 
-export default function SignUp() {
+const CreateAccount: NextPage = () => {
   const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     const data = new FormData(event.currentTarget);
@@ -101,7 +102,7 @@ export default function SignUp() {
             </Button>
             <Grid container justifyContent="flex-end">
               <Grid item>
-                <Link href="/login" variant="body2">
+                <Link href="/auth/login" variant="body2">
                   Already have an account? Log in
                 </Link>
               </Grid>
@@ -113,3 +114,5 @@ export default function SignUp() {
     </ThemeProvider>
   );
 }
+
+export default CreateAccount;

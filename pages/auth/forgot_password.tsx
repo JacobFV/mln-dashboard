@@ -1,4 +1,6 @@
 import * as React from 'react';
+import type { NextPage } from 'next'
+
 import Avatar from '@mui/material/Avatar';
 import Button from '@mui/material/Button';
 import CssBaseline from '@mui/material/CssBaseline';
@@ -12,12 +14,12 @@ import Typography from '@mui/material/Typography';
 import Container from '@mui/material/Container';
 import { createTheme, ThemeProvider } from '@mui/material/styles';
 
-import Copyright from '../components/copyright';
-import AppIcon from '../components/appIcon';
+import Copyright from '../../components/copyright';
+import AppIcon from '../../components/appIcon';
 
 const theme = createTheme();
 
-export default function SignIn() {
+const ForgotPassword: NextPage = () => {
   const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     const data = new FormData(event.currentTarget);
@@ -64,12 +66,12 @@ export default function SignIn() {
             </Button>
             <Grid container>
               <Grid item>
-                <Link href="/login" variant="body2">
+                <Link href="/auth/login" variant="body2">
                   Already have an account? Log in
                 </Link>
               </Grid>
               <Grid item>
-                <Link href="/create_account" variant="body2">
+                <Link href="/auth/create_account" variant="body2">
                   Don't have an account? Create one
                 </Link>
               </Grid>
@@ -81,3 +83,5 @@ export default function SignIn() {
     </ThemeProvider>
   );
 }
+
+export default ForgotPassword;

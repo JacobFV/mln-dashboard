@@ -109,7 +109,7 @@ export default NextAuth({
     jwt: true,
 
     // Seconds - How long until an idle session expires and is no longer valid.
-    // maxAge: 30 * 24 * 60 * 60, // 30 days
+    maxAge: 5 * 24 * 60 * 60, // 5 days
 
     // Seconds - Throttle how frequently to write to database to extend a session.
     // Use it to limit write operations. Set to 0 to always update the database.
@@ -124,6 +124,18 @@ export default NextAuth({
     // A secret to use for key generation (you should set this explicitly)
     // I (Jacob) generated a random secret `openssl rand -hex 32`
     secret: process.env.JWT_SECRET,
+    // https://next-auth.js.org/configuration/options#jwt
+    // signingKey: {
+    //   kty: "oct",
+    //   kid: "Dl893BEV-iVE-x9EC52TDmlJUgGm9oZ99_ZL025Hc5Q",
+    //   alg: "HS512",
+    //   k: "K7QqRmJOKRK2qcCKV_pi9PSBv3XP0fpTu30TP8xn4w01xR3ZMZM38yL2DnTVPVw6e4yhdh0jtoah-i4c_pZagA"
+    // },
+    // If you chose something other than the default algorithm for the signingKey (HS512)
+    // you also need to configure the algorithm
+    // verificationOptions: {
+    //    algorithms: ['HS256']
+    // },
     // Set to true to use encryption (default: false)
     // encryption: true,
     // You can define your own encode/decode functions for signing and encryption
@@ -138,9 +150,9 @@ export default NextAuth({
   // pages is not specified for that route.
   // https://next-auth.js.org/configuration/pages
   pages: {
-    // signIn: '/auth/signin',  // Displays signin buttons
+    signIn: '/auth/login',  // Displays signin buttons
     // signOut: '/auth/signout', // Displays form with sign out button
-    // error: '/auth/error', // Error code passed in query string as ?error=
+    error: '/auth/error', // Error code passed in query string as ?error=
     // verifyRequest: '/auth/verify-request', // Used for check email page
     // newUser: null // If set, new users will be directed here on first sign in
   },
@@ -164,5 +176,5 @@ export default NextAuth({
   theme: 'light',
 
   // Enable debug messages in the console if you are having problems
-  debug: false,
+  debug: true,
 })
