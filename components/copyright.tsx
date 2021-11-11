@@ -1,7 +1,7 @@
 import Link from '@mui/material/Link';
 import Typography from '@mui/material/Typography';
 
-import appinfo from '../common/appInfo';
+import appinfo from '../common/misc/appInfo';
 
 export default function Copyright(props: any) {
     return (

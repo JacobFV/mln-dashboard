@@ -17,7 +17,7 @@ import { createTheme, ThemeProvider } from '@mui/material/styles';
 import Copyright from '../../components/copyright';
 import AppIcon from '../../components/appIcon';
 
-import { useSession, signIn, signOut } from "next-auth/react"
+import { useSession, signIn, signOut } from "next-auth/client"
 
 const theme = createTheme();
 
@@ -25,11 +25,13 @@ const Login: NextPage = () => {
   const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     const data = new FormData(event.currentTarget);
-    // eslint-disable-next-line no-console
-    console.log({
+    const loginParams = {
       email: data.get('email'),
       password: data.get('password'),
-    });
+    }
+    // eslint-disable-next-line no-console
+    console.log(loginParams);
+    //signIn(loginParams);
   };
 
   return (

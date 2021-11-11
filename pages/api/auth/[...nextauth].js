@@ -1,12 +1,13 @@
 import NextAuth from "next-auth"
 import Providers from "next-auth/providers"
+import usersRepo from '../../../db/users_helper'
 
 // For more information on each option (and a full list of options) go to
 // https://next-auth.js.org/configuration/options
 export default NextAuth({
   // https://next-auth.js.org/configuration/providers
   providers: [
-    CredentialsProvider({
+    Providers.Credentials({
       // The name to display on the sign in form (e.g. 'Sign in with...')
       name: 'Credentials',
       // The credentials is used to generate a suitable form on the sign in page.
@@ -25,20 +26,20 @@ export default NextAuth({
         // You can also use the `req` object to obtain additional parameters
         // (i.e., the request IP address)
 
-        // read the users.json to authenticate the user
-        // TODO replace with my own logic
-        const res = await fetch("/your/endpoint", {
-          method: 'POST',
-          body: JSON.stringify(credentials),
-          headers: { "Content-Type": "application/json" }
-        })
-        const user = await res.json()
-  
-        // If no error and we have user data, return it
-        if (res.ok && user) {
+        // find the user with the matching username
+        const user = usersRepo.getById(credentials.username);
+        
+        // compute hash of password
+        const hash = await NextAuth.hash(credentials.password);
+
+        // if the user is found and the password matches
+        if (user && user.password === hash) {
+          // return the user object
+          console.log('user authenticated:', user, hash);
           return user
         }
-        // Return null if user data could not be retrieved
+        // otherwise return null
+        console.log('user not authenticated:', user, hash);
         return null
       }
     })
@@ -150,7 +151,7 @@ export default NextAuth({
   // pages is not specified for that route.
   // https://next-auth.js.org/configuration/pages
   pages: {
-    signIn: '/auth/login',  // Displays signin buttons
+    // signIn: '/auth/login',  // Displays signin buttons
     // signOut: '/auth/signout', // Displays form with sign out button
     error: '/auth/error', // Error code passed in query string as ?error=
     // verifyRequest: '/auth/verify-request', // Used for check email page
@@ -173,7 +174,7 @@ export default NextAuth({
 
   // You can set the theme to 'light', 'dark' or use 'auto' to default to the
   // whatever prefers-color-scheme is set to in the browser. Default is 'auto'
-  theme: 'light',
+  theme: 'auto',
 
   // Enable debug messages in the console if you are having problems
   debug: true,

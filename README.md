@@ -1,13 +1,18 @@
 # Multilayer Network Dashboard
 
-Nile & David: I will have a QT-demo ready by the meeting Friday
+**NOTE: I have written this README using declarative sentences as it might appear when published. However much of the actual code is not implemented yet.**
 
 ## Getting Started
 
-First, install the node packages:
+Clone this repository and install the dependencies:
 ```bash
+git clone
 npm install
 ```
+
+NOTE: this server depends on other MLN-graphing tools that are not included in this repository. We will be adding them later.
+
+Copy the `.env.local` file to your project root and replace the value for JWT_SECRET with a new secret. (# Linux: `openssl rand -hex 32` or go to https://generate-secret.now.sh/32)
 
 Then, run the server:
 
@@ -19,18 +24,21 @@ yarn dev
 
 Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
 
+
 ## Development
 
 This project is organized by
 ```
 ├── src
-│   ├── common: common functions and data
-│   ├── components: useful ReactJS components
+│   ├── apps: applications that the server interfaces with
+│   ├── common: common functions to both frontend and backend
+│   ├── components: ReactJS components which are included in pages
 │   ├── data: JSON files for storing auth data
-│   ├── pages: next ReactJS pages
+│   ├── pages: routable next.js pages and api endpoints
 │   ├── public: static files
-│   ├── styles: stylesheets
-|   └── server_py: server-side code (python)
+│   ├── server: server-side-only code
+│   ├── storage: user-segmented storage
+│   └── styles: stylesheets
 ├─ README: documentation for internal and (future) anaymous developers
 ├─ LICENSE: MIT License 
 ├─ ...staticly compiled files and directories
@@ -40,28 +48,22 @@ This project is organized by
 
 ### Client
 
-TODO:
+Known TODO's:
 [ ] add a client-side dashboard
 [ ] use `next/Link` instead of `mui/link` to precache pages
-[ ] do full-on 3-teir architecture for simplicity (maybe the middle teir can move to the client)
 
-### Frontend
+### Frontend 
 
-Pages are defined in `pages/` directory and written in ReactJS (mostly typescript).
+Pages are defined in `pages/` directory and written in ReactJS (mostly typescript). I used the material-ui library for user interface design because its components provide a strong starting point to meet user expectations on both desktop and mobile, different screen sizes, and with accessibility requirements.
 
-### Backend server
-
-We haven't decided yet how to handle the backend server.
-
-**TODO**. Explain and justify graphQL is used as the interface for all backend API calls.
-- flexible to data. show how python data is effortlessly serialized and reconstructed.
-- flexible to growth. explain how it can be grown
-- flexible to platform. find python and nodejs solutions.
-
-#### javascript
+### Backend
 
 The javscript backend component of the server is managed by nextjs. [API routes](https://nextjs.org/docs/api-routes/introduction) can be accessed on [http://localhost:3000/api/hello](http://localhost:3000/api/hello). This endpoint can be edited in `pages/api/hello.ts`. The `pages/api` directory is mapped to `/api/*`. Files in this directory are treated as [API routes](https://nextjs.org/docs/api-routes/introduction) instead of React pages.
 
-#### Python
+Some API routes will be used to perform application-logic like graph generation, visualization, and data retrieval. The next.js server API routes for those application-specific functions simply provide an interface to other backend programs (python scripts, databases, etc.) which perform necesary logic. The `next.js` server can directly launch new processes or communicate with existing ones. 
 
-Nothing yet.
+### Security
+
+I suggest we containerize all application logic processes in docker containers. We should also containerize the server. Then we should periodically (maybe every night) restart all the containers to make sure they are healthy. 
+
+I think the JWT_SECRET environment variable (`.env.local`) should be regenerated every time the server is restarted.

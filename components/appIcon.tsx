@@ -1,5 +1,5 @@
 import { Box, IconButton } from "@mui/material";
-import appinfo from "../common/appInfo";
+import appinfo from "../common/misc/appInfo";
 
 export default function AppIcon(props: any) {
     return (
