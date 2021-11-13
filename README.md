@@ -51,6 +51,8 @@ This project is organized by
 Known TODO's:
 [ ] add a client-side dashboard
 [ ] use `next/Link` instead of `mui/link` to precache pages
+[ ] make sure the users verify their email before usering
+[ ] enable third-party authentication
 
 ### Frontend 
 
