@@ -1,6 +1,8 @@
 // some code from: https://jasonwatmore.com/post/2021/08/28/next-js-read-write-data-to-json-files-as-the-database
 const fs = require('fs')
 const path = require('path')
+const bcrypt = require('bcryptjs');
+
 import {User} from '../common/types/user'
 
 
@@ -88,6 +90,21 @@ class UsersHelper {
 
   saveData() {
     fs.writeFileSync(path.resolve('db/users.json'), JSON.stringify(this.users, null, 4))
+  }
+
+  authenticate(email: string, password: string): User|undefined {
+    const user = this.getByEmail(email)
+
+    if (!user) {
+      return undefined
+    }
+
+    return user.password === this.hash(password) ? user : undefined
+  }
+
+  hash(password: string): string {
+    console.log(password, bcrypt.hashSync(password, 10))
+    return bcrypt.hashSync(password, 10)
   }
 }
 

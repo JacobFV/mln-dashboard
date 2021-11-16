@@ -26,21 +26,10 @@ export default NextAuth({
         // You can also use the `req` object to obtain additional parameters
         // (i.e., the request IP address)
 
-        // find the user with the matching username
-        const user = usersRepo.getById(credentials.username);
-        
-        // compute hash of password
-        const hash = await NextAuth.hash(credentials.password);
-
-        // if the user is found and the password matches
-        if (user && user.password === hash) {
-          // return the user object
-          console.log('user authenticated:', user, hash);
-          return user
-        }
-        // otherwise return null
-        console.log('user not authenticated:', user, hash);
-        return null
+        // find the user with the matching email
+        const user = usersRepo.authenticate(credentials.email, credentials.password)
+        console.log('authorize', user)
+        return user
       }
     })
 

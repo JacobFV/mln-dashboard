@@ -6,7 +6,7 @@
 
 Clone this repository and install the dependencies:
 ```bash
-git clone
+git clone TODO
 npm install
 ```
 

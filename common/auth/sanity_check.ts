@@ -22,7 +22,7 @@ export function sanityCheck(candidate: Partial<User>): [string, boolean] {
   if (candidate.username && (candidate.username.length > 256 || candidate.username.length < 3)) {
     errorMessages.push('Username must be between 3 and 256 characters')
   }
-  // TODO: ask team if this regest is what we agreed on
+  // TODO: ask team if this regex is what we agreed on
   if (candidate.username && !/^[a-zA-Z0-9_]+$/.test(candidate.username)) {
     errorMessages.push('Username must only contain letters, numbers, and underscores')
   }

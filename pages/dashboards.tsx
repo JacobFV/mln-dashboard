@@ -5,20 +5,21 @@ import Image from 'next/image'
 import styles from '../styles/Home.module.css'
 
 import Layout from '../components/panelLayout/panelLayout'
+import { useSession } from 'next-auth/client'
+import Login from './auth/login'
 
 const Dashboards: NextPage = () => {
 
     const [ session, loading ] = useSession()
 
-    // Server-render loading state
-    if (!user || user.isLoggedIn === false) {
-        return <Layout>Loading...</Layout>
+    if (!session || !session.user) {
+        return <Login />
     }
 
     return (
         <Layout>
             <h1>Current user:</h1>
-            <pre>{JSON.stringify(user, null, 2)}</pre>
+            <pre>{JSON.stringify(session.user, null, 2)}</pre>
         </Layout>
     )
 
