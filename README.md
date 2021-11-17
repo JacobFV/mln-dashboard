@@ -49,10 +49,13 @@ This project is organized by
 ### Client
 
 Known TODO's:
+[ ] use/develop middleware to wrap all requests that require authentication
+[ ] implement single file server endpoint GET/POST/LIST/DELETE
 [ ] add a client-side dashboard
 [ ] use `next/Link` instead of `mui/link` to precache pages
 [ ] make sure the users verify their email before usering
 [ ] enable third-party authentication
+[ ] rename `User.username` to `User.name`
 
 ### Frontend 
 

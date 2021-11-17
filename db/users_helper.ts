@@ -31,20 +31,22 @@ class UsersHelper {
 
   /**
    * Creates a new user in the database
-   * @param user object containing {username, email, password}
-   * @returns boolean indicating if the operation was successful
+   * @param user object containing {username, email, UNHASHED password}
+   * @returns the full user object or undefined if the operation failed
    */
-  create(user: Partial<User>): boolean {
+  create(user: Partial<User>): User|undefined {
     // generate new user id
     user.id = this.users.length ? Math.max(...this.users.map((u: User) => u.id)) + 1 : 1
 
     // uniqueness checks
-    if (this.getByUsername(user.username!)) {
-      throw new Error(`User with name: ${user.username} already exists`)
+    if (usersHelper.getByUsername(user.username!) || usersHelper.getByEmail(user.email!)) {
+      // I combined both uniqueness checks to reveal as little information as possible
+      throw new Error(`User with name: ${user.username} or ${user.email} already exists`);
+      return undefined
     }
-    if (this.getByEmail(user.email!)) {
-      throw new Error(`User with email: ${user.email} already exists`)
-    }
+
+    // hash password
+    user.password = this.hash(user.password!)
 
     // set date created and updated
     user.dateCreated = new Date().toISOString()
@@ -54,7 +56,7 @@ class UsersHelper {
     this.users.push(user as User)
     this.saveData()
 
-    return true;
+    return user as User;
   }
 
   update(id: number, params: object): boolean {
@@ -75,14 +77,16 @@ class UsersHelper {
   }
 
   delete(id: number): boolean {
+    // I don't actually delete the user to keep id's unique
+
     const user = this.getById(id)
 
     if (!user) {
       throw new Error(`User with id: ${id} not found`)
     }
 
-    // remove and save
-    this.users = this.users.filter(user => user.id.toString() !== id.toString())
+    // delete and save
+    user.deleted = true
     this.saveData()
 
     return true
@@ -103,7 +107,7 @@ class UsersHelper {
   }
 
   hash(password: string): string {
-    console.log(password, bcrypt.hashSync(password, 10))
+    console.log(password, bcrypt.hashSync(`${password}${process.env.PSW_SALT}`, 10))
     return bcrypt.hashSync(password, 10)
   }
 }

@@ -1,3 +1,5 @@
+import appinfo from "../misc/appInfo";
+
 export interface User {
   id: number
   username: string
@@ -5,6 +7,17 @@ export interface User {
   password: string
   dateCreated: string
   dateUpdated: string
+  deleted: boolean
+}
+
+export const Anonymous: User = {
+  id: 0,
+  username: 'Anonymous',
+  email: `anonymous@${appinfo.publicUrl}`,
+  password: '',
+  dateCreated: '',
+  dateUpdated: '',
+  deleted: false
 }
 
 /*export function makeFullUser(user: Partial<User>): User|undefined {
