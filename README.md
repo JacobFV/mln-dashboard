@@ -48,14 +48,22 @@ This project is organized by
 
 ### Client
 
+Maybe make sidebar have two tabs: 
+- show all files: then users open individual files with a default or user-specified file viewer 
+- show all projects: then users open individual projects with 
+
 Known TODO's:
-[ ] use/develop middleware to wrap all requests that require authentication
-[ ] implement single file server endpoint GET/POST/LIST/DELETE
+[ ] use/develop middleware to wrap all requests that require authentication/verification
+[ ] require users to verify their email before continuing
+[ ] implement single file server endpoint GET/POST/LIST/DELETE. Gracefully don't show files that the user doesn't have access to.
+[ ] add robots.txt
+[ ] add captcha to create account
+[ ] obtain API keys to authenticate with Google, Facebook, etc.
+[ ] 
 [ ] add a client-side dashboard
 [ ] use `next/Link` instead of `mui/link` to precache pages
-[ ] make sure the users verify their email before usering
 [ ] enable third-party authentication
-[ ] rename `User.username` to `User.name`
+[ ] completely stop using user.username and user.name except in natural langauge greetings and non-auth logic
 
 ### Frontend 
 
