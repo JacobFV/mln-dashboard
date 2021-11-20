@@ -8,10 +8,14 @@ import { useSession, signIn, signOut } from "next-auth/client"
 
 // Dr. Sharma wants to login page to be the home page
 const Home: NextPage = () => {
+
+  // include this before any user-specific code
   const [session, loading] = useSession()
   if (!session) {
     signIn()
   }
+
+  session.user.name
 
   return (
     <div className={styles.container}>

@@ -16,7 +16,7 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
     return res.status(401).json({ message: 'You are not signed in.' })
   } 
   let user = usersHelper.getByUsername(token.user.username)!
-  
+
   // get request body
   let dirPath = req.body.path
   let fileName = req.body.fileName

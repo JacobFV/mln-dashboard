@@ -7,10 +7,12 @@ import { User } from "../common/types/user";
 export interface Permission {
   read: boolean,
   write: boolean,
+  owner:
+  editsharing
   admin: boolean  // admin means rename, delete, manage sharing, etc.
 }
 
-
+// TODO add groups to the uid namespace
 class FileAuthorizationHelper {
 
   private table: Map<string, Map<number, Permission>> = this.load()
