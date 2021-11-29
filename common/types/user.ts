@@ -22,7 +22,7 @@ export const Anonymous: User = {
 
 /*export function makeFullUser(user: Partial<User>): User|undefined {
   if (!user) return undefined
-  if (user.id && user.name && user.email && user.password 
+  if (user.id && user.name && user.email && user.password
       && user.dateCreated && user.dateUpdated) {
     return user as User
   }

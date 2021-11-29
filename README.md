@@ -30,10 +30,11 @@ Open [http://localhost:3000](http://localhost:3000) with your browser to see the
 This project is organized by
 ```
 ├── src
-│   ├── apps: applications that the server interfaces with
+│   ├── apps: backend applications that the server interfaces with
 │   ├── common: common functions to both frontend and backend
 │   ├── components: ReactJS components which are included in pages
-│   ├── data: JSON files for storing auth data
+│   ├── db: JSON files for storing persistant data
+│   ├── notes: notes from our meetings
 │   ├── pages: routable next.js pages and api endpoints
 │   ├── public: static files
 │   ├── server: server-side-only code
@@ -46,11 +47,10 @@ This project is organized by
 └─ ...github stuff
 ```
 
+I'm trying (want) to adhere to Google's [JavaScript Style Guide](https://google.github.io/styleguide/jsguide.html).
+
 ### Client
 
-Maybe make sidebar have two tabs: 
-- show all files: then users open individual files with a default or user-specified file viewer 
-- show all projects: then users open individual projects with 
 
 Known TODO's:
 [ ] use/develop middleware to wrap all requests that require authentication/verification
@@ -59,15 +59,21 @@ Known TODO's:
 [ ] add robots.txt
 [ ] add captcha to create account
 [ ] obtain API keys to authenticate with Google, Facebook, etc.
-[ ] 
 [ ] add a client-side dashboard
 [ ] use `next/Link` instead of `mui/link` to precache pages
 [ ] enable third-party authentication
 [ ] completely stop using user.username and user.name except in natural langauge greetings and non-auth logic
+[ ] add top-level comments to all API routes and maybe also to pages
 
 ### Frontend 
 
 Pages are defined in `pages/` directory and written in ReactJS (mostly typescript). I used the material-ui library for user interface design because its components provide a strong starting point to meet user expectations on both desktop and mobile, different screen sizes, and with accessibility requirements.
+
+TODO: Maybe make sidebar have two tabs: 
+- show all files: then users open individual files with a default or user-specified file viewer 
+- show all projects: then users open individual projects with 
+
+TODO: make tabbed-interface for main content
 
 ### Backend
 
