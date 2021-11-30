@@ -4,8 +4,8 @@ const path = require('path');
 import type { NextApiRequest, NextApiResponse } from 'next'
 import NextAuth from 'next-auth'
 
-import {sanityCheck} from '../../../common/auth/sanity_check'
-import {fileAuthorizationHelper} from '../../../db/file_authorization_helper';
+import { sanityCheck } from '../../../common/auth/sanity_check'
+import { fileAuthorizationHelper } from '../../../db/file_authorization_helper';
 import usersHelper from '../../../db/users_helper'
 
 export default async (req: NextApiRequest, res: NextApiResponse) => {
@@ -37,7 +37,7 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
   }
 
   // make directory in /storage for user
-  const storageDir = path.resolve(`/storage/${user.id}`)
+  const storageDir = path.resolve(`storage/${user.id}`)
   if (fs.existsSync(storageDir)) {
     console.log(`Directory for user ${user.id} already exists: ${storageDir}`)
   } else {
@@ -45,7 +45,7 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
   }
 
   // enter read write admin permissions for user personal directory
-  fileAuthorizationHelper.setPermissions(`/${user.id}`, user.id, {read: true, write: true, admin: true})
+  fileAuthorizationHelper.setPermissions(`/${user.id}`, user.id, { read: true, write: true, admin: true })
 
   // send the user to the client
   let msg = `Created new user: ${username}`

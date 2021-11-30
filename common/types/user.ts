@@ -7,6 +7,9 @@ export interface User {
   password: string
   dateCreated: string
   dateUpdated: string
+  dateLastLogin: string
+  dateVerified: string
+  verified: boolean
   deleted: boolean
 }
 
@@ -17,6 +20,22 @@ export const Anonymous: User = {
   password: '',
   dateCreated: '',
   dateUpdated: '',
+  dateLastLogin: '',
+  dateVerified: '',
+  verified: false,
+  deleted: false
+}
+
+export const Nobody: User = {
+  id: 1,
+  username: 'Nobody',
+  email: `nobody@${appinfo.publicUrl}`,
+  password: '',
+  dateCreated: '',
+  dateUpdated: '',
+  dateLastLogin: '',
+  dateVerified: '',
+  verified: false,
   deleted: false
 }
 

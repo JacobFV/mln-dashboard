@@ -23,6 +23,8 @@
  * Users can be owners for files and directories that are not under their personal directory.
  * Users must have write permission on a directory to upload files and create folders in it.
  * When a client is not logged in, they are the `public` user.
+ * A user cannot be the explicit owner without explicit read and write permission.
+ * A user cannot have explicit write permission without explicit read permission.
  *
  * @method GET
  * @param {string} req.query.path The path to the file or directory to
@@ -34,23 +36,51 @@
  * they are not necessarily the permissions that the user has explicitly set.
  *
  * @example
- * GET /api/fs/permissions?path=/storage/jacob/test.txt
+ * GET /api/fs/permissions?path=/jacob/proj1/test.txt
  * Response:
  * {
- *   "path": "/storage/jacob/test.txt",
- *   "owner": {
- *     "username": "jacob",
- *     "name": "Jacob",
- *     "email": "jacobfv@msn.com"
- *    },
  *   "read": {
- * },
- *   "write": true,
+ *     0: true,  // visible to pulic
+ *     76555345: true, // visible to jacob
+ *     76555344: false  // hidden from nile (even if nile has permission to view the parent directory)
+ *   },
+ *   "write": {
+ *    76555345: true, // jacob can edit
+ *   },
+ *   "owner": 76555345  // jacob's uid
+ * }
  *
  *
- * @method POST
+ * @method PUT
  * @param {string} req.query.path The path to the file or directory to
  * modify permissions for.
- * @param {object} req.body The permissions to set.
+ * @param {Permission} req.body The permissions to add or remove (does NOT override existing permissions).
+ *    Set a "read" or "write" key to `null` to remove the entry. For "owner", `null` means no change.
  * @returns {Response} A response indicating success or failure.
+ *
+ * This endpoint is atomic and idempotent. (i.e.: if one of the permissions is invalid, none of the permissions are changed.)
+ *
+ * @example
+ * PUT /api/fs/permissions?path=/jacob/proj1/test.txt
+ * Body:
+ * {
+ *   "read": {
+ *     76555344: false  // allow nile to also view the file
+ *   },
+ *   "write": { }  // no change to existing write permissions
+ *   "owner": null // no ownership change
+ * }
+ *
+ * @example
+ * PUT /api/fs/permissions?path=/jacob/proj1/test.txt
+ * Body:
+ * {
+ *   "read": { },  // no change to existing read permissions
+ *   "write": {
+ *     76555343: false  // jacob can no longer edit the file (this will throw an error since jacob is the owner)
+ *     76555344: null, // remove explicit permissions for nile on the file. If nile has write permissions on /jacob/proj1, they will now be inherited.
+ *   },
+ *   "owner": 76555344  // nile is now the owner of the file (this will also throw an error since nile doesn't have explicit write permissions)
+ * }
+ *
  */
