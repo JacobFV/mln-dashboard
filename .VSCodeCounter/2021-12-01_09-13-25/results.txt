@@ -1,0 +1,91 @@
+Date : 2021-12-01 09:13:25
+Directory : /home/jacob/Code/mln-dashboard
+Total : 44 files,  1256 codes, 607 comments, 241 blanks, all 2104 lines
+
+Languages
++------------------+------------+------------+------------+------------+------------+
+| language         | files      | code       | comment    | blank      | total      |
++------------------+------------+------------+------------+------------+------------+
+| TypeScript       |         19 |        518 |        398 |        123 |      1,039 |
+| TypeScript React |         10 |        405 |         85 |         46 |        536 |
+| CSS              |          2 |        119 |          0 |         20 |        139 |
+| JavaScript       |          6 |         77 |        124 |         23 |        224 |
+| JSON             |          5 |         70 |          0 |          4 |         74 |
+| Markdown         |          1 |         63 |          0 |         25 |         88 |
+| XML              |          1 |          4 |          0 |          0 |          4 |
++------------------+------------+------------+------------+------------+------------+
+
+Directories
++------------------------------------------------------------------------+------------+------------+------------+------------+------------+
+| path                                                                   | files      | code       | comment    | blank      | total      |
++------------------------------------------------------------------------+------------+------------+------------+------------+------------+
+| .                                                                      |         44 |      1,256 |        607 |        241 |      2,104 |
+| common                                                                 |          4 |         77 |         22 |         11 |        110 |
+| common/auth                                                            |          1 |         23 |          8 |          5 |         36 |
+| common/misc                                                            |          1 |          8 |          0 |          1 |          9 |
+| common/types                                                           |          2 |         46 |         14 |          5 |         65 |
+| components                                                             |          4 |         53 |          0 |          6 |         59 |
+| components/panelLayout                                                 |          2 |         28 |          0 |          3 |         31 |
+| db                                                                     |          4 |        241 |        112 |         52 |        405 |
+| pages                                                                  |         23 |        642 |        467 |        121 |      1,230 |
+| pages/api                                                              |         15 |        262 |        382 |         78 |        722 |
+| pages/api/auth                                                         |          1 |         35 |        121 |         15 |        171 |
+| pages/api/examples                                                     |          2 |         11 |          2 |          4 |         17 |
+| pages/api/files-old                                                    |          1 |         33 |          6 |          9 |         48 |
+| pages/api/fs                                                           |          4 |        101 |        206 |         29 |        336 |
+| pages/api/user                                                         |          7 |         82 |         47 |         21 |        150 |
+| pages/auth                                                             |          5 |        330 |         14 |         27 |        371 |
+| public                                                                 |          1 |          4 |          0 |          0 |          4 |
+| styles                                                                 |          2 |        119 |          0 |         20 |        139 |
++------------------------------------------------------------------------+------------+------------+------------+------------+------------+
+
+Files
++------------------------------------------------------------------------+------------------+------------+------------+------------+------------+
+| filename                                                               | language         | code       | comment    | blank      | total      |
++------------------------------------------------------------------------+------------------+------------+------------+------------+------------+
+| /home/jacob/Code/mln-dashboard/.eslintrc.json                          | JSON             |          3 |          0 |          1 |          4 |
+| /home/jacob/Code/mln-dashboard/README.md                               | Markdown         |         63 |          0 |         25 |         88 |
+| /home/jacob/Code/mln-dashboard/common/auth/sanity_check.ts             | TypeScript       |         23 |          8 |          5 |         36 |
+| /home/jacob/Code/mln-dashboard/common/misc/appInfo.ts                  | TypeScript       |          8 |          0 |          1 |          9 |
+| /home/jacob/Code/mln-dashboard/common/types/permissions.ts             | TypeScript       |          6 |          4 |          1 |         11 |
+| /home/jacob/Code/mln-dashboard/common/types/user.ts                    | TypeScript       |         40 |         10 |          4 |         54 |
+| /home/jacob/Code/mln-dashboard/components/appIcon.tsx                  | TypeScript React |          9 |          0 |          1 |         10 |
+| /home/jacob/Code/mln-dashboard/components/copyright.tsx                | TypeScript React |         16 |          0 |          2 |         18 |
+| /home/jacob/Code/mln-dashboard/components/panelLayout/access-denied.js | JavaScript       |         15 |          0 |          2 |         17 |
+| /home/jacob/Code/mln-dashboard/components/panelLayout/panelLayout.js   | JavaScript       |         13 |          0 |          1 |         14 |
+| /home/jacob/Code/mln-dashboard/db/file_authorization.json              | JSON             |          2 |          0 |          1 |          3 |
+| /home/jacob/Code/mln-dashboard/db/file_authorization_helper.ts         | TypeScript       |        103 |         56 |         23 |        182 |
+| /home/jacob/Code/mln-dashboard/db/users.json                           | JSON             |         14 |          0 |          0 |         14 |
+| /home/jacob/Code/mln-dashboard/db/users_helper.ts                      | TypeScript       |        122 |         56 |         28 |        206 |
+| /home/jacob/Code/mln-dashboard/next-env.d.ts                           | TypeScript       |          0 |          5 |          2 |          7 |
+| /home/jacob/Code/mln-dashboard/next.config.js                          | JavaScript       |          3 |          1 |          1 |          5 |
+| /home/jacob/Code/mln-dashboard/package.json                            | JSON             |         32 |          0 |          1 |         33 |
+| /home/jacob/Code/mln-dashboard/pages/_app.tsx                          | TypeScript React |          6 |          0 |          2 |          8 |
+| /home/jacob/Code/mln-dashboard/pages/api/auth/[...nextauth].js         | JavaScript       |         35 |        121 |         15 |        171 |
+| /home/jacob/Code/mln-dashboard/pages/api/examples/jwt.js               | JavaScript       |          6 |          1 |          3 |         10 |
+| /home/jacob/Code/mln-dashboard/pages/api/examples/session.js           | JavaScript       |          5 |          1 |          1 |          7 |
+| /home/jacob/Code/mln-dashboard/pages/api/files-old/upload.ts           | TypeScript       |         33 |          6 |          9 |         48 |
+| /home/jacob/Code/mln-dashboard/pages/api/fs/files.ts                   | TypeScript       |         68 |         20 |         16 |        104 |
+| /home/jacob/Code/mln-dashboard/pages/api/fs/ls.ts                      | TypeScript       |         33 |         72 |         13 |        118 |
+| /home/jacob/Code/mln-dashboard/pages/api/fs/mkdir.ts                   | TypeScript       |          0 |         22 |          0 |         22 |
+| /home/jacob/Code/mln-dashboard/pages/api/fs/permissions.ts             | TypeScript       |          0 |         92 |          0 |         92 |
+| /home/jacob/Code/mln-dashboard/pages/api/user/create.ts                | TypeScript       |         35 |          8 |         11 |         54 |
+| /home/jacob/Code/mln-dashboard/pages/api/user/delete.ts                | TypeScript       |         25 |          4 |          7 |         36 |
+| /home/jacob/Code/mln-dashboard/pages/api/user/meta.ts                  | TypeScript       |          0 |         15 |          0 |         15 |
+| /home/jacob/Code/mln-dashboard/pages/api/user/resend_verification.ts   | TypeScript       |          0 |          6 |          0 |          6 |
+| /home/jacob/Code/mln-dashboard/pages/api/user/reset_password.ts        | TypeScript       |         11 |          1 |          2 |         14 |
+| /home/jacob/Code/mln-dashboard/pages/api/user/sanity_check.ts          | TypeScript       |         11 |          0 |          1 |         12 |
+| /home/jacob/Code/mln-dashboard/pages/api/user/verify.ts                | TypeScript       |          0 |         13 |          0 |         13 |
+| /home/jacob/Code/mln-dashboard/pages/auth/create_account.tsx           | TypeScript React |        111 |          1 |          7 |        119 |
+| /home/jacob/Code/mln-dashboard/pages/auth/error.tsx                    | TypeScript React |         42 |          0 |          5 |         47 |
+| /home/jacob/Code/mln-dashboard/pages/auth/forgot_password.tsx          | TypeScript React |         80 |          1 |          6 |         87 |
+| /home/jacob/Code/mln-dashboard/pages/auth/login.tsx                    | TypeScript React |         97 |          2 |          7 |        106 |
+| /home/jacob/Code/mln-dashboard/pages/auth/verify.tsx                   | TypeScript React |          0 |         10 |          2 |         12 |
+| /home/jacob/Code/mln-dashboard/pages/dashboards.tsx                    | TypeScript React |         22 |         69 |          7 |         98 |
+| /home/jacob/Code/mln-dashboard/pages/index.tsx                         | TypeScript React |         22 |          2 |          7 |         31 |
+| /home/jacob/Code/mln-dashboard/public/vercel.svg                       | XML              |          4 |          0 |          0 |          4 |
+| /home/jacob/Code/mln-dashboard/styles/Home.module.css                  | CSS              |        105 |          0 |         17 |        122 |
+| /home/jacob/Code/mln-dashboard/styles/globals.css                      | CSS              |         14 |          0 |          3 |         17 |
+| /home/jacob/Code/mln-dashboard/tsconfig.json                           | JSON             |         19 |          0 |          1 |         20 |
+| Total                                                                  |                  |      1,256 |        607 |        241 |      2,104 |
++------------------------------------------------------------------------+------------------+------------+------------+------------+------------+

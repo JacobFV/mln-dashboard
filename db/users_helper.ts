@@ -1,114 +1,210 @@
-// some code from: https://jasonwatmore.com/post/2021/08/28/next-js-read-write-data-to-json-files-as-the-database
-const fs = require('fs')
-const path = require('path')
-const bcrypt = require('bcryptjs');
+import fs from 'fs';
+import path from 'path';
+import bcrypt from 'bcryptjs';
+//import nodemailer from 'nodemailer';
+const nodemailer = require('nodemailer');
 
 import {User} from '../common/types/user'
+import appinfo from '../common/misc/appInfo';
 
 
 class UsersHelper {
-  users: User[] = JSON.parse(fs.readFileSync(path.resolve('db/users.json')).toString())
 
-  getAll(): User[] {
-    return this.users
-  }
+  private users: {[uid: string]: User} = this.load()
+  private lastSave: number = Date.now()
 
-  getById(id: number): User|undefined {
-    return this.users.find(user => user.id === id)
-  }
+  // https://nodemailer.com/about/
+  private emailAccount = await nodemailer.createTestAccount(); // change to real account on deploy
+  private transporter = nodemailer.createTransport({
+    host: "smtp.ethereal.email",
+    port: 587,
+    secure: false, // true for 465, false for other ports
+    auth: {
+      user: this.emailAccount.user, // generated ethereal user
+      pass: this.emailAccount.pass, // generated ethereal password
+    },
+  });
 
-  getByUsername(name: string): User|undefined {
-    return this.users.find(user => user.username === name)
-  }
-
-  getByEmail(email: string): User|undefined {
-    return this.users.find(user => user.email === email)
-  }
-
-  getByUser(user: User): User|undefined {
-    return this.users.find(u => u.toString() === user.toString())
+  /**
+   * Ensures that a username is unique (not already taken).
+   *
+   * @param {String} username - candidate username of the user
+   * @returns {boolean} - True if the username is unique, false otherwise.
+   */
+  usernameUnique(username: string): boolean {
+    return Object.values(this.users).some(user => user.username === username)
   }
 
   /**
-   * Creates a new user in the database
-   * @param user object containing {username, email, UNHASHED password}
-   * @returns the full user object or undefined if the operation failed
+   * Ensures that an email is unique (not already taken).
+   *
+   * @param {String} email - candidate email of the user
+   * @returns {boolean} - True if the email is unique, false otherwise.
    */
-  create(user: Partial<User>): User|undefined {
-    // generate new user id
-    user.id = this.users.length ? Math.max(...this.users.map((u: User) => u.id)) + 1 : 1
-
-    // uniqueness checks
-    if (usersHelper.getByUsername(user.username!) || usersHelper.getByEmail(user.email!)) {
-      // I combined both uniqueness checks to reveal as little information as possible
-      throw new Error(`User with name: ${user.username} or ${user.email} already exists`);
-      return undefined
-    }
-
-    // hash password
-    user.password = this.hash(user.password!)
-
-    // set date created and updated
-    user.dateCreated = new Date().toISOString()
-    user.dateUpdated = new Date().toISOString()
-
-    // add and save user
-    this.users.push(user as User)
-    this.saveData()
-
-    return user as User;
+  emailUnique(email: string): boolean {
+    return Object.values(this.users).some(user => user.email === email)
   }
 
-  update(id: number, params: object): boolean {
-    const user = this.getById(id)
+  /**
+   * Creates a new user in the database.
+   * This method assumes you have already ensured that the username and email are unique.
+   * This method also sends a verification email to the user.
+   *
+   * @param {object} user - object containing {username, email, password}
+   * @returns {boolean} - True if the operation succeeded, raises an error otherwise.
+   */
+  create(user: Partial<User>): boolean {
+    // generate unique user id
+    let uid: string;
+    do {
+      uid = 'u-' + Math.floor(Math.random() * 1000000000)
+    } while (this.users[uid])
 
-    if (!user) {
-      throw new Error(`User with id: ${id} not found`)
-    }
+    // add and save user
+    this.users[uid] = {
+      uid: uid,
+      username: user.username!,
+      email: user.email!,
+      password: user.password!,
+      hash: this.hash(user.password!),
+      dateCreated: new Date().toISOString(),
+      dateLastLogin: undefined,
+      verificationCode: undefined,
+      verified: false,
+      dateVerified: undefined,
+      deleted: false
+    })
+    this.sendVerificationCode(uid, user.username!, user.email!)
 
-    // set date updated
-    user.dateUpdated = new Date().toISOString()
-
-    // update and save
-    Object.assign(user, params)
-    this.saveData()
-
+    this.save()
     return true;
   }
 
-  delete(id: number): boolean {
-    // I don't actually delete the user to keep id's unique
-
-    const user = this.getById(id)
-
+  /**
+   * Sends a verification email to the user.
+   *
+   * @param {string} uid - user id
+   * @param {string} username - username
+   * @param {string} email - email to send verification code to
+   * @returns {boolean} - True if the operation succeeded, raises an error otherwise.
+   */
+  sendVerificationCode(uid: string, username: string, email: string): string {
+    const user = this.users[uid]
     if (!user) {
-      throw new Error(`User with id: ${id} not found`)
+      throw new Error('User not found')
+    }
+    if (user.verified) {
+      throw new Error('User already verified')
     }
 
-    // delete and save
-    user.deleted = true
-    this.saveData()
+    const charset = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789'
+    const code = [...Array(5)]
+      .map((_) => charset[Math.floor(Math.random() * charset.length)])
+      .join("");
 
+    const textMessage =
+      `Hello ${username},\n\n` +
+      `Your verification code is: "${code}".\n\n` +
+      `Please enter this code in ${appinfo.name} to verify your email.`
+    const htmlMessage =
+      `<p>Hello ${username},</p>
+      <p>Your verification code is: "${code}".</p>
+      <p>
+        Please enter this code in ${appinfo.name} to verify your email or simply click the link below.
+        <form style="display: none" action="${appinfo.baseurl}/api/user/verify" method="post">
+          <input type="hidden" name="uid" value="${uid}" />
+          <input type="hidden" name="code" value="${code}" />
+          <button type="submit" id="button_to_link"> </button>
+        </form>
+        <label style="text-decoration: underline" for="button_to_link">verify</label>
+      </p>`
+
+    const info = await this.transporter.sendMail({
+      from: `"${appinfo.name}" <verification@${appinfo.publicDomain}>`,
+      to: email,
+      subject: `${appinfo.name} verification code: ${code}`, // Subject line
+      text: textMessage, // plain text body
+      html: htmlMessage, // html body
+    });
+
+    console.log("Message sent: %s", info.messageId);
+
+    user.verificationCode = code
+    user.dateVerified = undefined
+    user.verified = false
+
+    this.save()
     return true
   }
 
-  saveData() {
-    fs.writeFileSync(path.resolve('db/users.json'), JSON.stringify(this.users, null, 4))
+  // TODO: implement the special methods below
+  //        also find a way to unify the initial email set and changeEmail
+  //        as well as the initial password set and password change
+  //        make this class fully contained (i.e.: public facing methods don't 
+  //        assume anything about whether an email is valid, etc.)
+
+  /**
+   * Update specific fields of a user.
+   *
+   * Do not use this method to update the following special fields:
+   * - uid: immutable. handled by createUser
+   * - email: use changeEmail instead
+   * - password: use setPassword instead
+   * - hash: handled by setPassword
+   * - dateCreated: immutable. handled by createUser
+   * - dateLastLogin: handled by authenticate
+   * - verificationCode: handled by sendVerificationCode
+   * Those fields are managed by other methods in this class.
+   *
+   * @param uid 
+   * @param key 
+   * @param newVal 
+   * @returns 
+   */
+  update(uid: string, key: string, newVal: boolean): boolean {
+
+    // keep me from doing anything stupid
+    // TODO include all the fields in the list above
+    if (['uid', 'password', 'hash'].includes(key)) {
+      throw new Error(`Cannot update the ${key} of a user.`)
+    }
+
+    // update the user
+    Object.assign(this.users[uid], {[key]: newVal})
+
+    this.save()
+    return true;
   }
 
   authenticate(email: string, password: string): User|undefined {
-    const user = this.getByEmail(email)
+    const user = Object.values(this.users).find(user => user.email === email)
 
     if (!user) {
       return undefined
     }
 
-    return user.password === this.hash(password) ? user : undefined
+    return user.hash === this.hash(password) ? user : undefined
   }
 
-  hash(password: string): string {
+  private hash(password: string): string {
     console.log(password, bcrypt.hashSync(`${password}${process.env.PSW_SALT}`, 10))
     return bcrypt.hashSync(password, 10)
+  }
+
+  private load(): {[uid: string]: User} {
+    const data = fs.readFileSync(path.resolve('db/users.json'), 'utf-8')
+    return JSON.parse(data)
+  }
+
+  private save() {
+    // only actually write to the disk if 5 seconds have passed
+    // this may be unnecessary, since most OS's manage a file cache
+    // TODO: run experiments to see if this is necessary
+    if (Date.now() - this.lastSave > 5000) {
+      fs.writeFileSync(path.resolve('db/users.json'),
+        JSON.stringify(this.users, null, 4))
+      this.lastSave = Date.now()
+    }
   }
 }
 

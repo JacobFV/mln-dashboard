@@ -1,41 +1,46 @@
 import appinfo from "../misc/appInfo";
 
 export interface User {
-  id: number
+  uid: string
   username: string
   email: string
-  password: string
+  password: string|undefined
+  hash: string|undefined
   dateCreated: string
-  dateUpdated: string
-  dateLastLogin: string
-  dateVerified: string
+  dateLastLogin: string|undefined
+  verificationCode: string|undefined
   verified: boolean
+  dateVerified: string|undefined
   deleted: boolean
 }
 
+// used for people who aren't signed in
 export const Anonymous: User = {
-  id: 0,
+  uid: 'u-anonymous',
   username: 'Anonymous',
-  email: `anonymous@${appinfo.publicUrl}`,
-  password: '',
+  email: `anonymous@${appinfo.publicDomain}`,
+  password: undefined,
+  hash: undefined,
   dateCreated: '',
-  dateUpdated: '',
-  dateLastLogin: '',
-  dateVerified: '',
+  dateLastLogin: undefined,
+  verificationCode: '',
   verified: false,
+  dateVerified: undefined,
   deleted: false
 }
 
+// used for special cases (like owning the root storage directory)
 export const Nobody: User = {
-  id: 1,
+  uid: 'u-nobody',
   username: 'Nobody',
-  email: `nobody@${appinfo.publicUrl}`,
-  password: '',
+  email: `nobody@${appinfo.publicDomain}`,
+  password: undefined,
+  hash: undefined,
   dateCreated: '',
-  dateUpdated: '',
-  dateLastLogin: '',
-  dateVerified: '',
+  dateLastLogin: undefined,
+  verificationCode: '',
   verified: false,
+  dateVerified: undefined,
   deleted: false
 }
 

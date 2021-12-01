@@ -2,11 +2,17 @@
  * @fileoverview View or modify the permissions of a file or directory
  * under /storage.
  *
- * Permissions are represented by:
- * {read: [[uid: number]: bool], write: [[uid: number]: bool], owner: number}
+ * Permissions are defined as:
+ * interface Permissions {
+ *   read: {[uid: string]: boolean},
+ *   write: {[uid: string]: boolean},
+ *   editPermissions: {[uid: string]: boolean},
+ *   owner: string|undefined,
+ * }
  * where uid is the id of the user. Use /api/user/meta to get the names, emails,
- * etc. for a list of user ids.
- *
+ * etc. for a list of user ids. For users, `uid` will always be a number. In the
+ * future, groups/orgs may be supported which will have a uid like 'g<groupnum>'.
+ *z
  * Permissions waterfall down (i.e.: are inherited) with the following precedence:
  * - explicitly set permissions for that file or directory for the given user
  * - inherited from the parent directory for the given user
@@ -40,7 +46,7 @@
  * Response:
  * {
  *   "read": {
- *     0: true,  // visible to pulic
+ *     0: true,  // visible to public
  *     76555345: true, // visible to jacob
  *     76555344: false  // hidden from nile (even if nile has permission to view the parent directory)
  *   },
@@ -50,8 +56,7 @@
  *   "owner": 76555345  // jacob's uid
  * }
  *
- *
- * @method PUT
+ * @method PUT (not POST)
  * @param {string} req.query.path The path to the file or directory to
  * modify permissions for.
  * @param {Permission} req.body The permissions to add or remove (does NOT override existing permissions).

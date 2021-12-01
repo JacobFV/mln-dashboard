@@ -1,30 +1,27 @@
 /**
  * @fileoverview Download, upload, and delete files and directories in the
  * file system tree under /storage/
- * 
+ *
  * @method GET
  * @param {string} req.query.path The path to download a file or
  * directory from.
  * NOTE: Returns a zip if a directory is given as the path.
  * @returns {Response<file>} The file at the given path.
- * 
+ *
  * @method POST
  * @param {string} req.query.path The path to upload the file to.
  * NOTE: Unzips the file after uploading if it is a zip.
  * @returns {Response} A response indicating success or failure.
- * 
+ *
  * @method DELETE
  * @param {string} req.query.path Path to the file or directory to delete.
  * @returns {Response} A response indicating success or failure.
  */
 
-
-
 const fs = require('fs')
 const path = require('path')
 import jwt from 'next-auth/jwt'
 import { NextApiRequest, NextApiResponse } from 'next'
-import nextConnect from 'next-connect'
 import { fileAuthorizationHelper } from '../../../db/file_authorization_helper'
 import usersHelper from '../../../db/users_helper'
 

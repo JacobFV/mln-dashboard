@@ -1,18 +1,16 @@
 /**
- * @fileoverview Lists files and directories in the file system tree under 
+ * @fileoverview Lists files and directories in the file system tree under
  * /storage that the requesting user has permission to view.
- * 
+ *
  * NOTE: Returns an empty response if the given path does not exist or if user
  * does not have permission to view anything at the given path.
- * 
+ *
  * @method GET
- * 
  * @param {string} req.query.path The path to list files and directories under.
  * @param {boolean} req.query.recursive Whether to list files and directories recursively. 
  *  false by default. If false,, folders do not have a "children" property.
- * 
  * @returns {Response<object>} Children below the given path.
- * 
+ *
  * @example GET /api/fs/ls?path=/nile&recursive=true (sent by nile)
  * Returns a json object with the following structure:
  * [
@@ -34,11 +32,11 @@
  *     ]
  *   }
  * ]
- * 
+ *
  * @example GET /api/fs/ls?path=/nile&recursive=true (sent by jacob)
  * Returns an empty json response (if jacob does not have permission to view any filess under /nile))):
  * [ ]
- * 
+ *
  * @example GET /api/fs/ls?path=/&recursive=true (sent by a user that is not signed in)
  * Returns a json response showing all files and directories that are publicly accessible:
  * [
@@ -54,7 +52,7 @@
  *           { ... },
  *           { ... },
  *           ...
- *           // jacob has a private file at 
+ *           // jacob has a private file at
  *           // /storage/jacob/my_public_project/private_file.txt
  *           // This file is not included in the response
  *         ]
@@ -64,7 +62,7 @@
  *   },
  *   // no other users have public files
  * ]
- * 
+ *
  */
 
 
@@ -78,6 +76,8 @@ import { fileAuthorizationHelper } from '../../../db/file_authorization_helper'
 import usersHelper from '../../../db/users_helper'
 
 const secret = process.env.SECRET
+
+
 
 export default async (req: NextApiRequest, res: NextApiResponse) => {
 

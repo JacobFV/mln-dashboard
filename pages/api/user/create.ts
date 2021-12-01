@@ -45,7 +45,7 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
   }
 
   // enter read write admin permissions for user personal directory
-  fileAuthorizationHelper.setPermissions(`/${user.id}`, user.id, { read: true, write: true, admin: true })
+  fileAuthorizationHelper.setExplicitPermissions(`/${user.id}`, user.id, { read: true, write: true, admin: true })
 
   // send the user to the client
   let msg = `Created new user: ${username}`

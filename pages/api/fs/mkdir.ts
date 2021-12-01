@@ -2,10 +2,8 @@
  * @fileoverview Makes a directory in the file system tree under /storage/
  *
  * @method POST
- *
  * @param {string} req.query.name The name of the directory to create.
  * @param {string} req.query.parent The parent directory to create the directory in.
- *
  * @returns {Response} A response indicating success or failure.
  *
  * @example
