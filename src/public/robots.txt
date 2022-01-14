@@ -1,0 +1,7 @@
+# robots.txt for MLN-Dashboard
+
+User-agent: *
+Crawl-delay: 15
+Allow: /
+Disallow: /api/
+Disallow: /auth/
