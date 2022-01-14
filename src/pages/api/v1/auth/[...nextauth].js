@@ -28,6 +28,11 @@ export default NextAuth({
 
         // find the user with the matching email
         const user = usersRepo.authenticate(credentials.email, credentials.password)
+        
+        // todo lookup if they need to be verified
+        // if (user.verified === false) {
+          // redirect to the verification page
+        
         console.log('authorize', user)
         return user
       }

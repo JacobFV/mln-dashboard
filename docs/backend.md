@@ -1,16 +1,14 @@
 # Backend
 
-TODO: getUser() does authentication, checks verification, optional redirect, and returns user object while getData('users.<email>') only returns user object
-
 TODO: restructure as much functionality as possible into a graphql schema
 
 When you run `npm run dev`, you are starting a node.js process that serves the pages located in the /pages directory. If you're working in vscode, select the `Next.js: debug server-side` or `Next.js: debug full stack` options to enjoy break-point debugging
 
 I'm splitting the backend code into three parts:
 
-- **API endpoints**. These are located in the `/pages/api` folder. Like any other Next.js page, whenever the user navigates to `http://localhost:<app_port>/api/...`, the corresponding function in `/pages/api/...` is called.
-- **Server-only code**. Many API endpoints use the same code. This code is located in the `/server` folder. These functions do not\* operate on HTTP requests or responses.
-- **Applications**. These are the essential programs that this web app provides an interface to. For MLN-Dashboard, examples of apps could be graph generation, visualization, and data retrieval tools. This code is located in the `/apps` folder. See the [Apps](/docs/apps) documentation page for details.
+- **API endpoints**. These are located in the `/src/pages/api` folder. Like any other Next.js page, whenever the user navigates to `http://localhost:<app_port>/api/...`, the corresponding function in `/src/pages/api/...` is called.
+- **Server-only code**. Many API endpoints use the same code. This code is located in the `/src/server` folder. These functions do not\* operate on HTTP requests or responses.
+- **Applications**. These are the essential programs that this web app provides an interface to. For MLN-Dashboard, examples of apps could be graph generation, visualization, and data retrieval tools. This code is located in the `/src/apps` folder. See the [Apps](/docs/apps.md) documentation page for details.
 
 ## Diagrams
 

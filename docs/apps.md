@@ -34,6 +34,7 @@ string;
 number;
 boolean;
 array<Type>;
+// for file types, the value is supplied as a filepath (not the actual contents)
 PlainTextFile;
 CSVFile;
 JSONFile;
