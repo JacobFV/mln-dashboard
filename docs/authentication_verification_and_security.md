@@ -18,8 +18,8 @@ Valid JWT tokens are **not** the same as users. A token only identifies (one of)
 
 Since JWT's identify users by their email, a new account is created each time the user signs in using an auth provider that is under a different email address. An account can be made to point to a different email address by making appropriate changes to the `emailToUserMap`. If this field is defined and valid, `server.getUser()` returns the user's database entry for the email address it points to.
 
-Athorization is exclusively implemented on the GraphQL server using type and field directives. See the [schema description](/src/docs/backend.md) for details.
+Athorization is exclusively implemented on the GraphQL server using type and field directives. See the [schema description](/docs/backend.md) for details.
 
-Also, I'm not sure where to state this, but REST API requests and GraphQL queries are rate limited to prevent abuse. The rate limit is implemented with a leaky bucket algorithm on a per-IP address basis for unauthenticated users and per-user basis for authenticated users. Additionally, app usage is rate limited, but this better explained in the [apps documentation](/src/docs/apps.md).
+Also, I'm not sure where to state this, but REST API requests and GraphQL queries are rate limited to prevent abuse. The rate limit is implemented with a leaky bucket algorithm on a per-IP address basis for unauthenticated users and per-user basis for authenticated users. Additionally, app usage is rate limited, but this better explained in the [apps documentation](/docs/apps.md).
 
 Apps are launched in containers which only have access to the `/storage` directory. The nobody has execute permission in the `/storage` directory. The entire server is also containerized and only has permissions to read and write to the repository root directory. The storage directory is saved and the entire app container is deleted, re-downloaded, restarted every night.

@@ -4,18 +4,22 @@
 
 ## Getting Started
 
-Clone this repository and install the dependencies:
+1. Clone this repository and install the dependencies:
 
 ```bash
 git clone TODO
 npm install
 ```
 
-NOTE: this server depends on other MLN-graphing tools that are not included in this repository. We will be adding them later.
+_NOTE: this server will ultimately depend on other MLN-graphing tools that are not included in this repository._
 
-Copy the `.env.local` file to your project root and replace the value for JWT_SECRET with a new secret. (# Linux: `openssl rand -hex 32` or go to https://generate-secret.now.sh/32)
+2. Update the `.env.local` file:
 
-Then, run the server:
+- replace the value for JWT_SECRET with a new random secret. (# Linux: `openssl rand -hex 32` or go to https://generate-secret.now.sh/32)
+
+- follow the URLs to get your own API_KEY's and SECRETS for google, github, etc. authentication providers
+
+3. Run the server:
 
 ```bash
 npm run dev
@@ -23,15 +27,18 @@ npm run dev
 yarn dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+4. Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
 
 ## Documentation
 
 Please see the `/docs` directory for documentation.
 
-## Development
+## Contributing & Development
+
+Please read through the documentation before contributing. If you have any questions, please contact me.
 
 Known TODO's:
+
 [ ] separate HTTP API handlers from true handlers
 [ ] add unit and integration tests
 [ ] use https://codecrumbs.io/ and/or https://bogdan-lyashenko.github.io/js-code-to-svg-flowchart/docs/live-editor to make nice documentation of the API routes
