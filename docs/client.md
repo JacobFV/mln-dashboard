@@ -1,5 +1,7 @@
 # Client
 
-Pages are defined in `/pages` directory and written in ReactJS (mostly typescript). I used the material-ui library for user interface design because its components provide a strong starting point to meet user expectations on both desktop and mobile, different screen sizes, and with accessibility requirements.
+Pages are defined in `/pages` directory and written in ReactJS (mostly typescript). I am recommending the following libraries:
 
-I used the axios library to make HTTP requests to the server since it handles errors and building json objects from the response data for the client.
+- material-ui and mui: developer-friendly, accelerate development time, meet user expectations on both desktop and mobile, different screen sizes, and with accessibility requirements.
+- apollo ecosystem: flexible and complex queries with client-side caching.
+- Modularized SASS: for flexible styling with jsx/tsx.

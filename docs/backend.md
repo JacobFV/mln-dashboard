@@ -2,32 +2,100 @@
 
 TODO: restructure as much functionality as possible into a graphql schema
 
-When you run `npm run dev`, you are starting a node.js process that serves the pages located in the /pages directory. If you're working in vscode, select the `Next.js: debug server-side` or `Next.js: debug full stack` options to enjoy break-point debugging
+TODO: use getUser to make approriate email to identity mappings. Also denies access to a user if they are deleted. Obviously, throws an error if the user is not found.
 
-I'm splitting the backend code into three parts:
+The term 'backend' is kind of vauge. I'm going to describe it in three classes:
 
-- **API endpoints**. These are located in the `/src/pages/api` folder. Like any other Next.js page, whenever the user navigates to `http://localhost:<app_port>/api/...`, the corresponding function in `/src/pages/api/...` is called.
-- **Server-only code**. Many API endpoints use the same code. This code is located in the `/src/server` folder. These functions do not\* operate on HTTP requests or responses.
+- **API endpoints**. These are located in the `/pages/api` folder. Like any other Next.js page, whenever the user navigates to `http://localhost:<app_port>/api/...`, the corresponding default export function in `/pages/api/...` is called. All API endpoints are also versioned by `/api/v1/...`, so we can update the API without breaking the frontend. Much of the API is interfaced through a GraphQL schema at `/api/v1/graphql`.
+- **Server-only code**. Many API endpoints use the same code or it may be cleaner to consolidate the code that a single endpoint uses in separate files for readability, extendability, or versioning reasons. This server-only code is located in the `/server` folder. These functions do not\* operate on HTTP requests or responses and are not directly exposed to the client. The database is managed in the `/server/db` folder.
 - **Applications**. These are the essential programs that this web app provides an interface to. For MLN-Dashboard, examples of apps could be graph generation, visualization, and data retrieval tools. This code is located in the `/src/apps` folder. See the [Apps](/docs/apps.md) documentation page for details.
 
 ## Diagrams
 
 TODO: I need to make visual documentation showing how the server components fit together using [codecrumbs](https://codecrumbs.io/) and/or [js-code-to-svg-flowchart](https://bogdan-lyashenko.github.io/js-code-to-svg-flowchart/docs/live-editor).
 
+## Common Types, Database, and GraphQL
+
+This server is a hybrid RESTful / GraphQL server. The RESTful API is exposed to the client via the `/api/v1` endpoint. The GraphQL API is exposed to the client at a single endpoint: `/api/v1/graphql`. Please skim the [GraphQL Documentation](/https://graphql.org/learn/) for an introduction to GraphQL if you are not familiar with it.
+
+I think we should make as much data as possibly directly accessible to the frontend via GraphQL. This should help keep things simple, flexible, understandable, and maintainable while also allowing for complex server logic to be added in the future. To minimize complexity and maximize efficiency, the graphql schema is aligned as closely as is reasonably possible with the database. Directives defined on the schema (@authenticated, @owner, @private, etc.) establish how the client can interact with schema fields. Directives include:
+
+- `@readIfAuthenticated`: This directive requires that the client be authenticated. If the client is not authenticated, the field is not returned (without sending an error message).
+- `@readIfOwner`: This directive requires that the client be authenticated and that the client be the owner of the object. If the client is not authenticated or is not the owner of the object, the field is not returned. The owner is defined differently depending on the resource. For example, the owner of a file is defined by the `file.owner.guid` field; the owner of a user is defined by the `user.guid` field; the owner of an organization is defined by the `organization.owner.guid` field.
+- `@private`: This directive indicates the field is private. Private fields are never returned to the client regardless of authentication. In fact, they might be implemented by only including the value in the database while completely removing it from the graphql schema.
+- no visibility directive: This directive indicates the field is public. Public fields are always returned -- unless, of course, an error occurs.
+- `@immutable`: This directive indicates the field or object will not change and can be cached.
+- `@deprecated`: This directive indicates the field is deprecated. Deprecated fields or mutations are returned to the client with a warning message. Nothing should be deprecated for now.
+- `@unique`: This directive indicates that all values for the field should be unique. An error is thrown if the client attempts to set a value that results in a value-space collision.
+- `@paginated`: This directive indicates that the field is paginated. This means that the field is an array of objects and the client can request a specific page of the array. The client can request a page of the array by specifying the `page` and `pageSize` query parameters. The `page` parameter is 1-indexed. The `pageSize` parameter is the number of objects to return in the page. The default page size is 10. If no parameters are specified, the entire array is returned.
+
+It's hard to explain what the GraphQL schema looks like without also discussing common types and the database:
+
+- Common types (like `User`, `FilePermissions`, etc.) are defined in the `/src/common/types` folder. This allows types to be shared across the server and the frontend.
+- The 'database' is a singleton object that stores all persistent data (users, file permissions, etc.). This object is saved and loaded using json serialization/deserialization and can be retrieved on the server side using `/server/db.js:singleton()`.
+- The GraphQL schema and associated resolver functions are defined in the `/pages/api/v1/graphql` folder. The graphql endpoint manages interfacing with the database, provides server-side API functionality via graphql mutations, and can be extended for collaborative editing using graphql subscriptions.
+
+Since they're practically identical, I'm going to describe the types, database structure, and schema all here below. The main difference is that the database is actually a javascript/typescript object and doesn't include input types or the `mutate` or `subscription` objects, while the graphql schema doesn't include the `root` object. Please see `/src/server/db.ts` and `/src/pages/api/v1/graphql.ts` for up-to-date database and graphql code respectively.
+
+```graphql
+scalar DateTime // javascript default format: YYYY-mm-DD HH:MM:SS.SSS
+scalar Email
+interface Node {
+  guid: ID! @unique @immutable
+}
+type LoginAttempt {
+  token: String!
+  date: DateTime!
+  sucess: Boolean!
+}
+type User implements Node {
+  guid: ID!
+  email: Email! @unique
+  otherEmails: [Email!]
+  name: String
+  dateCreated: String
+  dateModified: String
+  passwordHash: String
+  loginAttempts: [LoginAttempt!]! @private
+  organizations: [ID!]
+  verification_needed: Boolean
+}
+type FilePermission {
+  guid: ID! @readonly
+  readers: [User!] @readonly
+  writers: [User!] @readonly // can also read
+  admins: [User!] @readonly // all admins can read and write
+  owner: User! @readonly // is an  admin, writer, and reader
+}
+root {
+}
+query {
+  emailToUserMap: [String: User]!
+  users: [User!]!
+  filePermissions: [String: FilePermission!]! // can be path to directory or files
+}
+mutate {
+  forgotPassword(email: String) {
+     result: String!
+  }
+  resetPassword(email: String, resetPasswordToken: String, newPassword: String) {
+     result: String
+  }
+}
+subscription {
+  ...
+}
+```
+
+Also, the GraphQL website [made some recommendations](https://graphql.org/learn/best-practices/) on development and deployment considerations:
+
+> It's encouraged that any production GraphQL services enable GZIP and encourage their clients to send the header:
+>
+> > Accept-Encoding: gzip
+
 ### Password reset sequence
 
-[![sequenceDiagram
-    User->>+Server: GET /account/forgot_password
-    Server->>+User: 200 OK with html form to enter email
-    User->>+Server: POST /api/v1/account/forgot_password
-    Server->>+User: 200 OK
-    Server->>+User: Sends email with reset_password link
-    User->>+Server: GET /account/reset_password
-    Server->>+User: 200 OK with html form to enter new password
-    User->>+Server: POST /api/v1/account/reset_password
-    Server->>+User: 200 OK
-    User->>+Server: GET /account/reset_password_success
-    Server->>+User: 200 OK with html page](https://mermaid.ink/img/eyJjb2RlIjoic2VxdWVuY2VEaWFncmFtXG4gICAgVXNlci0-PitTZXJ2ZXI6IEdFVCAvYWNjb3VudC9mb3Jnb3RfcGFzc3dvcmRcbiAgICBTZXJ2ZXItPj4rVXNlcjogMjAwIE9LIHdpdGggaHRtbCBmb3JtIHRvIGVudGVyIGVtYWlsXG4gICAgVXNlci0-PitTZXJ2ZXI6IFBPU1QgL2FwaS92MS9hY2NvdW50L2ZvcmdvdF9wYXNzd29yZFxuICAgIFNlcnZlci0-PitVc2VyOiAyMDAgT0tcbiAgICBTZXJ2ZXItPj4rVXNlcjogU2VuZHMgZW1haWwgd2l0aCByZXNldF9wYXNzd29yZCBsaW5rXG4gICAgVXNlci0-PitTZXJ2ZXI6IEdFVCAvYWNjb3VudC9yZXNldF9wYXNzd29yZFxuICAgIFNlcnZlci0-PitVc2VyOiAyMDAgT0sgd2l0aCBodG1sIGZvcm0gdG8gZW50ZXIgbmV3IHBhc3N3b3JkXG4gICAgVXNlci0-PitTZXJ2ZXI6IFBPU1QgL2FwaS92MS9hY2NvdW50L3Jlc2V0X3Bhc3N3b3JkXG4gICAgU2VydmVyLT4-K1VzZXI6IDIwMCBPS1xuICAgIFVzZXItPj4rU2VydmVyOiBHRVQgL2FjY291bnQvcmVzZXRfcGFzc3dvcmRfc3VjY2Vzc1xuICAgIFNlcnZlci0-PitVc2VyOiAyMDAgT0sgd2l0aCBodG1sIHBhZ2UiLCJtZXJtYWlkIjp7InRoZW1lIjoiZGVmYXVsdCJ9LCJ1cGRhdGVFZGl0b3IiOmZhbHNlLCJhdXRvU3luYyI6dHJ1ZSwidXBkYXRlRGlhZ3JhbSI6ZmFsc2V9)](https://mermaid.live/edit#eyJjb2RlIjoic2VxdWVuY2VEaWFncmFtXG4gICAgVXNlci0-PitTZXJ2ZXI6IEdFVCAvYWNjb3VudC9mb3Jnb3RfcGFzc3dvcmRcbiAgICBTZXJ2ZXItPj4rVXNlcjogMjAwIE9LIHdpdGggaHRtbCBmb3JtIHRvIGVudGVyIGVtYWlsXG4gICAgVXNlci0-PitTZXJ2ZXI6IFBPU1QgL2FwaS92MS9hY2NvdW50L2ZvcmdvdF9wYXNzd29yZFxuICAgIFNlcnZlci0-PitVc2VyOiAyMDAgT0tcbiAgICBTZXJ2ZXItPj4rVXNlcjogU2VuZHMgZW1haWwgd2l0aCByZXNldF9wYXNzd29yZCBsaW5rXG4gICAgVXNlci0-PitTZXJ2ZXI6IEdFVCAvYWNjb3VudC9yZXNldF9wYXNzd29yZFxuICAgIFNlcnZlci0-PitVc2VyOiAyMDAgT0sgd2l0aCBodG1sIGZvcm0gdG8gZW50ZXIgbmV3IHBhc3N3b3JkXG4gICAgVXNlci0-PitTZXJ2ZXI6IFBPU1QgL2FwaS92MS9hY2NvdW50L3Jlc2V0X3Bhc3N3b3JkXG4gICAgU2VydmVyLT4-K1VzZXI6IDIwMCBPS1xuICAgIFVzZXItPj4rU2VydmVyOiBHRVQgL2FjY291bnQvcmVzZXRfcGFzc3dvcmRfc3VjY2Vzc1xuICAgIFNlcnZlci0-PitVc2VyOiAyMDAgT0sgd2l0aCBodG1sIHBhZ2UiLCJtZXJtYWlkIjoie1xuICBcInRoZW1lXCI6IFwiZGVmYXVsdFwiXG59IiwidXBkYXRlRWRpdG9yIjpmYWxzZSwiYXV0b1N5bmMiOnRydWUsInVwZGF0ZURpYWdyYW0iOmZhbHNlfQ)
+[![](https://mermaid.ink/img/eyJjb2RlIjoic2VxdWVuY2VEaWFncmFtXG4gICAgVXNlci0-PitTZXJ2ZXI6IEdFVCAvYWNjb3VudC9mb3Jnb3RfcGFzc3dvcmRcbiAgICBTZXJ2ZXItPj4rVXNlcjogMjAwIE9LIHdpdGggaHRtbCBmb3JtIHRvIGVudGVyIGVtYWlsXG4gICAgVXNlci0-K1NlcnZlcjogbXV0YXRlIHsgZm9yZ290UGFzc3dvcmQoZW1haWwpIHsgcmVzdWx0IH0gfVxuICAgIFNlcnZlci0-PitVc2VyOiBTZW5kcyBlbWFpbCB3aXRoIHJlc2V0X3Bhc3N3b3JkIGxpbmtcbiAgICBVc2VyLT4-K1NlcnZlcjogbGluayBpbiBlbWFpbDogR0VUIC9hY2NvdW50L3Jlc2V0X3Bhc3N3b3JkJmVtYWlsPS4uLiZ0b2tlbj0uLi5cbiAgICBTZXJ2ZXItPj4rVXNlcjogMjAwIE9LIHdpdGggaHRtbCBmb3JtIHRvIGVudGVyIG5ldyBwYXNzd29yZFxuICAgIFVzZXItPitTZXJ2ZXI6IG11dGF0ZSB7IGNoYW5nZVBhc3N3b3JkKGVtYWlsLCBuZXdQYXNzd29yZCwgdG9rZW4pIHsgcmVzdWx0IH0gfSIsIm1lcm1haWQiOnsidGhlbWUiOiJkZWZhdWx0In0sInVwZGF0ZUVkaXRvciI6ZmFsc2UsImF1dG9TeW5jIjp0cnVlLCJ1cGRhdGVEaWFncmFtIjpmYWxzZX0)](https://mermaid.live/edit/#eyJjb2RlIjoic2VxdWVuY2VEaWFncmFtXG4gICAgVXNlci0-PitTZXJ2ZXI6IEdFVCAvYWNjb3VudC9mb3Jnb3RfcGFzc3dvcmRcbiAgICBTZXJ2ZXItPj4rVXNlcjogMjAwIE9LIHdpdGggaHRtbCBmb3JtIHRvIGVudGVyIGVtYWlsXG4gICAgVXNlci0-K1NlcnZlcjogbXV0YXRlIHsgZm9yZ290UGFzc3dvcmQoZW1haWwpIHsgcmVzdWx0IH0gfVxuICAgIFNlcnZlci0-PitVc2VyOiBTZW5kcyBlbWFpbCB3aXRoIHJlc2V0X3Bhc3N3b3JkIGxpbmtcbiAgICBVc2VyLT4-K1NlcnZlcjogbGluayBpbiBlbWFpbDogR0VUIC9hY2NvdW50L3Jlc2V0X3Bhc3N3b3JkJmVtYWlsPS4uLiZ0b2tlbj0uLi5cbiAgICBTZXJ2ZXItPj4rVXNlcjogMjAwIE9LIHdpdGggaHRtbCBmb3JtIHRvIGVudGVyIG5ldyBwYXNzd29yZFxuICAgIFVzZXItPitTZXJ2ZXI6IG11dGF0ZSB7IGNoYW5nZVBhc3N3b3JkKGVtYWlsLCBuZXdQYXNzd29yZCwgdG9rZW4pIHsgcmVzdWx0IH0gfSIsIm1lcm1haWQiOiJ7XG4gIFwidGhlbWVcIjogXCJkZWZhdWx0XCJcbn0iLCJ1cGRhdGVFZGl0b3IiOmZhbHNlLCJhdXRvU3luYyI6dHJ1ZSwidXBkYXRlRGlhZ3JhbSI6ZmFsc2V9)
 
 NOTE: The user can exit this sequence anytime before they reach step 7 without resetting their password.
 
