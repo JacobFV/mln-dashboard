@@ -4,7 +4,7 @@ TODO: restructure as much functionality as possible into a graphql schema
 
 TODO: use getUser to make approriate email to identity mappings. Also denies access to a user if they are deleted. Obviously, throws an error if the user is not found.
 
-The term 'backend' is kind of vauge. I'm going to describe it in three classes:
+When you're talking about a reasonably complex server like this one, the term 'backend' is kind of vauge. I'm going to describe it in three classes:
 
 - **API endpoints**. These are located in the `/pages/api` folder. Like any other Next.js page, whenever the user navigates to `http://localhost:<app_port>/api/...`, the corresponding default export function in `/pages/api/...` is called. All API endpoints are also versioned by `/api/v1/...`, so we can update the API without breaking the frontend. Much of the API is interfaced through a GraphQL schema at `/api/v1/graphql`.
 - **Server-only code**. Many API endpoints use the same code or it may be cleaner to consolidate the code that a single endpoint uses in separate files for readability, extendability, or versioning reasons. This server-only code is located in the `/server` folder. These functions do not\* operate on HTTP requests or responses and are not directly exposed to the client. The database is managed in the `/server/db` folder.
@@ -21,13 +21,14 @@ This server is a hybrid RESTful / GraphQL server. The RESTful API is exposed to 
 I think we should make as much data as possibly directly accessible to the frontend via GraphQL. This should help keep things simple, flexible, understandable, and maintainable while also allowing for complex server logic to be added in the future. To minimize complexity and maximize efficiency, the graphql schema is aligned as closely as is reasonably possible with the database. Directives defined on the schema (@authenticated, @owner, @private, etc.) establish how the client can interact with schema fields. Directives include:
 
 - `@readIfAuthenticated`: This directive requires that the client be authenticated. If the client is not authenticated, the field is not returned (without sending an error message).
-- `@readIfOwner`: This directive requires that the client be authenticated and that the client be the owner of the object. If the client is not authenticated or is not the owner of the object, the field is not returned. The owner is defined differently depending on the resource. For example, the owner of a file is defined by the `file.owner.guid` field; the owner of a user is defined by the `user.guid` field; the owner of an organization is defined by the `organization.owner.guid` field.
-- `@private`: This directive indicates the field is private. Private fields are never returned to the client regardless of authentication. In fact, they might be implemented by only including the value in the database while completely removing it from the graphql schema.
-- no visibility directive: This directive indicates the field is public. Public fields are always returned -- unless, of course, an error occurs.
-- `@immutable`: This directive indicates the field or object will not change and can be cached.
-- `@deprecated`: This directive indicates the field is deprecated. Deprecated fields or mutations are returned to the client with a warning message. Nothing should be deprecated for now.
+- `@readIfOwner`: This directive requires that the client be authenticated and that the client be the owner of the object. If the client is not authenticated or is not the owner of the object, the field is not returned. The `owner` is defined differently depending on the resource. For example, the owner of a file is defined by the `file.owner.guid` field; the owner of a user is defined by the `user.guid` field; the owner of an organization is defined by the `organization.owner.guid` field.
+- `@private`: This directive indicates the field is private. Private fields are never returned to the client regardless of authentication. In fact, they might be implemented by completely removing the field from the graphql schema.
+- no visibility directive: Fields are public by default. Public fields are always returned -- unless, of course, an error occurs.
+- `@immutable`: This directive indicates the field or object will not change and can be safely cached.
+- `@deprecated`: This directive indicates the field is deprecated. Deprecated fields or mutations are returned to the client with a warning message. There should not be a reason to use this directive at the early development stage we are in.
 - `@unique`: This directive indicates that all values for the field should be unique. An error is thrown if the client attempts to set a value that results in a value-space collision.
 - `@paginated`: This directive indicates that the field is paginated. This means that the field is an array of objects and the client can request a specific page of the array. The client can request a page of the array by specifying the `page` and `pageSize` query parameters. The `page` parameter is 1-indexed. The `pageSize` parameter is the number of objects to return in the page. The default page size is 10. If no parameters are specified, the entire array is returned.
+- `@lazy`: This directive indicates that the object is undefined until it is requested the first time -- hence, lazy loading. If the value changes, the object will be deleted and once again be undefined.
 
 It's hard to explain what the GraphQL schema looks like without also discussing common types and the database:
 
@@ -35,11 +36,113 @@ It's hard to explain what the GraphQL schema looks like without also discussing 
 - The 'database' is a singleton object that stores all persistent data (users, file permissions, etc.). This object is saved and loaded using json serialization/deserialization and can be retrieved on the server side using `/server/db.js:singleton()`.
 - The GraphQL schema and associated resolver functions are defined in the `/pages/api/v1/graphql` folder. The graphql endpoint manages interfacing with the database, provides server-side API functionality via graphql mutations, and can be extended for collaborative editing using graphql subscriptions.
 
-Since they're practically identical, I'm going to describe the types, database structure, and schema all here below. The main difference is that the database is actually a javascript/typescript object and doesn't include input types or the `mutate` or `subscription` objects, while the graphql schema doesn't include the `root` object. Please see `/src/server/db.ts` and `/src/pages/api/v1/graphql.ts` for up-to-date database and graphql code respectively.
+There are many similarities between the database and graphql schema -- the main difference being that the database is actually a javascript/typescript object, it doesn't include the `query`, `mutate` or `subscription` objects, and it replaces objects with their guid when serializing. On the other hand, the graphql schema doesn't include the `root` object and links directly to the objects pointed to by a guid. Please see `/src/common/types/*`, `/src/server/db.ts`, `/src/pages/api/v1/graphql.ts` for exact definitions.
+
+Note also: in most cases where a user want to do something that requires authorization, we don't trust the graphql api for the `email` or `guid`. That's because anybody can make a request on behalf of a user with a given email. Instead, the email, guid, and associated user object is retrieved on the server-side using the client's JWT. That's why you'll see mutations like `deleteAccount()` with no `email` or `guid` arguments.
+
+Here's the database and types:
+
+```ts
+interface Node {
+  guid: ID! @unique @immutable
+}
+scalar DateTime // javascript Date object as string `YYYY-mm-DD HH:MM:SS.SSS`
+interface Node {
+  guid: ID! @unique @immutable
+}
+interface Entity implements Node {
+  guid: ID! @unique @immutable
+  createdAt: DateTime!
+  updatedAt: DateTime!
+  name: String!
+}
+type Group implements Entity {
+  // groups also have their own storage folder
+  guid: ID!
+  createdAt: DateTime!
+  updatedAt: DateTime!
+  name: String!
+  owner: User!
+  dateCreated: String!
+  dateModified: String
+  members: [User!]
+}
+type User implements Entity {
+  guid: ID!
+  email: String!
+  otherEmails: [String!]
+  name: String!
+  picture: String! // url to profile picture. might be served from this server or elsewhere
+  dateOfBirth: DateTime! // policy purposes only
+  dateCreated: String!
+  dateModified: String
+  loginAttempts: [{
+    token: string
+    date: Date
+    sucess: boolean
+  }]
+  passwordHash: String
+  resetPasswordToken: String // short alphanumeric code
+  groups: [Group!] // list of Group guids
+  verification_needed: Boolean // if true, the user needs to verify their email address to log in with password authentication
+  verification_code: String // short alphanumeric code
+  verification_date: String // date the verification code was sent
+}
+enum PermissionLevel {
+  READER
+  WRITER
+  ADMIN
+  OWNER
+}
+type FilePermission {
+  user: User!
+  permissionLevel: PermissionLevel!
+}
+type File {
+  fullPath: String!
+  owner: User! // is an  admin, writer, and reader
+  permissions: [FilePermission!]!
+  dateCreated: String!
+  dateModified: String!
+  size: Int // bytes
+}
+type App {
+  name: String,
+  description: String,
+  version: String,
+  invocation_template: String, // eg. `node ./index.js $arg1 --arg2 $arg3`
+  inputs: {
+    [name: string]: {
+      type: Type,
+      description: string,
+      required: boolean,
+      default: any,
+    },
+  },
+  outputs: {
+    [name: string]: {
+      type: Type,
+      description: string,
+    },
+  },
+}
+db {
+  users: [User!]!
+  organizations: [Organization!]!
+  filePermissions: [String: FilePermission!]! // key is filepath
+  // there is no persistent data for files; we use the OS filesystem instead!
+  apps: [App!]!
+}
+```
+
+And here's the graphql schema:
 
 ```graphql
-scalar DateTime // javascript default format: YYYY-mm-DD HH:MM:SS.SSS
-scalar Email
+
+```
+
+```graphql
+scalar DateTime // javascript Date object as string `YYYY-mm-DD HH:MM:SS.SSS`
 interface Node {
   guid: ID! @unique @immutable
 }
@@ -48,39 +151,139 @@ type LoginAttempt {
   date: DateTime!
   sucess: Boolean!
 }
-type User implements Node {
+interface Entity implements Node {
+  guid: ID! @unique @immutable
+  createdAt: DateTime!
+  updatedAt: DateTime!
+  name: String!
+}
+type Group implements Entity {
+  // groups also have their own storage folder
+  guid: ID! @unique @immutable
+  createdAt: DateTime!
+  updatedAt: DateTime!
+  name: String!
+  owner: User! @owner
+  dateCreated: String! @private
+  dateModified: String @private
+  members: [User!]
+}
+type User implements Entity {
   guid: ID!
-  email: Email! @unique
-  otherEmails: [Email!]
-  name: String
-  dateCreated: String
-  dateModified: String
-  passwordHash: String
+  email: String! @unique
+  otherEmails: [String!]
+  name: String!
+  picture: String! // url to profile picture. might be served from this server or elsewhere
+  dateOfBirth: DateTime! @private // policy purposes only
+  dateCreated: String! @private
+  dateModified: String @private
   loginAttempts: [LoginAttempt!]! @private
-  organizations: [ID!]
-  verification_needed: Boolean
+  passwordHash: String @private
+  resetPasswordToken: String @private // short alphanumeric code
+  groups: [Group!] // list of Group guids
+  verification_needed: Boolean @private // if true, the user needs to verify their email address to log in with password authentication
+  verification_code: String @private // short alphanumeric code
+  verification_date: String @private // date the verification code was sent
+}
+enum PermissionLevel {
+  READER
+  WRITER
+  ADMIN
+  OWNER
 }
 type FilePermission {
-  guid: ID! @readonly
-  readers: [User!] @readonly
-  writers: [User!] @readonly // can also read
-  admins: [User!] @readonly // all admins can read and write
-  owner: User! @readonly // is an  admin, writer, and reader
+  user: User!
+  permissionLevel: PermissionLevel!
 }
-root {
+type File {
+  fullPath: String!
+  owner: User! // is an  admin, writer, and reader
+  permissions: [FilePermission!]!
+  dateCreated: String!
+  dateModified: String!
+  size: Int // bytes
+}
+type App {
+  name: String,
+  description: String,
+  version: String,
+  invocation_template: String, // eg. `node ./index.js $arg1 --arg2 $arg3`
+  inputs: {
+    [name: string]: {
+      type: Type,
+      description: string,
+      required: boolean,
+      default: any,
+    },
+  },
+  outputs: {
+    [name: string]: {
+      type: Type,
+      description: string,
+    },
+  },
+}
+db {
+  users: [User!]!
+  organizations: [Organization!]!
+  filePermissions: [String: FilePermission!]! // key is filepath
+  // there is no persistent data for files; we use the OS filesystem instead!
+  apps: [App!]!
 }
 query {
-  emailToUserMap: [String: User]!
   users: [User!]!
-  filePermissions: [String: FilePermission!]! // can be path to directory or files
+  // file permissions are accessible inside `files`
+  files(path: String!, depth: Int = 0): [File!]|string // returns an error message if the path is invalid or user does not have permission
+  apps: [App!]!
 }
 mutate {
+  createPasswordAuthenticatedUser(email: String, name: String, password: String) {
+     result: String
+  }
+  // send email with verification code to user
+  resendVerificationEmail(email: String) {
+     result: String
+  }
+  // verify user's email address using verification code
+  verifyEmail(verificationCode: String) {
+     result: String
+  }
+  deleteUser() {
+     result: String
+  }
+  changeUsername(newUsername: String) {
+     result: String
+  }
+  mergeIntoOtherAccount(otherAccountEmail: String) {
+     result: String
+  }
+  changePassword(oldPassword: String, newPassword: String) {
+     result: String
+  }
+  // send email with reset password code to user
   forgotPassword(email: String) {
      result: String!
   }
+  // reset user's password using reset password code
   resetPassword(email: String, resetPasswordToken: String, newPassword: String) {
      result: String
   }
+  createGroup(name: String!) {
+     result: String
+  }
+  deleteGroup(guid: ID!) {
+     result: String
+  }
+  addUserToGroup(userGuid: ID!, groupGuid: ID!) {
+     result: String
+  }
+  removeUserFromGroup(userGuid: ID!, groupGuid: ID!) {
+     result: String
+  }
+  setPermisssions(path: String!, permissions: FilePermissionInput!) {
+     result: String
+  } // TODO: change permission to permissionLevels
+  // TODO: completely separate the database from graphql schema
 }
 subscription {
   ...
