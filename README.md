@@ -37,8 +37,17 @@ Please see the `/docs` directory for documentation.
 
 Please read through the documentation before contributing. If you have any questions, please contact me.
 
+This afternoon:
+
+1. use mantine to make the newUser, verifyRequest, error, signin, signout pages in `[..nextauth].js` (https://simplernerd.com/next-auth-callbackurl/)
+2. make graphql server schema, endpoint, and resolvers
+3. make prisma schema and other architecture changes
+4. finalize backend documentation
+
 Known TODO's:
 
+[ ] use
+[ ] add prisma seed command to create `system` and `anonymous` users
 [ ] separate HTTP API handlers from true handlers
 [ ] add unit and integration tests
 [ ] use https://codecrumbs.io/ and/or https://bogdan-lyashenko.github.io/js-code-to-svg-flowchart/docs/live-editor to make nice documentation of the API routes

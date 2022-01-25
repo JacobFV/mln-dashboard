@@ -40,6 +40,8 @@ There are many similarities between the database and graphql schema -- the main 
 
 Note also: in most cases where a user want to do something that requires authorization, we don't trust the graphql api for the `email` or `guid`. That's because anybody can make a request on behalf of a user with a given email. Instead, the email, guid, and associated user object is retrieved on the server-side using the client's JWT. That's why you'll see mutations like `deleteAccount()` with no `email` or `guid` arguments.
 
+TODO:don't define model here. Just tell them to go to the code
+
 Here's the database and types:
 
 ```ts
