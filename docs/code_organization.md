@@ -1,6 +1,6 @@
 # Code Organization
 
-```
+```text
 ├── docs: documentation for us, future developers, and the community
 ├── public: static web resources. nextjs requires this to be in the root
 ├── research: some papers that might be relevant for the project
@@ -12,7 +12,7 @@
 │   |   ├── utils: utility functions that are used by multiple files
 │   |   └── ...
 │   ├── components: ReactJS components which are included in pages
-│   ├── db: JSON files for storing persistent data and their schemas
+│   ├── prisma: database schema, saves, and types
 │   ├── pages: next.js pages and api endpoints
 │   ├── server: server-side-only code shared by API endpoints
 │   └── styles: stylesheets

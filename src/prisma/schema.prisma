@@ -7,9 +7,35 @@ generator client {
 
 datasource db {
   provider = "sqlite"
-  url      = "file:./db/dev.db"
+  url      = "./db.sqlite"
 }
 
+/// TODO: create and delete a corresponding EntityUnions when a user is created or deleted
+model User {
+  id                       String               @id @default(cuid())
+  entityRef                EntityUnion          @relation("EntityRef", fields: [entityUnionId], references: [id])
+  emails                   Email[]
+  loginAttempts            LoginAttempt[]
+  pswHash                  String?
+  ownerOfGroups            Group[]              @relation("GroupOwners")
+  explicitPermissionsAdded ExplicitPermission[] @relation("ExplicitPermissionsAdded")
+  entityUnionId            String               @unique
+}
+
+model Email {
+  id                     String    @id @default(cuid())
+  email                  String    @unique
+  needsVerification      Boolean
+  verified               Boolean?
+  verificationCode       String?
+  verificationCodeExpiry DateTime?
+  user                   User      @relation(fields: [userId], references: [id])
+  userId                 String
+  primary                Boolean?
+}
+
+/// Stores all login attempts (credential based and oath)
+/// Of course, OAuth login attempts will always succeed
 model LoginAttempt {
   id        Int      @id @default(autoincrement())
   ip        String
@@ -17,47 +43,60 @@ model LoginAttempt {
   timestamp DateTime
   email     String
   success   Boolean
+  user      User     @relation(fields: [userId], references: [id])
+  userId    String
 }
 
-model User {
-  id                     String         @id @default(cuid())
-  name                   String
-  picture                String?
-  email                  String
-  otherEmails            String[]
-  loginAttempts          LoginAttempt[] @relation(fields: [loginAttemptIds], references: [id])
-  loginAttemptIds        Int[]
-  emailVerified          Boolean
-  verificationCode       String
-  verificationCodeExpiry DateTime
-  pswHash                String?
-  createdAt              DateTime
-  updatedAt              DateTime       @updatedAt
-  deleted                Boolean        @default(false)
-  deletedAt              DateTime?
-}
-
+/// TODO: create and delete a corresponding EntityUnion when a group is created or deleted
 model Group {
-  id        String   @id @default(cuid())
-  name      String
-  picture   String?
-  createdAt DateTime
-  updatedAt DateTime @updatedAt
-  owner     User
-  memberIds String[] // references both users and groups
+  id            String            @id @default(cuid())
+  entityRef     EntityUnion       @relation("EntityRef", fields: [entityUnionId], references: [id])
+  name          String
+  picture       String
+  createdAt     DateTime
+  updatedAt     DateTime          @updatedAt
+  owner         User              @relation("GroupOwners", fields: [ownerId], references: [id])
+  ownerId       String
+  members       GroupMembership[] @relation("GroupMembershipGroup")
+  entityUnionId String            @unique
 }
 
-enum PermissionLevel {
-  hidden
-  reader
-  writer
-  admin
+model GroupMembership {
+  id          String      @id @default(cuid())
+  group       Group       @relation("GroupMembershipGroup", fields: [groupId], references: [id])
+  groupId     String
+  entityRef   EntityUnion @relation("GroupMembershipEntity", fields: [entityRefId], references: [id])
+  entityRefId String
 }
 
-type Permission {
+/// This model is used to make a union type between users and groups
+model EntityUnion {
+  /// dirty hack to make the union type work
+  id               String            @id // should be set to the id of the user or group
+  user             User?             @relation(name: "EntityRef")
+  group            Group?            @relation(name: "EntityRef")
+  // common attributes
+  name             String
+  picture          String
+  createdAt        DateTime          @default(now())
+  updatedAt        DateTime          @updatedAt
+  deleted          Boolean           @default(false)
+  deletedAt        DateTime?
+  // advanced attributes
+  groupMemberships GroupMembership[] @relation("GroupMembershipEntity")
+
+  explicitlyAssignedPermissions ExplicitPermission[] @relation("ExplicitlyAssignedPermissions")
+}
+
+model ExplicitPermission {
+  id         String      @id @default(cuid())
   path       String
-  entity_id  String
-  permission PermissionLevel
+  entity     EntityUnion @relation("ExplicitlyAssignedPermissions", fields: [entityId], references: [id]) /// the entity that the permissions are applied to
+  entityId   String
+  permission String /// hidden, reader, writer, or admin
+  createdAt  DateTime    @default(now())
+  addedBy    User        @relation("ExplicitPermissionsAdded", fields: [addedById], references: [id])
+  addedById  String
 }
 
 // type App {
