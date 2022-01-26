@@ -1,5 +1,7 @@
 # File Permissions
 
+TODO: the owner is always the entity that a resource is under. The admins can assign other admins. Owner always has admin rights.
+
 Ideally, we want to implement a Google Drive type sharing architeture where users and groups can own and share files with fine-tuned permission levels (hidden, reader, writer, admin, owner). The owner can change the owner and administrate files; all admins can delete, move, rename, and share files, and they are also writers; all writers can edit files, and they are also readers; and all readers can read, copy, and download files. If a user or group is given 'hidden' permissions (this is the default), they cannot see the file or directory.
 
 In many cases, file access permissions are inherited from the parent directory. For example, if a user creates a new file in a directory, the file's owner is the user who owns the directory. Inherited permissions can also override the parent directory's permissions. For example, UserA could be given reader permissions on `/storage/userB/sharedFolder` but also hidden permissions on `/storage/userB/sharedFolder/file.txt`. This would make UserA able to read everything in `/storage/userB/sharedFolder/` except for `file.txt`.

@@ -1,0 +1,89 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = "file:./db/dev.db"
+}
+
+model LoginAttempt {
+  id        Int      @id @default(autoincrement())
+  ip        String
+  userAgent String
+  timestamp DateTime
+  email     String
+  success   Boolean
+}
+
+model User {
+  id                     String         @id @default(cuid())
+  name                   String
+  picture                String?
+  email                  String
+  otherEmails            String[]
+  loginAttempts          LoginAttempt[] @relation(fields: [loginAttemptIds], references: [id])
+  loginAttemptIds        Int[]
+  emailVerified          Boolean
+  verificationCode       String
+  verificationCodeExpiry DateTime
+  pswHash                String?
+  createdAt              DateTime
+  updatedAt              DateTime       @updatedAt
+  deleted                Boolean        @default(false)
+  deletedAt              DateTime?
+}
+
+model Group {
+  id        String   @id @default(cuid())
+  name      String
+  picture   String?
+  createdAt DateTime
+  updatedAt DateTime @updatedAt
+  owner     User
+  memberIds String[] // references both users and groups
+}
+
+enum PermissionLevel {
+  hidden
+  reader
+  writer
+  admin
+}
+
+type Permission {
+  path       String
+  entity_id  String
+  permission PermissionLevel
+}
+
+// type App {
+//   name: String,
+//   description: String,
+//   version: String,
+//   invocation_template: String, // eg. `node ./index.js $arg1 --arg2 $arg3`
+//   inputs: {
+//     [name: string]: {
+//       type: Type,
+//       description: string,
+//       required: boolean,
+//       default: any,
+//     },
+//   },
+//   outputs: {
+//     [name: string]: {
+//       type: Type,
+//       description: string,
+//     },
+//   },
+// }
+// db {
+//   users: [User!]!
+//   organizations: [Organization!]!
+//   filePermissions: [String: FilePermission!]! // key is filepath
+//   // there is no persistent data for files; we use the OS filesystem instead!
+//   apps: [App!]!
+// }

@@ -43,6 +43,7 @@ This afternoon:
 2. make graphql server schema, endpoint, and resolvers
 3. make prisma schema and other architecture changes
 4. finalize backend documentation
+5. get other auth providers working
 
 Known TODO's:
 

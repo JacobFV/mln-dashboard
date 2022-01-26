@@ -2,6 +2,7 @@
 
 ```
 ├── docs: documentation for us, future developers, and the community
+├── public: static web resources. nextjs requires this to be in the root
 ├── research: some papers that might be relevant for the project
 ├── src
 │   ├── apps: backend applications that the server interfaces with
@@ -13,7 +14,6 @@
 │   ├── components: ReactJS components which are included in pages
 │   ├── db: JSON files for storing persistent data and their schemas
 │   ├── pages: next.js pages and api endpoints
-│   ├── public: static web resources
 │   ├── server: server-side-only code shared by API endpoints
 │   └── styles: stylesheets
 ├── storage: user-segmented storage
