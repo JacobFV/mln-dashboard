@@ -1,0 +1,36 @@
+{
+  "version": "0.2.0",
+  "configurations": [
+    {
+      "name": "Next.js: debug server-side",
+      "type": "node-terminal",
+      "request": "launch",
+      "command": "npm run dev",
+      "sourceMaps": true,
+    },
+    {
+      "type": "pwa-chrome",
+      "runtimeExecutable": "/usr/bin/google-chrome",
+      "request": "launch",
+      "name": "Launch Chrome against localhost:3000",
+      "url": "http://localhost:3000",
+      "sourceMaps": true,
+    },
+    {
+      "name": "Next.js: debug full stack",
+      "type": "node-terminal",
+      "request": "launch",
+      "command": "npm run dev",
+      "console": "integratedTerminal",
+      "runtimeExecutable": "/usr/bin/google-chrome",
+      "sourceMaps": true,
+      "serverReadyAction": {
+        //"pattern": "started server on *",
+        //"uriFormat": "http://localhost:3000",
+        "pattern": "started server on .+, url: (https?://.+)",
+        "uriFormat": "%s",
+        "action": "debugWithChrome"
+      }
+    }
+  ]
+}

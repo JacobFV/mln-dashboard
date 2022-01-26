@@ -1,0 +1,14 @@
+{
+  "u-12345678": {
+    "uid": "u-12345678",
+    "username": "jacob",
+    "email": "jacobfv123@gmail.com",
+    "hash": "01234567890abcdef",
+    "dateCreated": "2018-01-01T00:00:00.000Z",
+    "dateLastLogin": "2021-11-30T00:00:00.000Z",
+    "verificationCode": "123456",
+    "verified": true,
+    "dateVerified": "2021-11-30T00:00:00.000Z",
+    "deleted": false
+  }
+}

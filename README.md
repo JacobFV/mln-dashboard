@@ -1,15 +1,25 @@
 # Multilayer Network Dashboard
 
-Nile & David: I will have a QT-demo ready by the meeting Friday
+**NOTE: I have written this README using declarative sentences as it might appear when published. However much of the actual code is not implemented yet.**
 
 ## Getting Started
 
-First, install the node packages:
+1. Clone this repository and install the dependencies:
+
 ```bash
+git clone TODO
 npm install
 ```
 
-Then, run the server:
+_NOTE: this server will ultimately depend on other MLN-graphing tools that are not included in this repository._
+
+2. Update the `.env.local` file:
+
+- replace the value for JWT_SECRET with a new random secret. (# Linux: `openssl rand -hex 32` or go to https://generate-secret.now.sh/32)
+
+- follow the URLs to get your own API_KEY's and SECRETS for google, github, etc. authentication providers
+
+3. Run the server:
 
 ```bash
 npm run dev
@@ -17,51 +27,42 @@ npm run dev
 yarn dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+4. Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
 
-## Development
+## Documentation
 
-This project is organized by
-```
-├── src
-│   ├── common: common functions and data
-│   ├── components: useful ReactJS components
-│   ├── pages: next ReactJS pages
-│   ├── public: static files
-│   ├── styles: stylesheets
-│   ├── server_js: server-side code (javascript)
-|   └── server_py: server-side code (python)
-├─ README: documentation for internal and (future) anaymous developers
-├─ LICENSE: MIT License 
-├─ ...staticly compiled files and directories
-├─ ...npm stuff
-└─ ...github stuff
-```
+Please see the `/docs` directory for documentation.
 
-### Client
+## Contributing & Development
 
-TODO:
+Please read through the documentation before contributing. If you have any questions, please contact me.
+
+This afternoon:
+
+1. use mantine to make the newUser, verifyRequest, error, signin, signout pages in `[..nextauth].js` (https://simplernerd.com/next-auth-callbackurl/)
+2. make graphql server schema, endpoint, and resolvers
+3. make prisma schema and other architecture changes
+4. finalize backend documentation
+
+Known TODO's:
+
+[ ] use
+[ ] add prisma seed command to create `system` and `anonymous` users
+[ ] separate HTTP API handlers from true handlers
+[ ] add unit and integration tests
+[ ] use https://codecrumbs.io/ and/or https://bogdan-lyashenko.github.io/js-code-to-svg-flowchart/docs/live-editor to make nice documentation of the API routes
+[ ] require users to verify their email before continuing
+[ ] implement single file server endpoint GET/POST/LIST/DELETE. Gracefully don't show files that the user doesn't have access to.
+[ ] add captcha to create account
+[ ] obtain API keys to authenticate with Google, Facebook, etc. and enable third-party authentication
 [ ] add a client-side dashboard
-[ ] use `next/Link` instead of `mui/link` to precache pages
-[ ] do full-on 3-teir architecture for simplicity (maybe the middle teir can move to the client)
+[ ] use `next/Link` instead of `mui/link` to pre-cache pages
+[ ] completely stop using user.username and user.name except in natural language greetings and non-auth logic
+[ ] add top-level comments to all API routes and maybe also to pages
 
-### Frontend
+TODO: Maybe make sidebar have two tabs:
 
-Pages are defined in `pages/` directory and written in ReactJS (mostly typescript).
+- show all files: then users open individual files with a default or user-specified file viewer
+- show all projects: then users open individual projects with
 
-### Backend server
-
-We haven't decided yet how to handle the backend server.
-
-**TODO**. Explain and justify graphQL is used as the interface for all backend API calls.
-- flexible to data. show how python data is effortlessly serialized and reconstructed.
-- flexible to growth. explain how it can be grown
-- flexible to platform. find python and nodejs solutions.
-
-#### javascript
-
-The javscript backend component of the server is managed by nextjs. [API routes](https://nextjs.org/docs/api-routes/introduction) can be accessed on [http://localhost:3000/api/hello](http://localhost:3000/api/hello). This endpoint can be edited in `pages/api/hello.ts`. The `pages/api` directory is mapped to `/api/*`. Files in this directory are treated as [API routes](https://nextjs.org/docs/api-routes/introduction) instead of React pages.
-
-#### Python
-
-Nothing yet.
+TODO: make tabbed-interface for main content
