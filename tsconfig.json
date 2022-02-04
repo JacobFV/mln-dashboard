@@ -1,10 +1,13 @@
 {
   "compilerOptions": {
-    "target": "es5",
+    //"target": "es5",
+    "target": "es2018", // typegraphql; or newer if your node.js version supports this
     "lib": [
       "dom",
       "dom.iterable",
-      "esnext"
+      "esnext",
+      "es2018",
+      "esnext.asynciterable"
     ],
     "allowJs": true,
     "skipLibCheck": true,
@@ -14,10 +17,14 @@
     "esModuleInterop": true,
     "module": "esnext",
     "moduleResolution": "node",
-    "resolveJsonModule": true,, "src/pages/_app.jsx"
+    "resolveJsonModule": true, //, "src/pages/_app.jsx"
     "isolatedModules": true,
     "jsx": "preserve",
-    "incremental": true
+    "incremental": true,
+    // typegraphql
+    "emitDecoratorMetadata": true,
+    "experimentalDecorators": true,
+    "strictPropertyInitialization": false // this is needed for the typegraphql types
   },
   "include": [
     "src/next-env.d.ts",

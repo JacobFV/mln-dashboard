@@ -7,19 +7,21 @@ generator client {
 
 datasource db {
   provider = "sqlite"
-  url      = "./db.sqlite"
+  url      = "file:./dev.db"
 }
 
 /// TODO: create and delete a corresponding EntityUnions when a user is created or deleted
 model User {
-  id                       String               @id @default(cuid())
-  entityRef                EntityUnion          @relation("EntityRef", fields: [entityUnionId], references: [id])
-  emails                   Email[]
-  loginAttempts            LoginAttempt[]
-  pswHash                  String?
-  ownerOfGroups            Group[]              @relation("GroupOwners")
-  explicitPermissionsAdded ExplicitPermission[] @relation("ExplicitPermissionsAdded")
-  entityUnionId            String               @unique
+  /// id should not be used for purposes other than uniqueness. Not the same as the user or group id
+  id String @id @default(cuid())
+
+  entityRef                  EntityUnion          @relation("UserEntityRef", fields: [entityUnionId], references: [id])
+  emails                     Email[]
+  loginAttempts              LoginAttempt[]
+  pswHash                    String?
+  ownerOfGroups              Group[]              @relation("GroupOwners")
+  explicitPermissionsCreated ExplicitPermission[] @relation("ExplicitPermissionsCreated") // permissions that the user has added to other files (including ones that the user does not own)
+  entityUnionId              String               @unique
 }
 
 model Email {
@@ -40,6 +42,7 @@ model LoginAttempt {
   id        Int      @id @default(autoincrement())
   ip        String
   userAgent String
+  headers   String
   timestamp DateTime
   email     String
   success   Boolean
@@ -47,14 +50,12 @@ model LoginAttempt {
   userId    String
 }
 
-/// TODO: create and delete a corresponding EntityUnion when a group is created or deleted
+/// TODO: delete a corresponding EntityUnion when a group is created or deleted
 model Group {
-  id            String            @id @default(cuid())
-  entityRef     EntityUnion       @relation("EntityRef", fields: [entityUnionId], references: [id])
-  name          String
-  picture       String
-  createdAt     DateTime
-  updatedAt     DateTime          @updatedAt
+  /// id should not be used for purposes other than uniqueness. Not the same as the user or group id
+  id String @id @default(cuid())
+
+  entityRef     EntityUnion       @relation("GroupEntityRef", fields: [entityUnionId], references: [id])
   owner         User              @relation("GroupOwners", fields: [ownerId], references: [id])
   ownerId       String
   members       GroupMembership[] @relation("GroupMembershipGroup")
@@ -67,36 +68,41 @@ model GroupMembership {
   groupId     String
   entityRef   EntityUnion @relation("GroupMembershipEntity", fields: [entityRefId], references: [id])
   entityRefId String
+  joinedAt    DateTime    @default(now())
 }
 
 /// This model is used to make a union type between users and groups
 model EntityUnion {
-  /// dirty hack to make the union type work
-  id               String            @id // should be set to the id of the user or group
-  user             User?             @relation(name: "EntityRef")
-  group            Group?            @relation(name: "EntityRef")
-  // common attributes
-  name             String
-  picture          String
-  createdAt        DateTime          @default(now())
-  updatedAt        DateTime          @updatedAt
-  deleted          Boolean           @default(false)
-  deletedAt        DateTime?
-  // advanced attributes
-  groupMemberships GroupMembership[] @relation("GroupMembershipEntity")
+  id String @id @default(cuid()) /// this id is used a a global point of reference for users and groups
 
+  /// This is dirty hack to make the union type work
+  user  User?  @relation(name: "UserEntityRef")
+  group Group? @relation(name: "GroupEntityRef")
+
+  // common attributes
+  name      String
+  picture   String
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+  deleted   Boolean   @default(false)
+  deletedAt DateTime?
+
+  // advanced attributes
+  memberOfGroups GroupMembership[] @relation("GroupMembershipEntity")
+
+  // permissions where the user or group is a reciever or read/write/admin access. This is used for the "Shared with me" feature
   explicitlyAssignedPermissions ExplicitPermission[] @relation("ExplicitlyAssignedPermissions")
 }
 
 model ExplicitPermission {
-  id         String      @id @default(cuid())
-  path       String
-  entity     EntityUnion @relation("ExplicitlyAssignedPermissions", fields: [entityId], references: [id]) /// the entity that the permissions are applied to
-  entityId   String
-  permission String /// hidden, reader, writer, or admin
-  createdAt  DateTime    @default(now())
-  addedBy    User        @relation("ExplicitPermissionsAdded", fields: [addedById], references: [id])
-  addedById  String
+  id                String      @id @default(cuid())
+  path              String
+  appliesTo         EntityUnion @relation("ExplicitlyAssignedPermissions", fields: [appliesToEntityId], references: [id]) /// the entity that the permissions are applied to
+  appliesToEntityId String
+  permissionLevel   String /// 'HIDDEN', 'READ', 'WRITE', or 'ADMIN'
+  createdOn         DateTime    @default(now())
+  createdBy         User        @relation("ExplicitPermissionsCreated", fields: [createdById], references: [id])
+  createdById       String
 }
 
 // type App {

@@ -47,6 +47,9 @@ This afternoon:
 
 Known TODO's:
 
+see https://react.rocks/example/react-sortable-tree for collaspable tree
+[ ] make password hash salted witha naunce that is computed from the account creation timestamp
+[ ] add captcha's on the forms
 [ ] use
 [ ] add prisma seed command to create `system` and `anonymous` users
 [ ] separate HTTP API handlers from true handlers
