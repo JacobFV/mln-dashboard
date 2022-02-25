@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="eng">
+    <head>
+        <meta charset="UTF-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>File Browser</title>
+        <link rel="stylesheet" href="filePicker.css">
+    </head>
+    <body>
+        <h1>File Browser</h1>
+        <h2>To make things easier I have temporarily disabled any files that aren't text files</h2>
+        <h3>I am still tyring to figure out file uploads</h3>
+        <button id="openFile"> Open File </button>
+        <button id="saveButton"> Save </button>
+        <button id="saveAsButton"> Save as</button>
+
+        <div class="container" id ="mainText">
+            <!--<p id="fileContent"></p>-->
+            <pre id="fileContent" contenteditable></pre>
+        </div>
+
+        <div class = "container" id ="fileNames">
+            <p>file names go here</p>
+        </div>
+        
+        <script src="./filePicker.js"></script>
+
+        
+    </body>
+</html>
