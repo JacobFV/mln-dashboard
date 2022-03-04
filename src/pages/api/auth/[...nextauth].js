@@ -1,24 +1,28 @@
-import NextAuth from "next-auth"
-import GoogleProvider from "next-auth/providers/google"
-import FacebookProvider from "next-auth/providers/facebook"
-import GithubProvider from "next-auth/providers/github"
-import TwitterProvider from "next-auth/providers/twitter"
-import Auth0Provider from "next-auth/providers/auth0"
+import NextAuth from "next-auth";
+import GoogleProvider from "next-auth/providers/google";
+import FacebookProvider from "next-auth/providers/facebook";
+import GithubProvider from "next-auth/providers/github";
+import TwitterProvider from "next-auth/providers/twitter";
+import Auth0Provider from "next-auth/providers/auth0";
 // import AppleProvider from "next-auth/providers/apple"
 // import EmailProvider from "next-auth/providers/email"
+
+import { prisma } from "../../../prisma/prisma";
+import createUser from "../../../server/account/createUser";
+import { verfCodeExpiration } from "../../../common/constants";
 
 // For more information on each option (and a full list of options) go to
 // https://next-auth.js.org/configuration/options
 export default NextAuth({
   // https://next-auth.js.org/configuration/providers
   providers: [
-    //// /* EmailProvider({
-    ////      server: process.env.EMAIL_SERVER,
-    ////      from: process.env.EMAIL_FROM,
-    ////    }),
+    //// EmailProvider({
+    ////   server: process.env.EMAIL_SERVER,
+    ////   from: process.env.EMAIL_FROM,
+    //// }),
     //// // Temporarily removing the Apple provider from the demo site as the
     //// // callback URL for it needs updating due to Vercel changing domains
-    ////   
+    ////
     //// Providers.Apple({
     ////   clientId: process.env.APPLE_ID,
     ////   clientSecret: {
@@ -42,10 +46,10 @@ export default NextAuth({
     ////   clientId: process.env.GOOGLE_ID,
     ////   clientSecret: process.env.GOOGLE_SECRET,
     //// }),
-    //// TwitterProvider({
-    ////   clientId: process.env.TWITTER_ID,
-    ////   clientSecret: process.env.TWITTER_SECRET,
-    //// }),
+    TwitterProvider({
+      clientId: process.env.TWITTER_ID,
+      clientSecret: process.env.TWITTER_SECRET,
+    }),
     //// Auth0Provider({
     ////   clientId: process.env.AUTH0_ID,
     ////   clientSecret: process.env.AUTH0_SECRET,
@@ -99,22 +103,98 @@ export default NextAuth({
   // when an action is performed.
   // https://next-auth.js.org/configuration/callbacks
   callbacks: {
-    // async signIn({ user, account, profile, email, credentials }) { return true },
+    async signIn({ user, account, profile, email, credentials }) {
+      // user: { name, email, image } on first sign in
+      // user includes uid and jwt token on later calls
+
+      // First check if user exists in database
+      const dbEmails = await prisma.email.findMany({
+        where: {
+          email: {
+            equals: email,
+          },
+        },
+      });
+      if (dbEmails.length === 0) {
+        // If user does not exist in database,
+        // Create new user (the verf code will be sent by `createUser`)
+        // This case should only happen for third-party authenticated users
+        // since a credential authenticated user will already have been made if it is able to sign in
+        createUser({ name: user.name, email: user.email, picture: user.image });
+
+        // redirect to the verify email page
+        return "/auth/verify";
+      } else if (dbEmails.length === 1) {
+        // If one matching email exists, check if it needs verification
+        if (dbEmails[0].needsVerification) {
+          const verfCodeSentOnSeconds = new Date(
+            dbEmails[0].verificationCodeSentOn
+          ).getSeconds();
+          const verfCodeExpiresAtSeconds =
+            verfCodeSentOnSeconds + verfCodeExpiration;
+          // If the verification code has expired, send a new one
+          if (verfCodeSentOnSeconds > verfCodeExpiresAtSeconds) {
+            sendVerificationCode(email);
+          }
+          // In any case, redirect to the verify email page
+          return "/auth/verify";
+        } else {
+          // If the user exists and is already verified; sign them in
+          return true;
+        }
+      } else {
+        // If multiple matching emails exist, throw an error
+        throw new Error("Multiple matching emails found");
+      }
+    },
     // async redirect({ url, baseUrl }) { return baseUrl },
     // async session({ session, token, user }) { return session },
     // async jwt({ token, user, account, profile, isNewUser }) { return token }
   },
 
+  debug: true,
+
   // Events are useful for logging
   // https://next-auth.js.org/configuration/events
-  events: {},
+  events: {
+    async signIn(message) {
+      /* on successful sign in */
+      console.log("signIn", JSON.stringify(message, null, 2));
+    },
+    async signOut(message) {
+      /* on signout */
+      console.log("signOut", JSON.stringify(message, null, 2));
+    },
+    async createUser(message) {
+      /* user created */
+      console.log("createUser", JSON.stringify(message, null, 2));
+    },
+    async updateUser(message) {
+      /* user updated - e.g. their email was verified */
+      console.log("updateUser", JSON.stringify(message, null, 2));
+    },
+    async linkAccount(message) {
+      /* account (e.g. Twitter) linked to a user */
+      console.log("linkAccount", JSON.stringify(message, null, 2));
+    },
+    async session(message) {
+      /* session is active */
+      console.log("session", JSON.stringify(message, null, 2));
+    },
+    async error(message) {
+      /* error in authentication flow */
+      console.log("error", JSON.stringify(message, null, 2));
+    },
+  },
 
   // You can set the theme to 'light', 'dark' or use 'auto' to default to the
   // whatever prefers-color-scheme is set to in the browser. Default is 'auto'
   theme: {
-    colorScheme: "light",
+    colorScheme: "auto",
+    brandColor: "", // Hex color code
+    logo: "", // Absolute URL to image
   },
 
   // Enable debug messages in the console if you are having problems
   debug: false,
-})
+});

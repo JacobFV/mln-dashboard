@@ -10,10 +10,9 @@ CREATE TABLE "User" (
 CREATE TABLE "Email" (
     "id" TEXT NOT NULL PRIMARY KEY,
     "email" TEXT NOT NULL,
-    "needsVerification" BOOLEAN NOT NULL,
-    "verified" BOOLEAN,
+    "needsVerification" BOOLEAN NOT NULL DEFAULT true,
     "verificationCode" TEXT,
-    "verificationCodeExpiry" DATETIME,
+    "verificationCodeSentOn" DATETIME,
     "userId" TEXT NOT NULL,
     "primary" BOOLEAN,
     CONSTRAINT "Email_userId_fkey" FOREIGN KEY ("userId") REFERENCES "User" ("id") ON DELETE RESTRICT ON UPDATE CASCADE
@@ -82,3 +81,6 @@ CREATE UNIQUE INDEX "Email_email_key" ON "Email"("email");
 
 -- CreateIndex
 CREATE UNIQUE INDEX "Group_entityUnionId_key" ON "Group"("entityUnionId");
+
+-- CreateIndex
+CREATE UNIQUE INDEX "EntityUnion_name_key" ON "EntityUnion"("name");

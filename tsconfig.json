@@ -18,7 +18,7 @@
     "module": "esnext",
     "moduleResolution": "node",
     "resolveJsonModule": true, //, "src/pages/_app.jsx"
-    "isolatedModules": true,
+    "isolatedModules": true, //true,
     "jsx": "preserve",
     "incremental": true,
     // typegraphql

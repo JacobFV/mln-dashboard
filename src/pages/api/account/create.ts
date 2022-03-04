@@ -4,7 +4,7 @@ const path = require('path');
 import type { NextApiRequest, NextApiResponse } from 'next'
 import NextAuth from 'next-auth'
 
-import { isValidEmail, isValidName, isValidPassword } from '../../../common/account/sanity_check'
+import { isValidEmail, isValidName, isValidPassword } from '../../../common/account/sanityCheck'
 
 export default async (req: NextApiRequest, res: NextApiResponse) => {
 

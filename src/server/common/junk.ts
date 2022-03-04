@@ -1,8 +1,8 @@
-import { Prisma } from "@prisma/client"
-import { User as ClientUser } from "../../common/types/[...frontendTypes]"
-import { User as ServerUser } from "../graphql/User"
-import prisma from "../prisma"
-Prisma.EntityUnionScalarFieldEnum
+import { Prisma } from "@prisma/client";
+import { User as ClientUser } from "../../common/types/[...frontendTypes]";
+import { User as ServerUser } from "../graphql/User";
+import prisma from "../../prisma/prisma";
+Prisma.EntityUnionScalarFieldEnum;
 
 /*
  * @overview Get user data from the database, format in a client-understandable way, and federate field access based on the requesting user.
@@ -13,7 +13,7 @@ Prisma.EntityUnionScalarFieldEnum
 export default (userId: string, requestingUserId: string): ClientUser => {
   const fullUserObject = prisma.user.findFirst({
     where: {
-      id: userId
+      id: userId,
     },
   }) as ServerUser | null;
-}
+};

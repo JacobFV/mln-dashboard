@@ -6,25 +6,38 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "next lint"
+    "lint": "next lint",
+    "generate:prisma": "prisma migrate dev --name init",
+    "ts-node": "ts-node --compiler-options \"{\\\"module\\\":\\\"commonjs\\\"}\"",
+    "test": "nyc ./node_modules/.bin/_mocha 'test/**/*.test.ts'"
   },
   "dependencies": {
+    "@apollo/client": "^3.5.9",
     "@emotion/react": "^11.7.1",
     "@emotion/styled": "^11.6.0",
+    "@mantine/core": "^3.6.9",
+    "@mantine/hooks": "^3.6.9",
     "@mui/icons-material": "^5.3.1",
     "@mui/material": "^5.3.1",
     "@prisma/client": "^3.9.1",
+    "@testdeck/mocha": "^0.2.0",
     "bcryptjs": "^2.4.3",
+    "chai": "^4.3.6",
     "class-validator": "^0.13.2",
     "graphql": "^15.8.0",
     "graphql-scalars": "^1.14.1",
+    "graphql-tag": "^2.12.6",
+    "mocha": "^9.2.1",
     "next": "^12.0.8",
     "next-auth": "^4.1.2",
     "next-connect": "^0.11.0",
     "nodemailer": "^6.7.2",
+    "nyc": "^15.1.0",
     "react": "17.0.2",
     "react-dom": "17.0.2",
+    "react-markdown": "^8.0.0",
     "reflect-metadata": "^0.1.13",
+    "ts-mockito": "^2.6.1",
     "type-graphql": "^1.1.1"
   },
   "devDependencies": {
@@ -35,10 +48,13 @@
     "eslint": "8.7.0",
     "eslint-config-next": "^0.2.4",
     "prisma": "^3.9.1",
-    "ts-node": "^10.4.0",
+    "ts-node": "^10.6.0",
+    "ts-node-dev": "^1.1.8",
+    "tsconfig-paths": "^3.13.0",
     "typescript": "^4.5.5"
   },
   "prisma": {
-    "schema": "src/prisma/schema.prisma"
+    "schema": "src/prisma/schema.prisma",
+    "seed": "ts-node src/prisma/seed.ts"
   }
 }
