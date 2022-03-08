@@ -1,0 +1,53 @@
+Python Version: 3.7.3
+
+Running the Code:
+driverFunction-v5.py path_to_the_MLN_file path_to_the_analysis_Config_file
+eg: python driverFunction-v5.py IMDb-5KMovies-ActorFBLikes_DirectorBudget_MovieRating\Layers\mlnFileIMDB_5kMovies-v1.txt IMDb-5KMovies-ActorFBLikes_DirectorBudget_MovieRating\Analysis\analysisConfigFileIMDb_5kMovies-v1.txt
+
+** Change the Path for BASE in IMDb-5KMovies-ActorFBLikes_DirectorBudget_MovieRating\Layers\mlnFileIMDB_5kMovies-v1.txt
+** Chnage the Path for OUTPUT_DIR in IMDb-5KMovies-ActorFBLikes_DirectorBudget_MovieRating\Analysis\analysisConfigFileIMDb_5kMovies-v1.txt
+
+The driver function takes two arguments:
+    1. MLN file which has inter layer edges, intra layer edges and also MLN Structure.
+    2. Analysis Config file contains N number of expressions(Analysis Objectives) to be computed.
+		analysis objective includes:
+			communityDetectionAlgorithm, weightMetrics, MatchingAlgorithm,LayersToBeComputed
+			eg: infomap,we,mwm,ActorFBLikes-DirectorAvgBudget
+			(Order is important)
+			User can also mention the output directory, where the result of the expression can be stored
+
+            community Detction Algorithm choices:
+Infomap, Louvain
+Weight metrics choices: for bipartite graph generation
+    we = edge weight
+    wf = edge fraction
+    wd = edge density
+    wp = vertices participation
+    wh = participating hubs weight
+Macthing Algorithm choices:
+    mwm (Maximal Weighted Matching)
+    mwpm (Maximal Weighted Perfect Matching)
+    mwmt (Maximal Weighted Matching with Ties)
+    mwrm (Maximal Weighted Relaxed Matching)
+    (Please give the abbreviation in the equation)
+
+Folder Structure:
+Main Folder MLN Analysis: 
+	Contains:
+	Driver Function to be run (driverFunction.py)
+	finalComponents: Which has the code for all components
+	Data FIle:
+	eg: DBLP, IMDB-Random-1000, IMDB-Top-500-Actors
+Data File Contains two folders:
+	Analysis: contains analysisConfigFile.txt
+			  Analysis objective result folders
+			  Note that, user can also mention different output path for analysis objectives.
+	Layers:   contains Inter layer and Intra layers files.
+			  community folder: contains community info files for each layer
+	
+	
+	
+To Run Infomap refer:
+    https://www.mapequation.org/code.html#Windows
+To run louvain refer:
+    read me in the Louvain Files

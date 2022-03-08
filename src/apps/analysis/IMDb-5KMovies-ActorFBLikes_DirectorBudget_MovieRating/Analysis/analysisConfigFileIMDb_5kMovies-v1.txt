@@ -1,0 +1,7 @@
+# MLN Dataset: IMDb 5K Movies with ActorFBLikes, DirectorAvgBudget, MovieRating
+#
+#Analysis Question: ?
+OUTPUT_DIR = D:\UTA\ITLab\HeMLN-Match\v2-noweights\IMDb-5KMovies-ActorFBLikes_DirectorBudget_MovieRating\Analysis
+#Analysis Below: <communityAlgo>,<weightMetric>,<matchAlgo>,<expression>
+infomap,we,mwm,ActorFBLikes-DirectorAvgBudget
+#
