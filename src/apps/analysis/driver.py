@@ -1,20 +1,20 @@
 import sys
-import os.path
+import os
 import regex as re
-import logging
+import json
 
-from finalComponents.maximalWeightedMatchingGenerator import *
-from finalComponents.maximalWeightedBipartiteCouplingGenerator import *
-from finalComponents.maximalWeightedMatchingWithTiesGenerator_time import *
-from finalComponents.maximalWeightedPerfectMatchingGenerator import *
-from finalComponents.maximalWeightedMatchingRelaxedWithTiesGenerator import *
-from finalComponents.maximalWeightedRelaxedMatchingGenerator import *
+from gen.maximalWeightedMatchingGenerator import *
+from gen.maximalWeightedBipartiteCouplingGenerator import *
+from gen.maximalWeightedMatchingWithTiesGenerator_time import *
+from gen.maximalWeightedPerfectMatchingGenerator import *
+from gen.maximalWeightedMatchingRelaxedWithTiesGenerator import *
+from gen.maximalWeightedRelaxedMatchingGenerator import *
 
-from finalComponents.edgeWeightBipartiteGraphGenerator_WithoutSingleton_time import *
-from finalComponents.edgeFractionWeightBipartiteGraphGenerator import *
-from finalComponents.densityWeightedBipartiteGraphGenerator import *
-from finalComponents.participationWeightedBipartiteGraphGenerator import *
-from finalComponents.participatingHubsBipartiteGraphGenerator import *
+from gen.edgeWeightBipartiteGraphGenerator_WithoutSingleton_time import *
+from gen.edgeFractionWeightBipartiteGraphGenerator import *
+from gen.densityWeightedBipartiteGraphGenerator import *
+from gen.participationWeightedBipartiteGraphGenerator import *
+from gen.participatingHubsBipartiteGraphGenerator import *
 
 # bgg = bipartite graph generator
 WEIGHT_METRIC_FUNC = {
@@ -67,19 +67,19 @@ def main():
 
         else:
           equation = line.strip().split(",")
-          analysisObjective = equation[3].strip().split("-")
-          numberOfBipartiteLayers = len(analysisObjective)-1
+          analysis_objective = equation[3].strip().split("-")
+          bi_layer_ct = len(analysis_objective)-1
           layers = set(equation[3].strip().split("-"))
           print("***layers", layers)
-          print("**exp", analysisObjective)
-          print("**number of bipartite", numberOfBipartiteLayers)
-          numberOfLayers = len(layers)
-          print("number of layers in analysis: ", numberOfLayers)
+          print("**exp", analysis_objective)
+          print("**number of bipartite", bi_layer_ct)
+          layer_ct = len(layers)
+          print("number of layers in analysis: ", layer_ct)
           #---------------------------------------------------------------------------
           #computing comunities in the multilayer graph
           communityDetectionAlgo = equation[0].lower()
-          for i in range(0, numberOfLayers):
-            communityFileName = analysisObjective[i]+communityDetectionAlgo
+          for i in range(0, layer_ct):
+            communityFileName = analysis_objective[i]+communityDetectionAlgo
             print("community File Name: ", communityFileName)
             if communityDetectionAlgo == "louvain":
               print("louvain")
@@ -101,12 +101,12 @@ def main():
               print("Please enter the correct community detection algorithm")
           #---------------------------------------------------------------------------
           #generating bipartite graphs
-          if (weightMetrics := equation[1].lower()) not in WEIGHT_METRIC_FUNC.keys():
-            raise ValueError(f'Invalid weightMetrics: \'{ weightMetrics }\'')
+          if (weight_metrics := equation[1].lower()) not in WEIGHT_METRIC_FUNC.keys():
+            raise ValueError(f'Invalid weight_metrics: \'{ weight_metrics }\'')
 
-          for i in range(numberOfBipartiteLayers):
+          for i in range(bi_layer_ct):
 
-            AO1, AO2 = analysisObjective[i], analysisObjective[i+1]
+            AO1, AO2 = analysis_objective[i], analysis_objective[i+1]
             layer1         = MLN_file_paths[AO1]
             layer2         = MLN_file_paths[AO2]
             layer1CommFile = MLN_file_paths[AO1 + communityDetectionAlgo]
@@ -114,7 +114,7 @@ def main():
             interlayer12   = MLN_file_paths[AO1 + AO2]
             simpleEdgeBipartiteFile = None
 
-            resultFileString = f'expression{ str(count) }/bipartiteFiles/{ AO1 + AO2 }_{ weightMetrics }.bg'
+            resultFileString = f'expression{ str(count) }/bipartiteFiles/{ AO1 + AO2 }_{ weight_metrics }.bg'
 
             if count in output_dirs.keys():
               resultFileString = f'{ str(output_dirs[count]) }/{ resultFileString }'
@@ -123,7 +123,7 @@ def main():
               simpleEdgeBipartiteFile = MLN_file_paths[("we", AO1 + AO2)]
 
             if not os.path.exists(resultFileString):
-              WEIGHT_METRIC_FUNC[ weightMetrics ](
+              WEIGHT_METRIC_FUNC[ weight_metrics ](
                 layer1, 
                 layer2, 
                 layer1CommFile, 
@@ -133,38 +133,38 @@ def main():
                 resultFileString
             )
 
-            MLN_file_paths[(weightMetrics, AO1 + AO2)] = resultFileString
+            MLN_file_paths[(weight_metrics, AO1 + AO2)] = resultFileString
 
 
           #--------------------------------------------------------------------------
           #applying matching algorithm
           matchingAlgorithm = equation[2].lower()
-          processedLayers = [analysisObjective[0]]
+          processedLayers = [analysis_objective[0]]
           processedLayersFilePath = {}
-          for i in range(0, numberOfBipartiteLayers):
+          for i in range(0, bi_layer_ct):
             if matchingAlgorithm == "mwm":
               print("MWM")
               if i != 0:# and analysisObjective[i] in processedLayers:
                 string = ""
                 for j in range(0, i):
-                  string += analysisObjective[j]
-                if i == numberOfBipartiteLayers -1:
+                  string += analysis_objective[j]
+                if i == bi_layer_ct -1:
                   if count in output_dirs.keys():
                     fileString = str(output_dirs[count])
                     resultFileStringmwm = fileString + "/" + "expression"+str(count)+"/"+"MWM/FinalResults/" + \
                               string+\
-                              analysisObjective[i] \
-                              + analysisObjective[i + 1] + \
-                              "_" + weightMetrics + \
+                              analysis_objective[i] \
+                              + analysis_objective[i + 1] + \
+                              "_" + weight_metrics + \
                               "_" + communityDetectionAlgo + \
                               "_" + ".mwm"
                   else:
 
                     resultFileStringmwm = "expression"+str(count)+"/"+"MWM/FinalResults/"  + \
                                string+\
-                              analysisObjective[i] \
-                              + analysisObjective[i + 1] + \
-                              "_" + weightMetrics + \
+                              analysis_objective[i] \
+                              + analysis_objective[i + 1] + \
+                              "_" + weight_metrics + \
                               "_" + communityDetectionAlgo + \
                               "_" + ".mwm"
                 else:
@@ -172,101 +172,101 @@ def main():
                     fileString = str(output_dirs[count])
                     resultFileStringmwm = fileString + "/" + "expression"+str(count)+"/"+ "MWM/FinalResults/" + \
                               string+\
-                              analysisObjective[i] \
-                              + analysisObjective[i + 1] + \
-                              "_" + weightMetrics + \
+                              analysis_objective[i] \
+                              + analysis_objective[i + 1] + \
+                              "_" + weight_metrics + \
                               "_" + communityDetectionAlgo + \
                               "_" + ".mwm"
                   else:
-                    resultFileStringmwm = "expression"+str(count)+"/"+"MWM/" +string+analysisObjective[i] +\
-                             analysisObjective[i + 1] +\
-                            "_"+weightMetrics+\
+                    resultFileStringmwm = "expression"+str(count)+"/"+"MWM/" +string+analysis_objective[i] +\
+                             analysis_objective[i + 1] +\
+                            "_"+weight_metrics+\
                              "_" + communityDetectionAlgo+\
                              ".mwm"
                 if not os.path.exists(resultFileStringmwm):
                   print("processed layers: ", processedLayers)
-                  if analysisObjective[i+1] in processedLayers: # check if both layers have been processed
-                    print("same layer", analysisObjective[i+1])
+                  if analysis_objective[i+1] in processedLayers: # check if both layers have been processed
+                    print("same layer", analysis_objective[i+1])
                     for j in range(0, i-1):
-                      if analysisObjective[j] == analysisObjective[i+1]:
+                      if analysis_objective[j] == analysis_objective[i+1]:
                         break
-                    maximalWeightedMatchingExtender(processedLayersFilePath[analysisObjective[i]],
-                                  MLN_file_paths[(weightMetrics,analysisObjective[i]+analysisObjective[i+1])],
+                    maximalWeightedMatchingExtender(processedLayersFilePath[analysis_objective[i]],
+                                  MLN_file_paths[(weight_metrics,analysis_objective[i]+analysis_objective[i+1])],
                                    resultFileStringmwm, j)
                   else:
-                    maximalWeightedMatchingExtender(processedLayersFilePath[analysisObjective[i]],
-                                  MLN_file_paths[(weightMetrics,analysisObjective[i]+analysisObjective[i+1])],
+                    maximalWeightedMatchingExtender(processedLayersFilePath[analysis_objective[i]],
+                                  MLN_file_paths[(weight_metrics,analysis_objective[i]+analysis_objective[i+1])],
                                    resultFileStringmwm, -1)
                 MLN_file_paths[(
-                matchingAlgorithm, analysisObjective[i] + analysisObjective[i + 1])] = resultFileStringmwm
+                matchingAlgorithm, analysis_objective[i] + analysis_objective[i + 1])] = resultFileStringmwm
 
               else:
-                if i == numberOfBipartiteLayers -1:
+                if i == bi_layer_ct -1:
                   string = ""
                   for j in range(0, i):
-                    string += analysisObjective[j]
+                    string += analysis_objective[j]
                   if count in output_dirs.keys():
                     fileString = str(output_dirs[count])
                     resultFileStringmwm = fileString + "/" + "expression"+str(count)+"/" +"MWM/FinalResults/" + \
                               string+\
-                              analysisObjective[i] \
-                              + analysisObjective[i + 1] + \
-                              "_" + weightMetrics + \
+                              analysis_objective[i] \
+                              + analysis_objective[i + 1] + \
+                              "_" + weight_metrics + \
                               "_" + communityDetectionAlgo + \
                               "_" + ".mwm"
                   else:
                     resultFileStringmwm = "expression"+str(count)+"/"+"MWM/FinalResults/" + \
                                string+\
-                              analysisObjective[i] \
-                              + analysisObjective[i + 1] + \
-                              "_" + weightMetrics + \
+                              analysis_objective[i] \
+                              + analysis_objective[i + 1] + \
+                              "_" + weight_metrics + \
                               "_" + communityDetectionAlgo + \
                               "_" + ".mwm"
                 else:
                   if count in output_dirs.keys():
                     fileString = str(output_dirs[count])
                     resultFileStringmwm = fileString + "/" + "expression"+str(count)+"/" +"MWM/FinalResults/" + \
-                              analysisObjective[i] \
-                              + analysisObjective[i + 1] + \
-                              "_" + weightMetrics + \
+                              analysis_objective[i] \
+                              + analysis_objective[i + 1] + \
+                              "_" + weight_metrics + \
                               "_" + communityDetectionAlgo + \
                               "_" + ".mwm"
                   else:
-                    resultFileStringmwm = "expression"+str(count)+"/"+"MWM/"+analysisObjective[i]+\
-                             analysisObjective[i+1]+ \
-                             "_" + weightMetrics + \
+                    resultFileStringmwm = "expression"+str(count)+"/"+"MWM/"+analysis_objective[i]+\
+                             analysis_objective[i+1]+ \
+                             "_" + weight_metrics + \
                              "_" + communityDetectionAlgo + \
                              ".mwm"
                 if not os.path.exists(resultFileStringmwm):
-                  maximalWeightedMatchingGenerator(MLN_file_paths[(weightMetrics,analysisObjective[i]+analysisObjective[i+1])],
+                  maximalWeightedMatchingGenerator(MLN_file_paths[(weight_metrics,analysis_objective[i]+analysis_objective[i+1])],
                                   resultFileStringmwm)
-                MLN_file_paths[(matchingAlgorithm, analysisObjective[i]+analysisObjective[i+1])] = resultFileStringmwm
-              processedLayers.append(analysisObjective[i+1])
-              processedLayersFilePath[analysisObjective[i+1]] = resultFileStringmwm
+                MLN_file_paths[(matchingAlgorithm, analysis_objective[i]+analysis_objective[i+1])] = resultFileStringmwm
+              processedLayers.append(analysis_objective[i+1])
+              processedLayersFilePath[analysis_objective[i+1]] = resultFileStringmwm
 
             elif matchingAlgorithm == "mwbc":
               print("MWBC")
               if i != 0: #analysisObjective[i] in processedLayers:
                 string = ""
                 for j in range(0, i):
-                  string += analysisObjective[j]
-                if i == numberOfBipartiteLayers -1:
+                  string += analysis_objective[j]
+                if i == bi_layer_ct -1:
                   if count in output_dirs.keys():
                     fileString = str(output_dirs[count])
                     resultFileStringmwbc = fileString + "/" + "expression"+str(count)+"/" +"MWBC/FinalResults/" + \
                               string+\
-                              analysisObjective[i] \
-                              + analysisObjective[i + 1] + \
-                              "_" + weightMetrics + \
+                              analysis_objective[i] \
+                              + analysis_objective[i + 1] + \
+                              "_" + weight_metrics + \
                               "_" + communityDetectionAlgo + \
                               "_" + ".mwbc"
                   else:
 
                     resultFileStringmwbc = "expression"+str(count)+"/"+"MWBC/FinalResults/"  + \
                                string+\
-                              analysisObjective[i] \
-                              + analysisObjective[i + 1] + \
-                              "_" + weightMetrics + \
+                              analysis_objective[i] \
+                              + analysis_objective[i + 1] + \
+                              "_" + weight_metrics + \
                               "_" + communityDetectionAlgo + \
                               "_" + ".mwbc"
                 else:
@@ -274,101 +274,101 @@ def main():
                     fileString = str(output_dirs[count])
                     resultFileStringmwbc = fileString + "/" + "expression"+str(count)+"/" + "MWBC/FinalResults/" + \
                               string+\
-                              analysisObjective[i] \
-                              + analysisObjective[i + 1] + \
-                              "_" + weightMetrics + \
+                              analysis_objective[i] \
+                              + analysis_objective[i + 1] + \
+                              "_" + weight_metrics + \
                               "_" + communityDetectionAlgo + \
                               "_" + ".mwbc"
                   else:
-                    resultFileStringmwbc = "expression"+str(count)+"/"+"MWBC/" +string+analysisObjective[i] +\
-                             analysisObjective[i + 1] +\
-                            "_"+weightMetrics+\
+                    resultFileStringmwbc = "expression"+str(count)+"/"+"MWBC/" +string+analysis_objective[i] +\
+                             analysis_objective[i + 1] +\
+                            "_"+weight_metrics+\
                              "_" + communityDetectionAlgo+\
                              ".mwbc"
                 if not os.path.exists(resultFileStringmwbc):
                   print("processed layers: ", processedLayers)
-                  if analysisObjective[i+1] in processedLayers: # check if both layers have been processed
-                    print("same layer", analysisObjective[i+1])
+                  if analysis_objective[i+1] in processedLayers: # check if both layers have been processed
+                    print("same layer", analysis_objective[i+1])
                     for j in range(0, i-1):
-                      if analysisObjective[j] == analysisObjective[i+1]:
+                      if analysis_objective[j] == analysis_objective[i+1]:
                         break
-                    maximumWeightBipartiteCouplingExtender(processedLayersFilePath[analysisObjective[i]],
-                                  MLN_file_paths[(weightMetrics,analysisObjective[i]+analysisObjective[i+1])],
+                    maximumWeightBipartiteCouplingExtender(processedLayersFilePath[analysis_objective[i]],
+                                  MLN_file_paths[(weight_metrics,analysis_objective[i]+analysis_objective[i+1])],
                                    resultFileStringmwbc, j)
                   else:
-                    maximumWeightBipartiteCouplingExtender(processedLayersFilePath[analysisObjective[i]],
-                                  MLN_file_paths[(weightMetrics,analysisObjective[i]+analysisObjective[i+1])],
+                    maximumWeightBipartiteCouplingExtender(processedLayersFilePath[analysis_objective[i]],
+                                  MLN_file_paths[(weight_metrics,analysis_objective[i]+analysis_objective[i+1])],
                                    resultFileStringmwbc, -1)
                 MLN_file_paths[(
-                matchingAlgorithm, analysisObjective[i] + analysisObjective[i + 1])] = resultFileStringmwbc
+                matchingAlgorithm, analysis_objective[i] + analysis_objective[i + 1])] = resultFileStringmwbc
 
               else:
-                if i == numberOfBipartiteLayers -1:
+                if i == bi_layer_ct -1:
                   string = ""
                   for j in range(0, i):
-                    string += analysisObjective[j]
+                    string += analysis_objective[j]
                   if count in output_dirs.keys():
                     fileString = str(output_dirs[count])
                     resultFileStringmwbc = fileString + "/" + "expression"+str(count)+"/" +"MWBC/FinalResults/" + \
                               string+\
-                              analysisObjective[i] \
-                              + analysisObjective[i + 1] + \
-                              "_" + weightMetrics + \
+                              analysis_objective[i] \
+                              + analysis_objective[i + 1] + \
+                              "_" + weight_metrics + \
                               "_" + communityDetectionAlgo + \
                               "_" + ".mwbc"
                   else:
                     resultFileStringmwbc = "expression"+str(count)+"/"+"MWBC/FinalResults/" + \
                                string+\
-                              analysisObjective[i] \
-                              + analysisObjective[i + 1] + \
-                              "_" + weightMetrics + \
+                              analysis_objective[i] \
+                              + analysis_objective[i + 1] + \
+                              "_" + weight_metrics + \
                               "_" + communityDetectionAlgo + \
                               "_" + ".mwbc"
                 else:
                   if count in output_dirs.keys():
                     fileString = str(output_dirs[count])
                     resultFileStringmwbc = fileString + "/" + "expression"+str(count)+"/" +"MWBC/FinalResults/" + \
-                              analysisObjective[i] \
-                              + analysisObjective[i + 1] + \
-                              "_" + weightMetrics + \
+                              analysis_objective[i] \
+                              + analysis_objective[i + 1] + \
+                              "_" + weight_metrics + \
                               "_" + communityDetectionAlgo + \
                               "_" + ".mwbc"
                   else:
-                    resultFileStringmwbc = "expression"+str(count)+"/"+"MWBC/"+analysisObjective[i]+\
-                             analysisObjective[i+1]+ \
-                             "_" + weightMetrics + \
+                    resultFileStringmwbc = "expression"+str(count)+"/"+"MWBC/"+analysis_objective[i]+\
+                             analysis_objective[i+1]+ \
+                             "_" + weight_metrics + \
                              "_" + communityDetectionAlgo + \
                              ".mwbc"
                 if not os.path.exists(resultFileStringmwbc):
-                  maximumWeightBipartiteCouplingGenerator(MLN_file_paths[(weightMetrics,analysisObjective[i]+analysisObjective[i+1])],
+                  maximumWeightBipartiteCouplingGenerator(MLN_file_paths[(weight_metrics,analysis_objective[i]+analysis_objective[i+1])],
                                   resultFileStringmwbc)
-                MLN_file_paths[(matchingAlgorithm, analysisObjective[i]+analysisObjective[i+1])] = resultFileStringmwbc
-              processedLayers.append(analysisObjective[i+1])
-              processedLayersFilePath[analysisObjective[i+1]] = resultFileStringmwbc
+                MLN_file_paths[(matchingAlgorithm, analysis_objective[i]+analysis_objective[i+1])] = resultFileStringmwbc
+              processedLayers.append(analysis_objective[i+1])
+              processedLayersFilePath[analysis_objective[i+1]] = resultFileStringmwbc
               #print(processedLayers)
             elif matchingAlgorithm == "mwpm":
               print("MWPM")
               if i != 0: #analysisObjective[i] in processedLayers:
                 string = ""
                 for j in range(0, i):
-                  string += analysisObjective[j]
-                if i == numberOfBipartiteLayers -1:
+                  string += analysis_objective[j]
+                if i == bi_layer_ct -1:
                   if count in output_dirs.keys():
                     fileString = str(output_dirs[count])
                     resultFileStringmwpm = fileString + "/" + "expression"+str(count)+"/" +"MWPM/FinalResults/" + \
                               string+\
-                              analysisObjective[i] \
-                              + analysisObjective[i + 1] + \
-                              "_" + weightMetrics + \
+                              analysis_objective[i] \
+                              + analysis_objective[i + 1] + \
+                              "_" + weight_metrics + \
                               "_" + communityDetectionAlgo + \
                               "_" + ".mwpm"
                   else:
 
                     resultFileStringmwpm = "expression"+str(count)+"/"+"MWPM/FinalResults/"  + \
                                string+\
-                              analysisObjective[i] \
-                              + analysisObjective[i + 1] + \
-                              "_" + weightMetrics + \
+                              analysis_objective[i] \
+                              + analysis_objective[i + 1] + \
+                              "_" + weight_metrics + \
                               "_" + communityDetectionAlgo + \
                               "_" + ".mwpm"
                 else:
@@ -376,101 +376,101 @@ def main():
                     fileString = str(output_dirs[count])
                     resultFileStringmwpm = fileString + "/" + "expression"+str(count)+"/" + "MWPM/FinalResults/" + \
                               string+\
-                              analysisObjective[i] \
-                              + analysisObjective[i + 1] + \
-                              "_" + weightMetrics + \
+                              analysis_objective[i] \
+                              + analysis_objective[i + 1] + \
+                              "_" + weight_metrics + \
                               "_" + communityDetectionAlgo + \
                               "_" + ".mwpm"
                   else:
-                    resultFileStringmwpm = "expression"+str(count)+"/"+"MWPM/" +string+analysisObjective[i] +\
-                             analysisObjective[i + 1] +\
-                            "_"+weightMetrics+\
+                    resultFileStringmwpm = "expression"+str(count)+"/"+"MWPM/" +string+analysis_objective[i] +\
+                             analysis_objective[i + 1] +\
+                            "_"+weight_metrics+\
                              "_" + communityDetectionAlgo+\
                              ".mwpm"
                 if not os.path.exists(resultFileStringmwpm):
                   print("processed layers: ", processedLayers)
-                  if analysisObjective[i+1] in processedLayers: # check if both layers have been processed
-                    print("same layer", analysisObjective[i+1])
+                  if analysis_objective[i+1] in processedLayers: # check if both layers have been processed
+                    print("same layer", analysis_objective[i+1])
                     for j in range(0, i-1):
-                      if analysisObjective[j] == analysisObjective[i+1]:
+                      if analysis_objective[j] == analysis_objective[i+1]:
                         break
-                    maximalWeightedPerfectMatchingExtender(processedLayersFilePath[analysisObjective[i]],
-                                  MLN_file_paths[(weightMetrics,analysisObjective[i]+analysisObjective[i+1])],
+                    maximalWeightedPerfectMatchingExtender(processedLayersFilePath[analysis_objective[i]],
+                                  MLN_file_paths[(weight_metrics,analysis_objective[i]+analysis_objective[i+1])],
                                    resultFileStringmwpm, j)
                   else:
-                    maximalWeightedPerfectMatchingExtender(processedLayersFilePath[analysisObjective[i]],
-                                  MLN_file_paths[(weightMetrics,analysisObjective[i]+analysisObjective[i+1])],
+                    maximalWeightedPerfectMatchingExtender(processedLayersFilePath[analysis_objective[i]],
+                                  MLN_file_paths[(weight_metrics,analysis_objective[i]+analysis_objective[i+1])],
                                    resultFileStringmwpm, -1)
                 MLN_file_paths[(
-                matchingAlgorithm, analysisObjective[i] + analysisObjective[i + 1])] = resultFileStringmwpm
+                matchingAlgorithm, analysis_objective[i] + analysis_objective[i + 1])] = resultFileStringmwpm
 
               else:
-                if i == numberOfBipartiteLayers -1:
+                if i == bi_layer_ct -1:
                   string = ""
                   for j in range(0, i):
-                    string += analysisObjective[j]
+                    string += analysis_objective[j]
                   if count in output_dirs.keys():
                     fileString = str(output_dirs[count])
                     resultFileStringmwpm = fileString + "/" + "expression"+str(count)+"/" +"MWPM/FinalResults/" + \
                               string+\
-                              analysisObjective[i] \
-                              + analysisObjective[i + 1] + \
-                              "_" + weightMetrics + \
+                              analysis_objective[i] \
+                              + analysis_objective[i + 1] + \
+                              "_" + weight_metrics + \
                               "_" + communityDetectionAlgo + \
                               "_" + ".mwpm"
                   else:
                     resultFileStringmwpm = "expression"+str(count)+"/"+"MWPM/FinalResults/" + \
                                string+\
-                              analysisObjective[i] \
-                              + analysisObjective[i + 1] + \
-                              "_" + weightMetrics + \
+                              analysis_objective[i] \
+                              + analysis_objective[i + 1] + \
+                              "_" + weight_metrics + \
                               "_" + communityDetectionAlgo + \
                               "_" + ".mwpm"
                 else:
                   if count in output_dirs.keys():
                     fileString = str(output_dirs[count])
                     resultFileStringmwpm = fileString + "/" + "expression"+str(count)+"/" +"MWPM/FinalResults/" + \
-                              analysisObjective[i] \
-                              + analysisObjective[i + 1] + \
-                              "_" + weightMetrics + \
+                              analysis_objective[i] \
+                              + analysis_objective[i + 1] + \
+                              "_" + weight_metrics + \
                               "_" + communityDetectionAlgo + \
                               "_" + ".mwpm"
                   else:
-                    resultFileStringmwpm = "expression"+str(count)+"/"+"MWPM/"+analysisObjective[i]+\
-                             analysisObjective[i+1]+ \
-                             "_" + weightMetrics + \
+                    resultFileStringmwpm = "expression"+str(count)+"/"+"MWPM/"+analysis_objective[i]+\
+                             analysis_objective[i+1]+ \
+                             "_" + weight_metrics + \
                              "_" + communityDetectionAlgo + \
                              ".mwpm"
                 if not os.path.exists(resultFileStringmwpm):
-                  maximalWeightedPerfectMatchingGenerator(MLN_file_paths[(weightMetrics,analysisObjective[i]+analysisObjective[i+1])],
+                  maximalWeightedPerfectMatchingGenerator(MLN_file_paths[(weight_metrics,analysis_objective[i]+analysis_objective[i+1])],
                                   resultFileStringmwpm)
-                MLN_file_paths[(matchingAlgorithm, analysisObjective[i]+analysisObjective[i+1])] = resultFileStringmwpm
-              processedLayers.append(analysisObjective[i+1])
-              processedLayersFilePath[analysisObjective[i+1]] = resultFileStringmwpm
+                MLN_file_paths[(matchingAlgorithm, analysis_objective[i]+analysis_objective[i+1])] = resultFileStringmwpm
+              processedLayers.append(analysis_objective[i+1])
+              processedLayersFilePath[analysis_objective[i+1]] = resultFileStringmwpm
               #print(processedLayers)
             elif matchingAlgorithm == "mwmt":
               print("MWMT")
               if i != 0: #analysisObjective[i] in processedLayers:
                 string = ""
                 for j in range(0, i):
-                  string += analysisObjective[j]
-                if i == numberOfBipartiteLayers -1:
+                  string += analysis_objective[j]
+                if i == bi_layer_ct -1:
                   if count in output_dirs.keys():
                     fileString = str(output_dirs[count])
                     resultFileStringmwmt = fileString + "/" + "expression"+str(count)+"/" +"MWMT/FinalResults/" + \
                               string+\
-                              analysisObjective[i] \
-                              + analysisObjective[i + 1] + \
-                              "_" + weightMetrics + \
+                              analysis_objective[i] \
+                              + analysis_objective[i + 1] + \
+                              "_" + weight_metrics + \
                               "_" + communityDetectionAlgo + \
                               "_" + ".mwmt"
                   else:
 
                     resultFileStringmwmt = "expression"+str(count)+"/"+"MWMT/FinalResults/"  + \
                                string+\
-                              analysisObjective[i] \
-                              + analysisObjective[i + 1] + \
-                              "_" + weightMetrics + \
+                              analysis_objective[i] \
+                              + analysis_objective[i + 1] + \
+                              "_" + weight_metrics + \
                               "_" + communityDetectionAlgo + \
                               "_" + ".mwmt"
                 else:
@@ -478,101 +478,101 @@ def main():
                     fileString = str(output_dirs[count])
                     resultFileStringmwmt = fileString + "/" + "expression"+str(count)+"/" + "MWMT/FinalResults/" + \
                               string+\
-                              analysisObjective[i] \
-                              + analysisObjective[i + 1] + \
-                              "_" + weightMetrics + \
+                              analysis_objective[i] \
+                              + analysis_objective[i + 1] + \
+                              "_" + weight_metrics + \
                               "_" + communityDetectionAlgo + \
                               "_" + ".mwmt"
                   else:
-                    resultFileStringmwmt = "expression"+str(count)+"/"+"MWMT/" +string+analysisObjective[i] +\
-                             analysisObjective[i + 1] +\
-                            "_"+weightMetrics+\
+                    resultFileStringmwmt = "expression"+str(count)+"/"+"MWMT/" +string+analysis_objective[i] +\
+                             analysis_objective[i + 1] +\
+                            "_"+weight_metrics+\
                              "_" + communityDetectionAlgo+\
                              ".mwmt"
                 if not os.path.exists(resultFileStringmwmt):
                   print("processed layers: ", processedLayers)
-                  if analysisObjective[i+1] in processedLayers: # check if both layers have been processed
-                    print("same layer", analysisObjective[i+1])
+                  if analysis_objective[i+1] in processedLayers: # check if both layers have been processed
+                    print("same layer", analysis_objective[i+1])
                     for j in range(0, i-1):
-                      if analysisObjective[j] == analysisObjective[i+1]:
+                      if analysis_objective[j] == analysis_objective[i+1]:
                         break
-                    maximalWeightedMatchingWithTiesExtender(processedLayersFilePath[analysisObjective[i]],
-                                  MLN_file_paths[(weightMetrics,analysisObjective[i]+analysisObjective[i+1])],
+                    maximalWeightedMatchingWithTiesExtender(processedLayersFilePath[analysis_objective[i]],
+                                  MLN_file_paths[(weight_metrics,analysis_objective[i]+analysis_objective[i+1])],
                                    resultFileStringmwmt, j)
                   else:
-                    maximalWeightedMatchingWithTiesExtender(processedLayersFilePath[analysisObjective[i]],
-                                  MLN_file_paths[(weightMetrics,analysisObjective[i]+analysisObjective[i+1])],
+                    maximalWeightedMatchingWithTiesExtender(processedLayersFilePath[analysis_objective[i]],
+                                  MLN_file_paths[(weight_metrics,analysis_objective[i]+analysis_objective[i+1])],
                                    resultFileStringmwmt, -1)
                 MLN_file_paths[(
-                matchingAlgorithm, analysisObjective[i] + analysisObjective[i + 1])] = resultFileStringmwmt
+                matchingAlgorithm, analysis_objective[i] + analysis_objective[i + 1])] = resultFileStringmwmt
 
               else:
-                if i == numberOfBipartiteLayers -1:
+                if i == bi_layer_ct -1:
                   string = ""
                   for j in range(0, i):
-                    string += analysisObjective[j]
+                    string += analysis_objective[j]
                   if count in output_dirs.keys():
                     fileString = str(output_dirs[count])
                     resultFileStringmwmt = fileString + "/" + "expression"+str(count)+"/" +"MWMT/FinalResults/" + \
                               string+\
-                              analysisObjective[i] \
-                              + analysisObjective[i + 1] + \
-                              "_" + weightMetrics + \
+                              analysis_objective[i] \
+                              + analysis_objective[i + 1] + \
+                              "_" + weight_metrics + \
                               "_" + communityDetectionAlgo + \
                               "_" + ".mwmt"
                   else:
                     resultFileStringmwmt = "expression"+str(count)+"/"+"MWMT/FinalResults/" + \
                                string+\
-                              analysisObjective[i] \
-                              + analysisObjective[i + 1] + \
-                              "_" + weightMetrics + \
+                              analysis_objective[i] \
+                              + analysis_objective[i + 1] + \
+                              "_" + weight_metrics + \
                               "_" + communityDetectionAlgo + \
                               "_" + ".mwmt"
                 else:
                   if count in output_dirs.keys():
                     fileString = str(output_dirs[count])
                     resultFileStringmwmt = fileString + "/" + "expression"+str(count)+"/" +"MWMT/FinalResults/" + \
-                              analysisObjective[i] \
-                              + analysisObjective[i + 1] + \
-                              "_" + weightMetrics + \
+                              analysis_objective[i] \
+                              + analysis_objective[i + 1] + \
+                              "_" + weight_metrics + \
                               "_" + communityDetectionAlgo + \
                               "_" + ".mwmt"
                   else:
-                    resultFileStringmwmt = "expression"+str(count)+"/"+"MWMT/"+analysisObjective[i]+\
-                             analysisObjective[i+1]+ \
-                             "_" + weightMetrics + \
+                    resultFileStringmwmt = "expression"+str(count)+"/"+"MWMT/"+analysis_objective[i]+\
+                             analysis_objective[i+1]+ \
+                             "_" + weight_metrics + \
                              "_" + communityDetectionAlgo + \
                              ".mwmt"
                 if not os.path.exists(resultFileStringmwmt):
-                  maximalWeightedMatchingWithTiesGenerator(MLN_file_paths[(weightMetrics,analysisObjective[i]+analysisObjective[i+1])],
+                  maximalWeightedMatchingWithTiesGenerator(MLN_file_paths[(weight_metrics,analysis_objective[i]+analysis_objective[i+1])],
                                   resultFileStringmwmt)
-                MLN_file_paths[(matchingAlgorithm, analysisObjective[i]+analysisObjective[i+1])] = resultFileStringmwmt
-              processedLayers.append(analysisObjective[i+1])
-              processedLayersFilePath[analysisObjective[i+1]] = resultFileStringmwmt
+                MLN_file_paths[(matchingAlgorithm, analysis_objective[i]+analysis_objective[i+1])] = resultFileStringmwmt
+              processedLayers.append(analysis_objective[i+1])
+              processedLayersFilePath[analysis_objective[i+1]] = resultFileStringmwmt
               #print(processedLayers)
             elif matchingAlgorithm == "mwrmt":
               print("MWRMT")
               if i != 0: #analysisObjective[i] in processedLayers:
                 string = ""
                 for j in range(0, i):
-                  string += analysisObjective[j]
-                if i == numberOfBipartiteLayers -1:
+                  string += analysis_objective[j]
+                if i == bi_layer_ct -1:
                   if count in output_dirs.keys():
                     fileString = str(output_dirs[count])
                     resultFileStringmwrmt = fileString + "/" + "expression"+str(count)+"/" +"MWRMT/FinalResults/" + \
                               string+\
-                              analysisObjective[i] \
-                              + analysisObjective[i + 1] + \
-                              "_" + weightMetrics + \
+                              analysis_objective[i] \
+                              + analysis_objective[i + 1] + \
+                              "_" + weight_metrics + \
                               "_" + communityDetectionAlgo + \
                               "_" + ".mwrmt"
                   else:
 
                     resultFileStringmwrmt = "expression"+str(count)+"/"+"MWRMT/FinalResults/"  + \
                                string+\
-                              analysisObjective[i] \
-                              + analysisObjective[i + 1] + \
-                              "_" + weightMetrics + \
+                              analysis_objective[i] \
+                              + analysis_objective[i + 1] + \
+                              "_" + weight_metrics + \
                               "_" + communityDetectionAlgo + \
                               "_" + ".mwrmt"
                 else:
@@ -580,101 +580,101 @@ def main():
                     fileString = str(output_dirs[count])
                     resultFileStringmwrmt = fileString + "/" + "expression"+str(count)+"/" + "MWRMT/FinalResults/" + \
                               string+\
-                              analysisObjective[i] \
-                              + analysisObjective[i + 1] + \
-                              "_" + weightMetrics + \
+                              analysis_objective[i] \
+                              + analysis_objective[i + 1] + \
+                              "_" + weight_metrics + \
                               "_" + communityDetectionAlgo + \
                               "_" + ".mwrmt"
                   else:
-                    resultFileStringmwrmt = "expression"+str(count)+"/"+"MWRMT/" +string+analysisObjective[i] +\
-                             analysisObjective[i + 1] +\
-                            "_"+weightMetrics+\
+                    resultFileStringmwrmt = "expression"+str(count)+"/"+"MWRMT/" +string+analysis_objective[i] +\
+                             analysis_objective[i + 1] +\
+                            "_"+weight_metrics+\
                              "_" + communityDetectionAlgo+\
                              ".mwrmt"
                 if not os.path.exists(resultFileStringmwrmt):
                   print("processed layers: ", processedLayers)
-                  if analysisObjective[i+1] in processedLayers: # check if both layers have been processed
-                    print("same layer", analysisObjective[i+1])
+                  if analysis_objective[i+1] in processedLayers: # check if both layers have been processed
+                    print("same layer", analysis_objective[i+1])
                     for j in range(0, i-1):
-                      if analysisObjective[j] == analysisObjective[i+1]:
+                      if analysis_objective[j] == analysis_objective[i+1]:
                         break
-                    maximalWeightedMatchingRelaxedWithTiesExtender(processedLayersFilePath[analysisObjective[i]],
-                                  MLN_file_paths[(weightMetrics,analysisObjective[i]+analysisObjective[i+1])],
+                    maximalWeightedMatchingRelaxedWithTiesExtender(processedLayersFilePath[analysis_objective[i]],
+                                  MLN_file_paths[(weight_metrics,analysis_objective[i]+analysis_objective[i+1])],
                                    resultFileStringmwrmt, j)
                   else:
-                    maximalWeightedMatchingRelaxedWithTiesExtender(processedLayersFilePath[analysisObjective[i]],
-                                  MLN_file_paths[(weightMetrics,analysisObjective[i]+analysisObjective[i+1])],
+                    maximalWeightedMatchingRelaxedWithTiesExtender(processedLayersFilePath[analysis_objective[i]],
+                                  MLN_file_paths[(weight_metrics,analysis_objective[i]+analysis_objective[i+1])],
                                    resultFileStringmwrmt, -1)
                 MLN_file_paths[(
-                matchingAlgorithm, analysisObjective[i] + analysisObjective[i + 1])] = resultFileStringmwrmt
+                matchingAlgorithm, analysis_objective[i] + analysis_objective[i + 1])] = resultFileStringmwrmt
 
               else:
-                if i == numberOfBipartiteLayers -1:
+                if i == bi_layer_ct -1:
                   string = ""
                   for j in range(0, i):
-                    string += analysisObjective[j]
+                    string += analysis_objective[j]
                   if count in output_dirs.keys():
                     fileString = str(output_dirs[count])
                     resultFileStringmwrmt = fileString + "/" + "expression"+str(count)+"/" +"MWRMT/FinalResults/" + \
                               string+\
-                              analysisObjective[i] \
-                              + analysisObjective[i + 1] + \
-                              "_" + weightMetrics + \
+                              analysis_objective[i] \
+                              + analysis_objective[i + 1] + \
+                              "_" + weight_metrics + \
                               "_" + communityDetectionAlgo + \
                               "_" + ".mwrmt"
                   else:
                     resultFileStringmwrmt = "expression"+str(count)+"/"+"MWRMT/FinalResults/" + \
                                string+\
-                              analysisObjective[i] \
-                              + analysisObjective[i + 1] + \
-                              "_" + weightMetrics + \
+                              analysis_objective[i] \
+                              + analysis_objective[i + 1] + \
+                              "_" + weight_metrics + \
                               "_" + communityDetectionAlgo + \
                               "_" + ".mwrmt"
                 else:
                   if count in output_dirs.keys():
                     fileString = str(output_dirs[count])
                     resultFileStringmwrmt = fileString + "/" + "expression"+str(count)+"/" +"MWRMT/FinalResults/" + \
-                              analysisObjective[i] \
-                              + analysisObjective[i + 1] + \
-                              "_" + weightMetrics + \
+                              analysis_objective[i] \
+                              + analysis_objective[i + 1] + \
+                              "_" + weight_metrics + \
                               "_" + communityDetectionAlgo + \
                               "_" + ".mwrmt"
                   else:
-                    resultFileStringmwrmt = "expression"+str(count)+"/"+"MWRMT/"+analysisObjective[i]+\
-                             analysisObjective[i+1]+ \
-                             "_" + weightMetrics + \
+                    resultFileStringmwrmt = "expression"+str(count)+"/"+"MWRMT/"+analysis_objective[i]+\
+                             analysis_objective[i+1]+ \
+                             "_" + weight_metrics + \
                              "_" + communityDetectionAlgo + \
                              ".mwrmt"
                 if not os.path.exists(resultFileStringmwrmt):
-                  maximalWeightedMatchingRelaxedWithTiesGenerator(MLN_file_paths[(weightMetrics,analysisObjective[i]+analysisObjective[i+1])],
+                  maximalWeightedMatchingRelaxedWithTiesGenerator(MLN_file_paths[(weight_metrics,analysis_objective[i]+analysis_objective[i+1])],
                                   resultFileStringmwrmt)
-                MLN_file_paths[(matchingAlgorithm, analysisObjective[i]+analysisObjective[i+1])] = resultFileStringmwrmt
-              processedLayers.append(analysisObjective[i+1])
-              processedLayersFilePath[analysisObjective[i+1]] = resultFileStringmwrmt
+                MLN_file_paths[(matchingAlgorithm, analysis_objective[i]+analysis_objective[i+1])] = resultFileStringmwrmt
+              processedLayers.append(analysis_objective[i+1])
+              processedLayersFilePath[analysis_objective[i+1]] = resultFileStringmwrmt
               #print(processedLayers)
             elif matchingAlgorithm == "mwrm":
               print("MWRM")
               if i != 0: #analysisObjective[i] in processedLayers:
                 string = ""
                 for j in range(0, i):
-                  string += analysisObjective[j]
-                if i == numberOfBipartiteLayers -1:
+                  string += analysis_objective[j]
+                if i == bi_layer_ct -1:
                   if count in output_dirs.keys():
                     fileString = str(output_dirs[count])
                     resultFileStringmwrm = fileString + "/" + "expression"+str(count)+"/" +"MWRM/FinalResults/" + \
                               string+\
-                              analysisObjective[i] \
-                              + analysisObjective[i + 1] + \
-                              "_" + weightMetrics + \
+                              analysis_objective[i] \
+                              + analysis_objective[i + 1] + \
+                              "_" + weight_metrics + \
                               "_" + communityDetectionAlgo + \
                               "_" + ".mwrm"
                   else:
 
                     resultFileStringmwrm = "expression"+str(count)+"/"+"MWRM/FinalResults/"  + \
                                string+\
-                              analysisObjective[i] \
-                              + analysisObjective[i + 1] + \
-                              "_" + weightMetrics + \
+                              analysis_objective[i] \
+                              + analysis_objective[i + 1] + \
+                              "_" + weight_metrics + \
                               "_" + communityDetectionAlgo + \
                               "_" + ".mwrm"
                 else:
@@ -682,77 +682,77 @@ def main():
                     fileString = str(output_dirs[count])
                     resultFileStringmwrm = fileString + "/" + "expression"+str(count)+"/" + "MWRM/FinalResults/" + \
                               string+\
-                              analysisObjective[i] \
-                              + analysisObjective[i + 1] + \
-                              "_" + weightMetrics + \
+                              analysis_objective[i] \
+                              + analysis_objective[i + 1] + \
+                              "_" + weight_metrics + \
                               "_" + communityDetectionAlgo + \
                               "_" + ".mwrm"
                   else:
-                    resultFileStringmwrm = "expression"+str(count)+"/"+"MWRM/" +string+analysisObjective[i] +\
-                             analysisObjective[i + 1] +\
-                            "_"+weightMetrics+\
+                    resultFileStringmwrm = "expression"+str(count)+"/"+"MWRM/" +string+analysis_objective[i] +\
+                             analysis_objective[i + 1] +\
+                            "_"+weight_metrics+\
                              "_" + communityDetectionAlgo+\
                              ".mwrm"
                 if not os.path.exists(resultFileStringmwrm):
                   print("processed layers: ", processedLayers)
-                  if analysisObjective[i+1] in processedLayers: # check if both layers have been processed
-                    print("same layer", analysisObjective[i+1])
+                  if analysis_objective[i+1] in processedLayers: # check if both layers have been processed
+                    print("same layer", analysis_objective[i+1])
                     for j in range(0, i-1):
-                      if analysisObjective[j] == analysisObjective[i+1]:
+                      if analysis_objective[j] == analysis_objective[i+1]:
                         break
-                    maximalWeightedRelaxedMatchingExtender(processedLayersFilePath[analysisObjective[i]],
-                                  MLN_file_paths[(weightMetrics,analysisObjective[i]+analysisObjective[i+1])],
+                    maximalWeightedRelaxedMatchingExtender(processedLayersFilePath[analysis_objective[i]],
+                                  MLN_file_paths[(weight_metrics,analysis_objective[i]+analysis_objective[i+1])],
                                    resultFileStringmwrm, j)
                   else:
-                    maximalWeightedRelaxedMatchingExtender(processedLayersFilePath[analysisObjective[i]],
-                                  MLN_file_paths[(weightMetrics,analysisObjective[i]+analysisObjective[i+1])],
+                    maximalWeightedRelaxedMatchingExtender(processedLayersFilePath[analysis_objective[i]],
+                                  MLN_file_paths[(weight_metrics,analysis_objective[i]+analysis_objective[i+1])],
                                    resultFileStringmwrm, -1)
                 MLN_file_paths[(
-                matchingAlgorithm, analysisObjective[i] + analysisObjective[i + 1])] = resultFileStringmwrm
+                matchingAlgorithm, analysis_objective[i] + analysis_objective[i + 1])] = resultFileStringmwrm
 
               else:
-                if i == numberOfBipartiteLayers -1:
+                if i == bi_layer_ct -1:
                   string = ""
                   for j in range(0, i):
-                    string += analysisObjective[j]
+                    string += analysis_objective[j]
                   if count in output_dirs.keys():
                     fileString = str(output_dirs[count])
                     resultFileStringmwrm = fileString + "/" + "expression"+str(count)+"/" +"MWRM/FinalResults/" + \
                               string+\
-                              analysisObjective[i] \
-                              + analysisObjective[i + 1] + \
-                              "_" + weightMetrics + \
+                              analysis_objective[i] \
+                              + analysis_objective[i + 1] + \
+                              "_" + weight_metrics + \
                               "_" + communityDetectionAlgo + \
                               "_" + ".mwrm"
                   else:
                     resultFileStringmwrm = "expression"+str(count)+"/"+"MWRM/FinalResults/" + \
                                string+\
-                              analysisObjective[i] \
-                              + analysisObjective[i + 1] + \
-                              "_" + weightMetrics + \
+                              analysis_objective[i] \
+                              + analysis_objective[i + 1] + \
+                              "_" + weight_metrics + \
                               "_" + communityDetectionAlgo + \
                               "_" + ".mwrm"
                 else:
                   if count in output_dirs.keys():
                     fileString = str(output_dirs[count])
                     resultFileStringmwrm = fileString + "/" + "expression"+str(count)+"/" +"MWRM/FinalResults/" + \
-                              analysisObjective[i] \
-                              + analysisObjective[i + 1] + \
-                              "_" + weightMetrics + \
+                              analysis_objective[i] \
+                              + analysis_objective[i + 1] + \
+                              "_" + weight_metrics + \
                               "_" + communityDetectionAlgo + \
                               "_" + ".mwrm"
                   else:
-                    resultFileStringmwrm = "expression"+str(count)+"/"+"MWRM/"+analysisObjective[i]+\
-                             analysisObjective[i+1]+ \
-                             "_" + weightMetrics + \
+                    resultFileStringmwrm = "expression"+str(count)+"/"+"MWRM/"+analysis_objective[i]+\
+                             analysis_objective[i+1]+ \
+                             "_" + weight_metrics + \
                              "_" + communityDetectionAlgo + \
                              ".mwrm"
                 if not os.path.exists(resultFileStringmwrm):
-                  maximalWeightedRelaxedMatchingGenerator(MLN_file_paths[(weightMetrics,analysisObjective[i]+analysisObjective[i+1])],
+                  maximalWeightedRelaxedMatchingGenerator(MLN_file_paths[(weight_metrics,analysis_objective[i]+analysis_objective[i+1])],
                                   resultFileStringmwrm)
-                MLN_file_paths[(matchingAlgorithm, analysisObjective[i]+analysisObjective[i+1])] = resultFileStringmwrm
-              processedLayers.append(analysisObjective[i+1])
-              processedLayersFilePath[analysisObjective[i+1]] = resultFileStringmwrm
+                MLN_file_paths[(matchingAlgorithm, analysis_objective[i]+analysis_objective[i+1])] = resultFileStringmwrm
+              processedLayers.append(analysis_objective[i+1])
+              processedLayersFilePath[analysis_objective[i+1]] = resultFileStringmwrm
               #print(processedLayers)                
             else:
               print("Please enter the correct matching algorithm")
@@ -762,59 +762,21 @@ def main():
 #result <10(A),20(D),30(M); pathname of bipartite file of 10-20(A-D), pathname of bipartite file of 20-30(D-M)>
 
 
-COMMENT_re = re.compile(f'^\s*\#.*')
-def file_lines(path):
-  """ return a list of non-comment lines from a file.
-
-      path -- path of the file to be read
-  """
-  with open(path, 'r') as f:
-    lines = [ L for L in f.read().split('\n') if not re.fullmatch(COMMENT_re, L) ]
-  return lines
-
-
-def get_base_dir(config_path):
-  """ return the base directory string from configuration file.
-      expects to find a line like `BASE: /some/path/to/base/` in the configuration file.
-
-      config_path -- path of file to be read
-  """
-  base_dir = None
-  for line in file_lines(config_path):
-    if line.startswith('BASE'): base_dir = line.split('=')[1].strip()
-  return base_dir
-
-
-LAYER_DEF_re = re.compile(r'\w+?\s?=\s?(\w+\/?)+(\.inter|\.intra)')
-def get_file_paths(config_path):
-  """ return a dictionary whose keys are the names of layers and values are the corresponding paths.
-      expects to find lines like `LayerName = /path/to/layername.int(ra|er)`
-
-      config_path -- path of file to be read
-  """
-  file_paths = dict()
-  for line in file_lines(config_path):
-    if re.fullmatch(LAYER_DEF_re, line):
-      [layer_name, layer_path] = line.split('=')
-      file_paths[ layer_name.strip() ] = layer_path.strip()
-  return file_paths
-
-
-DEBUG = True
 if __name__== "__main__":
 
-  if len(sys.argv) != 3:
-    raise RuntimeError('Usage: `python3 driver.py /path/to/MLN_file /path/to/analysis_file`')
+  DEBUG = '-v' in sys.argv
 
-  MLN_config_path, ANA_config_path = sys.argv[1], sys.argv[2]
+  if '-b' in sys.argv:
+    BASE_DIR = os.path.abspath( sys.argv[ sys.argv.index('-b') + 1 ] )
+  else:
+    BASE_DIR = os.path.abspath('.')
 
-  BASE_DIR = get_base_dir(MLN_config_path)
   if DEBUG: print(f'\nBASE_DIR: "{ BASE_DIR }"')
 
-  MLN_file_paths = get_file_paths(MLN_config_path)
-  if DEBUG:
-    print('\nMLN_file_paths: ')
-    for k, v in MLN_file_paths.items(): print(f'| {k: >30}: {v}')
+  with open( f'{BASE_DIR}/config.json', 'r') as f: config = json.load(f)
 
+  if DEBUG:
+    print('\nlayers: ')
+    for k, v in config['layers'].items(): print(f' | {k: >30}: {v}')
 
   # main()
