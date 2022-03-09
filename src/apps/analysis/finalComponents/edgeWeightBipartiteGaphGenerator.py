@@ -18,6 +18,8 @@ def edgeWeightBipartiteGraphGenerator(
   resultFile
 ):
 
+  # it looks like this was written for the IMDb dataset in particular.
+  # shouldn't it be more general?
   director_community_info = []
   director_community_dict = {}
   movie_community_info = []

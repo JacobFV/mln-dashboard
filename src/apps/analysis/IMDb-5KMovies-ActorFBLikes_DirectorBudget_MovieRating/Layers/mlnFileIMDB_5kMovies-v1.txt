@@ -1,22 +1,22 @@
 #MLN structure for IMDb 5K Movies with ActorFBLikes, DirectorAvgBudget, MovieRating
 HeMLN = ActorFBLikes,DirectorAvgBudget,MovieRating
 # Base Directory
-BASE = D:\UTA\ITLab\HeMLN-Match\v2-noweights\IMDb-5KMovies-ActorFBLikes_DirectorBudget_MovieRating\
+BASE = D:/UTA/ITLab/HeMLN-Match/v2-noweights/IMDb-5KMovies-ActorFBLikes_DirectorBudget_MovieRating/
 #actor intra layer edge file
-ActorFBLikes = Layers\ActorFBLikes.intra
+ActorFBLikes = Layers/ActorFBLikes.intra
 #director intra layer edge file
-DirectorAvgBudget = Layers\DirectorAvgBudget.intra
+DirectorAvgBudget = Layers/DirectorAvgBudget.intra
 #movie intra layer edge file
-MovieRating = Layers\MovieRating.intra
+MovieRating = Layers/MovieRating.intra
 #actor director inter layer edge file
-ActorFBLikesDirectorAvgBudget = Layers\ActorDirector.inter
+ActorFBLikesDirectorAvgBudget = Layers/ActorDirector.inter
 #director movie inter layer edge file
-DirectorAvgBudgetMovieRating = Layers\DirectorMovie.inter
+DirectorAvgBudgetMovieRating = Layers/DirectorMovie.inter
 #actor movie inter layer edge file
-ActorFBLikesMovieRating = Layers\ActorMovie.inter
+ActorFBLikesMovieRating = Layers/ActorMovie.inter
 # director actor inter layer edge file
-DirectorAvgBudgetActorFBLikes = Layers\DirectorActor.inter
+DirectorAvgBudgetActorFBLikes = Layers/DirectorActor.inter
 # movie director inter layer edge file
-MovieRatingDirectorAvgBudget = Layers\MovieDirector.inter
+MovieRatingDirectorAvgBudget = Layers/MovieDirector.inter
 # actor movie inter layer edge file
-MovieRatingActorFBLikes = Layers\MovieActor.inter
+MovieRatingActorFBLikes = Layers/MovieActor.inter
