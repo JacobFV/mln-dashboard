@@ -84,12 +84,11 @@ export default createUser;
 
 async function test() {
   console.log("Testing createUser");
-  /*createUser({
+  createUser({
     name: "Jacob",
     email: "jacobfv@msn.com",
     password: "12345678",
-  });*/
-  sendVerfCode("jacobfv@msn.com", "Jacob");
+  });
 }
 
-test();
+//test();

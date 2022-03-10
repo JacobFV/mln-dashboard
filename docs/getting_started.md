@@ -1,0 +1,15 @@
+# Getting Started
+
+1. Clone this repository and install the dependencies:
+
+  ```bash
+  git clone https://github.com/JacobFV/mln-dashboard.git
+  cd  mln-dashboard
+  npm install
+  ```
+
+2. Next, rename `.env.example` to `.env`. Then follow the directions included as comments in `.env` to set up your environment. Most of these variables are required for the application to run.
+
+3. You should now be able to run the application by running `npm run dev`. Click on the URL shown in the terminal to get started!
+
+4. If you are using VS Code, you can enjoy break-point debugging within your IDE by debugging the `Next.js: debug server-side` or `Next.js: debug full stack` configurations.
