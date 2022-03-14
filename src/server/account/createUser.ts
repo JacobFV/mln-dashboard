@@ -3,7 +3,7 @@ import {
   isValidName,
   isValidEmail,
   isValidPassword,
-} from "../../common/account/sanityCheck";
+} from "../../common/utils/sanityCheck";
 import prisma from "../../prisma/prisma";
 import sendVerfCode from "./sendVerfCode";
 
