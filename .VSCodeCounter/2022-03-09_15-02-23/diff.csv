@@ -1,0 +1,77 @@
+"filename", "language", "JSON", "TypeScript", "JavaScript", "TypeScript React", "JavaScript React", "XML", "CSS", "Prisma", "JSON with Comments", "source.markdown.math", "SQL", "comment", "blank", "total"
+"/home/jacob/Code/mln-dashboard/.eslintrc.json", "JSON", 3, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 4
+"/home/jacob/Code/mln-dashboard/.mocharc.json", "JSON", 4, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 4
+"/home/jacob/Code/mln-dashboard/.nycrc.json", "JSON", 17, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 17
+"/home/jacob/Code/mln-dashboard/README.md", "source.markdown.math", 0, 0, 0, 0, 0, 0, 0, 0, 0, 50, 0, 0, 23, 73
+"/home/jacob/Code/mln-dashboard/docs/apps.md", "source.markdown.math", 0, 0, 0, 0, 0, 0, 0, 0, 0, 14, 0, 0, 6, 20
+"/home/jacob/Code/mln-dashboard/docs/authentication_verification_and_security.md", "source.markdown.math", 0, 0, 0, 0, 0, 0, 0, 0, 0, 9, 0, 0, 9, 18
+"/home/jacob/Code/mln-dashboard/docs/authorization.md", "source.markdown.math", 0, 0, 0, 0, 0, 0, 0, 0, 0, 4, 0, 0, 4, 8
+"/home/jacob/Code/mln-dashboard/docs/backend.md", "source.markdown.math", 0, 0, 0, 0, 0, 0, 0, 0, 0, 421, 0, 0, 165, 586
+"/home/jacob/Code/mln-dashboard/docs/client.md", "source.markdown.math", 0, 0, 0, 0, 0, 0, 0, 0, 0, 18, 0, 0, 5, 23
+"/home/jacob/Code/mln-dashboard/docs/code_organization.md", "source.markdown.math", 0, 0, 0, 0, 0, 0, 0, 0, 0, 33, 0, 0, 8, 41
+"/home/jacob/Code/mln-dashboard/docs/file_permissions.md", "source.markdown.math", 0, 0, 0, 0, 0, 0, 0, 0, 0, 23, 0, 0, 16, 39
+"/home/jacob/Code/mln-dashboard/docs/live_editing.md", "source.markdown.math", 0, 0, 0, 0, 0, 0, 0, 0, 0, 31, 0, 0, 6, 37
+"/home/jacob/Code/mln-dashboard/docs/users_and_groups.md", "source.markdown.math", 0, 0, 0, 0, 0, 0, 0, 0, 0, 10, 0, 0, 8, 18
+"/home/jacob/Code/mln-dashboard/next-env.d.ts", "TypeScript", 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 4, 2, 6
+"/home/jacob/Code/mln-dashboard/next.config.js", "JavaScript", 0, 0, 3, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 5
+"/home/jacob/Code/mln-dashboard/package.json", "JSON", 60, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 61
+"/home/jacob/Code/mln-dashboard/public/vercel.svg", "XML", 0, 0, 0, 0, 0, 4, 0, 0, 0, 0, 0, 0, 0, 4
+"/home/jacob/Code/mln-dashboard/register.js", "JavaScript", 0, 0, 16, 0, 0, 0, 0, 0, 0, 0, 0, 8, 4, 28
+"/home/jacob/Code/mln-dashboard/src/common/account/sanityCheck.ts", "TypeScript", 0, 66, 0, 0, 0, 0, 0, 0, 0, 0, 0, 9, 3, 78
+"/home/jacob/Code/mln-dashboard/src/common/apps/[...appTypes].ts", "TypeScript", 0, 23, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 7, 30
+"/home/jacob/Code/mln-dashboard/src/common/constants.ts", "TypeScript", 0, 12, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 13
+"/home/jacob/Code/mln-dashboard/src/common/types/[...frontendTypes].ts", "TypeScript", 0, 62, 0, 0, 0, 0, 0, 0, 0, 0, 0, 13, 7, 82
+"/home/jacob/Code/mln-dashboard/src/components/appIcon.tsx", "TypeScript React", 0, 0, 0, 9, 0, 0, 0, 0, 0, 0, 0, 0, 1, 10
+"/home/jacob/Code/mln-dashboard/src/components/copyright.tsx", "TypeScript React", 0, 0, 0, 16, 0, 0, 0, 0, 0, 0, 0, 0, 2, 18
+"/home/jacob/Code/mln-dashboard/src/components/panelLayout/access-denied.js", "JavaScript", 0, 0, 15, 0, 0, 0, 0, 0, 0, 0, 0, 0, 2, 17
+"/home/jacob/Code/mln-dashboard/src/components/panelLayout/panelLayout.js", "JavaScript", 0, 0, 13, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 14
+"/home/jacob/Code/mln-dashboard/src/pages/TODO_error.jsx", "JavaScript React", 0, 0, 0, 0, 14, 0, 0, 0, 0, 0, 0, 1, 3, 18
+"/home/jacob/Code/mln-dashboard/src/pages/_app.jsx", "JavaScript React", 0, 0, 0, 0, 12, 0, 0, 0, 0, 0, 0, 5, 2, 19
+"/home/jacob/Code/mln-dashboard/src/pages/about.tsx", "TypeScript React", 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1
+"/home/jacob/Code/mln-dashboard/src/pages/api/account/create.ts", "TypeScript", 0, 33, 0, 0, 0, 0, 0, 0, 0, 0, 0, 8, 11, 52
+"/home/jacob/Code/mln-dashboard/src/pages/api/account/delete.ts", "TypeScript", 0, 25, 0, 0, 0, 0, 0, 0, 0, 0, 0, 4, 7, 36
+"/home/jacob/Code/mln-dashboard/src/pages/api/account/meta.ts", "TypeScript", 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 15, 0, 15
+"/home/jacob/Code/mln-dashboard/src/pages/api/account/resend_verification.ts", "TypeScript", 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 6, 0, 6
+"/home/jacob/Code/mln-dashboard/src/pages/api/account/reset_password.ts", "TypeScript", 0, 11, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 2, 14
+"/home/jacob/Code/mln-dashboard/src/pages/api/account/verify.ts", "TypeScript", 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 13, 0, 13
+"/home/jacob/Code/mln-dashboard/src/pages/api/auth/[...nextauth].js", "JavaScript", 0, 0, 94, 0, 0, 0, 0, 0, 0, 0, 0, 92, 15, 201
+"/home/jacob/Code/mln-dashboard/src/pages/api/examples/jwt.js", "JavaScript", 0, 0, 6, 0, 0, 0, 0, 0, 0, 0, 0, 1, 2, 9
+"/home/jacob/Code/mln-dashboard/src/pages/api/examples/session.js", "JavaScript", 0, 0, 5, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 7
+"/home/jacob/Code/mln-dashboard/src/pages/api/files-old/upload.ts", "TypeScript", 0, 33, 0, 0, 0, 0, 0, 0, 0, 0, 0, 6, 9, 48
+"/home/jacob/Code/mln-dashboard/src/pages/api/fs/files.ts", "TypeScript", 0, 68, 0, 0, 0, 0, 0, 0, 0, 0, 0, 20, 16, 104
+"/home/jacob/Code/mln-dashboard/src/pages/api/fs/list.ts", "TypeScript", 0, 33, 0, 0, 0, 0, 0, 0, 0, 0, 0, 72, 13, 118
+"/home/jacob/Code/mln-dashboard/src/pages/api/fs/manage.ts", "TypeScript", 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 6, 0, 6
+"/home/jacob/Code/mln-dashboard/src/pages/api/fs/mkdir.ts", "TypeScript", 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 22, 0, 22
+"/home/jacob/Code/mln-dashboard/src/pages/api/fs/permissions.ts", "TypeScript", 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 91, 0, 91
+"/home/jacob/Code/mln-dashboard/src/pages/api/graphql.ts", "TypeScript", 0, 19, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 4, 23
+"/home/jacob/Code/mln-dashboard/src/pages/auth/create_account.tsx", "TypeScript React", 0, 0, 0, 111, 0, 0, 0, 0, 0, 0, 0, 1, 7, 119
+"/home/jacob/Code/mln-dashboard/src/pages/auth/error.tsx", "TypeScript React", 0, 0, 0, 42, 0, 0, 0, 0, 0, 0, 0, 0, 5, 47
+"/home/jacob/Code/mln-dashboard/src/pages/auth/forgot_password.tsx", "TypeScript React", 0, 0, 0, 80, 0, 0, 0, 0, 0, 0, 0, 1, 6, 87
+"/home/jacob/Code/mln-dashboard/src/pages/auth/login.jsx", "JavaScript React", 0, 0, 0, 0, 77, 0, 0, 0, 0, 0, 0, 4, 4, 85
+"/home/jacob/Code/mln-dashboard/src/pages/auth/verify.tsx", "TypeScript React", 0, 0, 0, 113, 0, 0, 0, 0, 0, 0, 0, 16, 14, 143
+"/home/jacob/Code/mln-dashboard/src/pages/dashboards.tsx", "TypeScript React", 0, 0, 0, 22, 0, 0, 0, 0, 0, 0, 0, 69, 7, 98
+"/home/jacob/Code/mln-dashboard/src/pages/data-deletion.tsx", "TypeScript React", 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1
+"/home/jacob/Code/mln-dashboard/src/pages/gallery.tsx", "TypeScript React", 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1
+"/home/jacob/Code/mln-dashboard/src/pages/index.jsx", "JavaScript React", 0, 0, 0, 0, 20, 0, 0, 0, 0, 0, 0, 3, 4, 27
+"/home/jacob/Code/mln-dashboard/src/pages/learn.tsx", "TypeScript React", 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1
+"/home/jacob/Code/mln-dashboard/src/pages/privacy.tsx", "TypeScript React", 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1
+"/home/jacob/Code/mln-dashboard/src/pages/terms-of-service.tsx", "TypeScript React", 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1
+"/home/jacob/Code/mln-dashboard/src/pages/todo_404.tsx", "TypeScript React", 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1
+"/home/jacob/Code/mln-dashboard/src/pages/todo_500.tsx", "TypeScript React", 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1
+"/home/jacob/Code/mln-dashboard/src/prisma/migrations/20220304144956_init/migration.sql", "SQL", 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 65, 11, 11, 87
+"/home/jacob/Code/mln-dashboard/src/prisma/prisma.ts", "TypeScript", 0, 4, 0, 0, 0, 0, 0, 0, 0, 0, 0, 12, 5, 21
+"/home/jacob/Code/mln-dashboard/src/prisma/schema.prisma", "Prisma", 0, 0, 0, 0, 0, 0, 0, 77, 0, 0, 0, 40, 17, 134
+"/home/jacob/Code/mln-dashboard/src/prisma/seed.ts", "TypeScript", 0, 88, 0, 0, 0, 0, 0, 0, 0, 0, 0, 32, 5, 125
+"/home/jacob/Code/mln-dashboard/src/server/account/createUser.ts", "TypeScript", 0, 68, 0, 0, 0, 0, 0, 0, 0, 0, 0, 19, 9, 96
+"/home/jacob/Code/mln-dashboard/src/server/account/sendVerfCode.ts", "TypeScript", 0, 58, 0, 0, 0, 0, 0, 0, 0, 0, 0, 14, 16, 88
+"/home/jacob/Code/mln-dashboard/src/server/common/junk.ts", "TypeScript", 0, 12, 0, 0, 0, 0, 0, 0, 0, 0, 0, 6, 2, 20
+"/home/jacob/Code/mln-dashboard/src/server/graphql/context.ts", "TypeScript", 0, 8, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 3, 11
+"/home/jacob/Code/mln-dashboard/src/server/graphql/resolvers.ts", "TypeScript", 0, 61, 0, 0, 0, 0, 0, 0, 0, 0, 0, 3, 10, 74
+"/home/jacob/Code/mln-dashboard/src/server/graphql/types.ts", "TypeScript", 0, 72, 0, 0, 0, 0, 0, 0, 0, 0, 0, 13, 8, 93
+"/home/jacob/Code/mln-dashboard/src/styles/Home.module.css", "CSS", 0, 0, 0, 0, 0, 0, 105, 0, 0, 0, 0, 0, 17, 122
+"/home/jacob/Code/mln-dashboard/src/styles/globals.css", "CSS", 0, 0, 0, 0, 0, 0, 14, 0, 0, 0, 0, 0, 3, 17
+"/home/jacob/Code/mln-dashboard/test/hello-world.unit.test.ts", "TypeScript", 0, 17, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 3, 20
+"/home/jacob/Code/mln-dashboard/test/index.ts", "TypeScript", 0, 4, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 2, 6
+"/home/jacob/Code/mln-dashboard/test/tsconfig.json", "JSON with Comments", 0, 0, 0, 0, 0, 0, 0, 0, 26, 0, 0, 0, 0, 26
+"/home/jacob/Code/mln-dashboard/tsconfig.json", "JSON with Comments", 0, 0, 0, 0, 0, 0, 0, 0, 39, 0, 0, 2, 1, 42
+"Total", "-", 84, 777, 152, 393, 123, 4, 119, 77, 65, 613, 65, 645, 535, 3652

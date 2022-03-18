@@ -1,14 +1,14 @@
 # Backend
 
-TODO: restructure as much functionality as possible into a graphql schema
+When you're talking about a reasonably complex server like this one, the term 'backend' is kind of vague. I'm going to describe it in three classes:
+
+- **API endpoints**. These are located in the `/pages/api` folder. Like any other Next.js page, whenever the user navigates to `http://localhost:<app_port>/api/...`, the corresponding default export function in `/pages/api/...` is called. Much of the API is interfaced through a GraphQL schema at `/api/graphql`. In the future, API endpoints will be versioned by `/api/v1/...`, so we can update the API without breaking the frontend.
+- **Server-only code**. Many API endpoints use the same code or there may be cases where it may be cleaner to consolidate the code that a single endpoint uses in separate files for readability, extendability, or versioning reasons. This server-only code is located in the `/server` folder. These functions do not\* operate on HTTP requests or responses and are not directly exposed to the client.
+- **Applications**. Now we're in the deep-backend. These are the essential programs that this web app provides an interface to. For MLN-Dashboard, examples of apps could be graph generation, visualization, and data retrieval tools. This code is located in the `/src/apps` folder. See the [Apps](/docs/apps.md) documentation page for details.
+
+**WARNING: DOCUMENTATION IS MISLEADING OR INCOMPLETE BEYOND THIS POINT**
 
 TODO: use getUser to make approriate email to identity mappings. Also denies access to a user if they are deleted. Obviously, throws an error if the user is not found.
-
-When you're talking about a reasonably complex server like this one, the term 'backend' is kind of vauge. I'm going to describe it in three classes:
-
-- **API endpoints**. These are located in the `/pages/api` folder. Like any other Next.js page, whenever the user navigates to `http://localhost:<app_port>/api/...`, the corresponding default export function in `/pages/api/...` is called. All API endpoints are also versioned by `/api/v1/...`, so we can update the API without breaking the frontend. Much of the API is interfaced through a GraphQL schema at `/api/v1/graphql`.
-- **Server-only code**. Many API endpoints use the same code or it may be cleaner to consolidate the code that a single endpoint uses in separate files for readability, extendability, or versioning reasons. This server-only code is located in the `/server` folder. These functions do not\* operate on HTTP requests or responses and are not directly exposed to the client. The database is managed in the `/server/db` folder.
-- **Applications**. These are the essential programs that this web app provides an interface to. For MLN-Dashboard, examples of apps could be graph generation, visualization, and data retrieval tools. This code is located in the `/src/apps` folder. See the [Apps](/docs/apps.md) documentation page for details.
 
 ## Diagrams
 
@@ -16,7 +16,7 @@ TODO: I need to make visual documentation showing how the server components fit 
 
 ## Common Types, Database, and GraphQL
 
-This server is a hybrid RESTful / GraphQL server. The RESTful API is exposed to the client via the `/api/v1` endpoint. The GraphQL API is exposed to the client at a single endpoint: `/api/v1/graphql`. Please skim the [GraphQL Documentation](/https://graphql.org/learn/) for an introduction to GraphQL if you are not familiar with it.
+This server is a hybrid RESTful / GraphQL server. The RESTful API is exposed to the client via the `/src/api` endpoint. The GraphQL API is exposed to the client at a single endpoint: `/src/api/graphql`. Please skim the [GraphQL Documentation](/https://graphql.org/learn/) for an introduction to GraphQL if you are not familiar with it.
 
 I think we should make as much data as possibly directly accessible to the frontend via GraphQL. This should help keep things simple, flexible, understandable, and maintainable while also allowing for complex server logic to be added in the future. To minimize complexity and maximize efficiency, the graphql schema is aligned as closely as is reasonably possible with the database. Directives defined on the schema (@authenticated, @owner, @private, etc.) establish how the client can interact with schema fields. Directives include:
 

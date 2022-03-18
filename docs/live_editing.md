@@ -33,4 +33,4 @@ function useDocument(document_id) {
 }
 ```
 
-Currently, the server does not feature applications that would utilize collaborative editing. However, in the future, users may be able to write reports, create block-based workflows, and comment on other users' reports and outputs in close to real-time.
+Currently, the server does not feature applications that would utilize collaborative editing. However, in the future, users may be able to write reports, create block-based workflows, and comment on other users' reports and outputs in close to real-time. If I have time, I might use `mantine/rtf` and (`react-blockly` or `react-flow`) to implement this.

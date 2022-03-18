@@ -2,12 +2,12 @@ import { useSession } from 'next-auth/react'
 import { SessionProvider } from 'next-auth/react'
 import { signIn } from 'next-auth/react'
 
-export default function Home () {
+export default function Home() {
   const { data: session, status } = useSession()
-	const loading = status === 'loading'
+  const loading = status === 'loading'
 
   // When rendering client side don't display anything until loading is complete
-  if (typeof window !== 'undefined' && loading) return null
+  if (loading) return null
 
   // If no session exists, display access denied message
   if (!session) {

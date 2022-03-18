@@ -3,7 +3,7 @@ import {
   isValidName,
   isValidEmail,
   isValidPassword,
-} from "../../common/account/sanityCheck";
+} from "../../common/utils/sanityCheck";
 import prisma from "../../prisma/prisma";
 import sendVerfCode from "./sendVerfCode";
 
@@ -84,12 +84,11 @@ export default createUser;
 
 async function test() {
   console.log("Testing createUser");
-  /*createUser({
+  createUser({
     name: "Jacob",
     email: "jacobfv@msn.com",
     password: "12345678",
-  });*/
-  sendVerfCode("jacobfv@msn.com", "Jacob");
+  });
 }
 
-test();
+//test();
