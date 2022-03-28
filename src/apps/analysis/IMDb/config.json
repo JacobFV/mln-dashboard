@@ -1,7 +1,7 @@
 {
   "HeMLN": "ActorFBLikes,DirectorAvgBudget,MovieRating",
 
-  "layers": {
+  "layer_paths": {
     "ActorFBLikes": "Layers/ActorFBLikes.intra",
     "DirectorAvgBudget": "Layers/DirectorAvgBudget.intra",
     "MovieRating": "Layers/MovieRating.intra",

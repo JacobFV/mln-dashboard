@@ -25,6 +25,12 @@ WEIGHT_METRIC_FUNC = {
   'wh': participating_hubs_bgg
 }
 
+# community detection algorithms
+COMM_ALGO_FUNC = {
+  'louvain': lambda *args: f'louvain({args})',
+  'infomap': lambda *args: f'infomap({args})'
+}
+
 
 def main():
 
@@ -75,74 +81,22 @@ def main():
           print("**number of bipartite", bi_layer_ct)
           layer_ct = len(layers)
           print("number of layers in analysis: ", layer_ct)
-          #---------------------------------------------------------------------------
-          #computing comunities in the multilayer graph
-          communityDetectionAlgo = equation[0].lower()
-          for i in range(0, layer_ct):
-            communityFileName = analysis_objective[i]+communityDetectionAlgo
-            print("community File Name: ", communityFileName)
-            if communityDetectionAlgo == "louvain":
-              print("louvain")
-              fileString = BASE_DIR + "Layers\\communityFiles\\"+communityFileName+".vcomm"
-              print(fileString)
-              if  os.path.exists(fileString):
-                MLN_file_paths[communityFileName] = fileString
-              else:
-                print("Call Louvain")
-            elif communityDetectionAlgo == "infomap":
-              print("infomap")
-              fileString = BASE_DIR + "Layers\\communityFiles\\"+communityFileName+".vcomm"
-              if os.path.exists(fileString):
-                MLN_file_paths[communityFileName] = fileString
-              else:
-                #call infomap with MLN_file_path[MLN_structure[i]]
-                print("Call Infomap")
-            else:
-              print("Please enter the correct community detection algorithm")
-          #---------------------------------------------------------------------------
-          #generating bipartite graphs
-          if (weight_metrics := equation[1].lower()) not in WEIGHT_METRIC_FUNC.keys():
-            raise ValueError(f'Invalid weight_metrics: \'{ weight_metrics }\'')
 
-          for i in range(bi_layer_ct):
 
-            AO1, AO2 = analysis_objective[i], analysis_objective[i+1]
-            layer1         = MLN_file_paths[AO1]
-            layer2         = MLN_file_paths[AO2]
-            layer1CommFile = MLN_file_paths[AO1 + communityDetectionAlgo]
-            layer2CommFile = MLN_file_paths[AO2 + communityDetectionAlgo]
-            interlayer12   = MLN_file_paths[AO1 + AO2]
-            simpleEdgeBipartiteFile = None
 
-            resultFileString = f'expression{ str(count) }/bipartiteFiles/{ AO1 + AO2 }_{ weight_metrics }.bg'
-
-            if count in output_dirs.keys():
-              resultFileString = f'{ str(output_dirs[count]) }/{ resultFileString }'
-
-            if 'we' in MLN_file_paths.keys():
-              simpleEdgeBipartiteFile = MLN_file_paths[("we", AO1 + AO2)]
-
-            if not os.path.exists(resultFileString):
-              WEIGHT_METRIC_FUNC[ weight_metrics ](
-                layer1, 
-                layer2, 
-                layer1CommFile, 
-                layer2CommFile, 
-                interlayer12, 
-                simpleEdgeBipartiteFile,
-                resultFileString
-            )
-
-            MLN_file_paths[(weight_metrics, AO1 + AO2)] = resultFileString
 
 
           #--------------------------------------------------------------------------
-          #applying matching algorithm
-          matchingAlgorithm = equation[2].lower()
+          # Apply matching algorithms
+
           processedLayers = [analysis_objective[0]]
           processedLayersFilePath = {}
           for i in range(0, bi_layer_ct):
-            if matchingAlgorithm == "mwm":
+
+            match_name = f''
+            match_path = f''
+            
+            if OBJ['match_algo'] == "mwm":
               print("MWM")
               if i != 0:# and analysisObjective[i] in processedLayers:
                 string = ""
@@ -190,15 +144,22 @@ def main():
                     for j in range(0, i-1):
                       if analysis_objective[j] == analysis_objective[i+1]:
                         break
-                    maximalWeightedMatchingExtender(processedLayersFilePath[analysis_objective[i]],
-                                  MLN_file_paths[(weight_metrics,analysis_objective[i]+analysis_objective[i+1])],
-                                   resultFileStringmwm, j)
+                    maximalWeightedMatchingExtender(
+                      processedLayersFilePath[analysis_objective[i]],
+                      MLN_file_paths[(weight_metrics,analysis_objective[i]+analysis_objective[i+1])],
+                      resultFileStringmwm, 
+                      j
+                    )
+
                   else:
-                    maximalWeightedMatchingExtender(processedLayersFilePath[analysis_objective[i]],
-                                  MLN_file_paths[(weight_metrics,analysis_objective[i]+analysis_objective[i+1])],
-                                   resultFileStringmwm, -1)
-                MLN_file_paths[(
-                matchingAlgorithm, analysis_objective[i] + analysis_objective[i + 1])] = resultFileStringmwm
+                    maximalWeightedMatchingExtender(
+                      processedLayersFilePath[analysis_objective[i]],
+                      MLN_file_paths[(weight_metrics,analysis_objective[i]+analysis_objective[i+1])],
+                      resultFileStringmwm, 
+                      -1
+                    )
+
+                MLN_file_paths[( OBJ['match_algo'], analysis_objective[i] + analysis_objective[i + 1])] = resultFileStringmwm
 
               else:
                 if i == bi_layer_ct -1:
@@ -240,11 +201,14 @@ def main():
                 if not os.path.exists(resultFileStringmwm):
                   maximalWeightedMatchingGenerator(MLN_file_paths[(weight_metrics,analysis_objective[i]+analysis_objective[i+1])],
                                   resultFileStringmwm)
-                MLN_file_paths[(matchingAlgorithm, analysis_objective[i]+analysis_objective[i+1])] = resultFileStringmwm
+
+
+                MLN_file_paths[(OBJ['match_algo'], analysis_objective[i]+analysis_objective[i+1])] = resultFileStringmwm
+
               processedLayers.append(analysis_objective[i+1])
               processedLayersFilePath[analysis_objective[i+1]] = resultFileStringmwm
 
-            elif matchingAlgorithm == "mwbc":
+            elif OBJ['match_algo'] == "mwbc":
               print("MWBC")
               if i != 0: #analysisObjective[i] in processedLayers:
                 string = ""
@@ -300,7 +264,7 @@ def main():
                                   MLN_file_paths[(weight_metrics,analysis_objective[i]+analysis_objective[i+1])],
                                    resultFileStringmwbc, -1)
                 MLN_file_paths[(
-                matchingAlgorithm, analysis_objective[i] + analysis_objective[i + 1])] = resultFileStringmwbc
+                OBJ['match_algo'], analysis_objective[i] + analysis_objective[i + 1])] = resultFileStringmwbc
 
               else:
                 if i == bi_layer_ct -1:
@@ -342,11 +306,12 @@ def main():
                 if not os.path.exists(resultFileStringmwbc):
                   maximumWeightBipartiteCouplingGenerator(MLN_file_paths[(weight_metrics,analysis_objective[i]+analysis_objective[i+1])],
                                   resultFileStringmwbc)
-                MLN_file_paths[(matchingAlgorithm, analysis_objective[i]+analysis_objective[i+1])] = resultFileStringmwbc
+                MLN_file_paths[(OBJ['match_algo'], analysis_objective[i]+analysis_objective[i+1])] = resultFileStringmwbc
               processedLayers.append(analysis_objective[i+1])
               processedLayersFilePath[analysis_objective[i+1]] = resultFileStringmwbc
               #print(processedLayers)
-            elif matchingAlgorithm == "mwpm":
+            
+            elif OBJ['match_algo'] == "mwpm":
               print("MWPM")
               if i != 0: #analysisObjective[i] in processedLayers:
                 string = ""
@@ -402,7 +367,7 @@ def main():
                                   MLN_file_paths[(weight_metrics,analysis_objective[i]+analysis_objective[i+1])],
                                    resultFileStringmwpm, -1)
                 MLN_file_paths[(
-                matchingAlgorithm, analysis_objective[i] + analysis_objective[i + 1])] = resultFileStringmwpm
+                OBJ['match_algo'], analysis_objective[i] + analysis_objective[i + 1])] = resultFileStringmwpm
 
               else:
                 if i == bi_layer_ct -1:
@@ -444,11 +409,12 @@ def main():
                 if not os.path.exists(resultFileStringmwpm):
                   maximalWeightedPerfectMatchingGenerator(MLN_file_paths[(weight_metrics,analysis_objective[i]+analysis_objective[i+1])],
                                   resultFileStringmwpm)
-                MLN_file_paths[(matchingAlgorithm, analysis_objective[i]+analysis_objective[i+1])] = resultFileStringmwpm
+                MLN_file_paths[(OBJ['match_algo'], analysis_objective[i]+analysis_objective[i+1])] = resultFileStringmwpm
               processedLayers.append(analysis_objective[i+1])
               processedLayersFilePath[analysis_objective[i+1]] = resultFileStringmwpm
               #print(processedLayers)
-            elif matchingAlgorithm == "mwmt":
+            
+            elif OBJ['match_algo'] == "mwmt":
               print("MWMT")
               if i != 0: #analysisObjective[i] in processedLayers:
                 string = ""
@@ -504,7 +470,7 @@ def main():
                                   MLN_file_paths[(weight_metrics,analysis_objective[i]+analysis_objective[i+1])],
                                    resultFileStringmwmt, -1)
                 MLN_file_paths[(
-                matchingAlgorithm, analysis_objective[i] + analysis_objective[i + 1])] = resultFileStringmwmt
+                OBJ['match_algo'], analysis_objective[i] + analysis_objective[i + 1])] = resultFileStringmwmt
 
               else:
                 if i == bi_layer_ct -1:
@@ -546,11 +512,12 @@ def main():
                 if not os.path.exists(resultFileStringmwmt):
                   maximalWeightedMatchingWithTiesGenerator(MLN_file_paths[(weight_metrics,analysis_objective[i]+analysis_objective[i+1])],
                                   resultFileStringmwmt)
-                MLN_file_paths[(matchingAlgorithm, analysis_objective[i]+analysis_objective[i+1])] = resultFileStringmwmt
+                MLN_file_paths[(OBJ['match_algo'], analysis_objective[i]+analysis_objective[i+1])] = resultFileStringmwmt
               processedLayers.append(analysis_objective[i+1])
               processedLayersFilePath[analysis_objective[i+1]] = resultFileStringmwmt
               #print(processedLayers)
-            elif matchingAlgorithm == "mwrmt":
+            
+            elif OBJ['match_algo'] == "mwrmt":
               print("MWRMT")
               if i != 0: #analysisObjective[i] in processedLayers:
                 string = ""
@@ -606,7 +573,7 @@ def main():
                                   MLN_file_paths[(weight_metrics,analysis_objective[i]+analysis_objective[i+1])],
                                    resultFileStringmwrmt, -1)
                 MLN_file_paths[(
-                matchingAlgorithm, analysis_objective[i] + analysis_objective[i + 1])] = resultFileStringmwrmt
+                OBJ['match_algo'], analysis_objective[i] + analysis_objective[i + 1])] = resultFileStringmwrmt
 
               else:
                 if i == bi_layer_ct -1:
@@ -648,11 +615,12 @@ def main():
                 if not os.path.exists(resultFileStringmwrmt):
                   maximalWeightedMatchingRelaxedWithTiesGenerator(MLN_file_paths[(weight_metrics,analysis_objective[i]+analysis_objective[i+1])],
                                   resultFileStringmwrmt)
-                MLN_file_paths[(matchingAlgorithm, analysis_objective[i]+analysis_objective[i+1])] = resultFileStringmwrmt
+                MLN_file_paths[(OBJ['match_algo'], analysis_objective[i]+analysis_objective[i+1])] = resultFileStringmwrmt
               processedLayers.append(analysis_objective[i+1])
               processedLayersFilePath[analysis_objective[i+1]] = resultFileStringmwrmt
               #print(processedLayers)
-            elif matchingAlgorithm == "mwrm":
+            
+            elif OBJ['match_algo'] == "mwrm":
               print("MWRM")
               if i != 0: #analysisObjective[i] in processedLayers:
                 string = ""
@@ -708,7 +676,7 @@ def main():
                                   MLN_file_paths[(weight_metrics,analysis_objective[i]+analysis_objective[i+1])],
                                    resultFileStringmwrm, -1)
                 MLN_file_paths[(
-                matchingAlgorithm, analysis_objective[i] + analysis_objective[i + 1])] = resultFileStringmwrm
+                OBJ['match_algo'], analysis_objective[i] + analysis_objective[i + 1])] = resultFileStringmwrm
 
               else:
                 if i == bi_layer_ct -1:
@@ -750,16 +718,15 @@ def main():
                 if not os.path.exists(resultFileStringmwrm):
                   maximalWeightedRelaxedMatchingGenerator(MLN_file_paths[(weight_metrics,analysis_objective[i]+analysis_objective[i+1])],
                                   resultFileStringmwrm)
-                MLN_file_paths[(matchingAlgorithm, analysis_objective[i]+analysis_objective[i+1])] = resultFileStringmwrm
+                MLN_file_paths[(OBJ['match_algo'], analysis_objective[i]+analysis_objective[i+1])] = resultFileStringmwrm
               processedLayers.append(analysis_objective[i+1])
               processedLayersFilePath[analysis_objective[i+1]] = resultFileStringmwrm
               #print(processedLayers)                
+            
             else:
               print("Please enter the correct matching algorithm")
           count += 1
 
-
-#result <10(A),20(D),30(M); pathname of bipartite file of 10-20(A-D), pathname of bipartite file of 20-30(D-M)>
 
 
 if __name__== "__main__":
@@ -769,14 +736,99 @@ if __name__== "__main__":
   if '-b' in sys.argv:
     BASE_DIR = os.path.abspath( sys.argv[ sys.argv.index('-b') + 1 ] )
   else:
-    BASE_DIR = os.path.abspath('.')
+    BASE_DIR = os.path.abspath( '.' )
 
-  if DEBUG: print(f'\nBASE_DIR: "{ BASE_DIR }"')
+  if DEBUG: print( f'\nBASE_DIR: "{ BASE_DIR }"' )
 
-  with open( f'{BASE_DIR}/config.json', 'r') as f: config = json.load(f)
+  with open( f'{ BASE_DIR }/config.json', 'r' ) as f: config = json.load(f)
+
+  for k, v in config['layer_paths'].items():
+    config['layer_paths'][k] = f'{ BASE_DIR }/{ v }' 
 
   if DEBUG:
-    print('\nlayers: ')
-    for k, v in config['layers'].items(): print(f' | {k: >30}: {v}')
+    print( '\nLayer paths: ' )
+    for k, v in config['layer_paths'].items(): print( f' | {k: >30}: {v}' )
+
+  if DEBUG:
+    print( '\nObjectives:' )
+    for l in config['objectives']: print( f' | {l}' )
+
+
+  for obj_num, obj in enumerate( config['objectives']) :
+
+    # objective: "infomap,we,mwm,ActorFBLikes-DirectorAvgBudget"
+    #   
+    #    ⬇
+    #
+    # OBJ = {
+    #   "comm_algo": "infomap", 
+    #   "weight_metric": "we", 
+    #   "matching_algo": "mwm", 
+    #   "layers": ["ActorFBLikes", "DirectorAvgBudget"]
+    # }
+
+    tok = obj.split( ',' )
+    OBJ = {
+      "comm_algo": tok[0], 
+      "weight_metric": tok[1], 
+      "matching_algo": tok[2], 
+      "layers": tok[3].split( '-' )
+    }
+
+
+    #---------------------------------------------------------------------------
+    # Community (comm) detection
+
+    for i, layer in enumerate( OBJ[ 'layers' ] ):
+      comm_name = f'{ layer }_{ OBJ["comm_algo"] }.vcomm'
+      comm_path = f'{ BASE_DIR }/Analysis/obj{ obj_num }/comm/{ comm_name }'
+
+      if os.path.exists( comm_path ):
+        print( f'Community { comm_name } already exists.' )
+      else:
+        COMM_ALGO_FUNC[ OBJ[ 'comm_algo' ] ]( 
+
+          'what are the arguments to these functions?' 
+
+        )
+
+        config['layer_paths'][comm_name] = comm_path
+
+
+    #---------------------------------------------------------------------------
+    # Bipartite graph (bg) generation
+
+    for i in range( len( OBJ['layers'] ) - 1 ):
+
+      L1, L2 = OBJ['layers'][i], OBJ['layers'][i+1]
+
+      # TODO: not sure about this one!
+      simpleEdgeBipartiteFile = None
+
+      bg_name = f'{ L1 }-{ L2 }_{ OBJ["weight_metric"] }.bg'
+      bg_path = f'{ BASE_DIR }/Analysis/obj{ obj_num }/bg/{ bg_name }'
+
+      if bg_name not in config['layer_paths'].keys():
+        WEIGHT_METRIC_FUNC[ OBJ["weight_metric"] ](
+
+        # paths to L1 and L2
+          config['layer_paths'][L1],
+          config['layer_paths'][L2],
+
+        # paths to L1 community and L2 community
+          config['layer_paths'][ f'{ L1 }_{ OBJ["comm_algo"] }' ], 
+          config['layer_paths'][ f'{ L2 }_{ OBJ["comm_algo"] }' ], 
+
+        # path to L1/L2 interlayer
+          config['layer_paths'][ f'{ L1 }{ L2 }' ], 
+
+        # idk
+          simpleEdgeBipartiteFile,
+
+        # path where result is to be stored
+          bg_path
+        )
+
+      config['layer_paths'][bg_name] = bg_path
 
   # main()
