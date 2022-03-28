@@ -3,8 +3,12 @@ const { PrismaClient } = require("@prisma/client");
 
 const prisma = new PrismaClient();
 
-const userData = [
+const entityData = [
   {
+    name: "Anonymous",
+    picture: "https://www.gravatar.com/avatar/00000000000000000000000000000000?d=mp&f=y",
+    memberOfGroups: { },
+    permissionsAssignedToMe: { },
     emails: {
       create: [
         {
@@ -14,30 +18,16 @@ const userData = [
         },
       ],
     },
-    loginAttempts: {
-      create: [],
-    },
-    ownerOfGroups: {
-      create: [],
-    },
-    explicitPermissionsCreated: {
-      create: [],
-    },
-    entityRef: {
-      create: {
-        name: "Anonymous",
-        picture:
-          "https://www.gravatar.com/avatar/00000000000000000000000000000000?d=mp&f=y",
-        memberOfGroups: {
-          create: [],
-        },
-        explicitlyAssignedPermissions: {
-          create: [],
-        },
-      },
-    },
+    loginAttempts: { },
+    ownerOfGroups: { },
+    explicitPermissionsCreated: { },
+    groupMembershipRelations: { }
   },
   {
+    name: "System",
+    picture: "https://www.gravatar.com/avatar/",
+    memberOfGroups: { },
+    permissionsAssignedToMe: { },
     emails: {
       create: [
         {
@@ -47,69 +37,37 @@ const userData = [
         },
       ],
     },
-    loginAttempts: {
-      create: [],
-    },
-    ownerOfGroups: {
-      create: [],
-    },
-    explicitPermissionsCreated: {
-      create: [],
-    },
-    entityRef: {
-      create: {
-        name: "System",
-        picture: "https://www.gravatar.com/avatar/",
-        memberOfGroups: {
-          create: [],
-        },
-        explicitlyAssignedPermissions: {
-          create: [],
-        },
-      },
-    },
-  } /*,
-  {
+    loginAttempts: { },
+    ownerOfGroups: { },
+    explicitPermissionsCreated: { },
+    groupMembershipRelations: { }
+  },
+  /* {
+    name: "Jacob",
+    picture: "https://avatars.githubusercontent.com/u/40343913?s=96&v=4",
+    memberOfGroups: { },
+    permissionsAssignedToMe: { },
     emails: {
       create: [
         {
-          email: "jacobfv123@gmail.com",
-          needsVerification: false,
+          email: "jacobfv@msn.com",
           primary: true,
         },
       ],
     },
-    loginAttempts: {
-      create: [],
-    },
-    ownerOfGroups: {
-      create: [],
-    },
-    explicitPermissionsCreated: {
-      create: [],
-    },
-    entityRef: {
-      create: {
-        name: "Jacob",
-        picture: "https://avatars.githubusercontent.com/u/40343913?s=96&v=4",
-        memberOfGroups: {
-          create: [],
-        },
-        explicitlyAssignedPermissions: {
-          create: [],
-        },
-      },
-    },
-  },*/,
+    loginAttempts: { },
+    ownerOfGroups: { },
+    explicitPermissionsCreated: { },
+    groupMembershipRelations: { }
+  } */
 ];
 
 async function main() {
   console.log(`Start seeding ...`);
-  for (const u of userData) {
-    const user = await prisma.user.create({
-      data: u,
-    });
-    console.log(`Created user with id: ${user.id}`);
+  for (const entity of entityData) {
+    console.log(`Seeding entity: ${entity.name}`);
+    await prisma.entity.create({ data: entity });
+    console.log(`Created entity: ${entity.name}`);
   }
   console.log(`Seeding finished.`);
 }

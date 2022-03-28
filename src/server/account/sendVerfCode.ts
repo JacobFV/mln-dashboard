@@ -14,12 +14,18 @@ import {
 import sendgrid from '@sendgrid/mail';
 sendgrid.setApiKey(process.env.SENDGRID_API_KEY!);
 
-export default async function sendVerfCode(email: string, name: string) {
+export default async function sendVerfCode(sendVerfCodeInput: {
+  email: string, 
+  name: string
+}) {
+  // unpack input
+  const { email, name } = sendVerfCodeInput;
+
   // generate verf code
   const code = crypto.randomInt(verfCodeLength).toString(36);
 
   // edit database
-  /*await prisma.email.update({
+  await prisma.email.update({
     where: {
       email: email,
     },
@@ -27,7 +33,7 @@ export default async function sendVerfCode(email: string, name: string) {
       verificationCode: code,
       verificationCodeSentOn: new Date(),
     },
-  });*/
+  });
 
   const verfUrl = `${publicDomain}/verify?email=${encodeURIComponent(email)}&code=${code}`;
 

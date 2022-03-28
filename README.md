@@ -48,21 +48,21 @@ This afternoon:
 Known TODO's:
 
 see https://react.rocks/example/react-sortable-tree for collaspable tree
-[ ] make password hash salted witha naunce that is computed from the account creation timestamp
-[ ] add captcha's on the forms
-[ ] use
-[ ] add prisma seed command to create `system` and `anonymous` users
-[ ] separate HTTP API handlers from true handlers
-[ ] add unit and integration tests
-[ ] use https://codecrumbs.io/ and/or https://bogdan-lyashenko.github.io/js-code-to-svg-flowchart/docs/live-editor to make nice documentation of the API routes
-[ ] require users to verify their email before continuing
-[ ] implement single file server endpoint GET/POST/LIST/DELETE. Gracefully don't show files that the user doesn't have access to.
-[ ] add captcha to create account
-[ ] obtain API keys to authenticate with Google, Facebook, etc. and enable third-party authentication
-[ ] add a client-side dashboard
-[ ] use `next/Link` instead of `mui/link` to pre-cache pages
-[ ] completely stop using user.username and user.name except in natural language greetings and non-auth logic
-[ ] add top-level comments to all API routes and maybe also to pages
+- [ ] make password hash salted witha naunce that is computed from the account creation timestamp
+- [ ] add captcha's on the forms
+- [ ] use
+- [ ] add prisma seed command to create `system` and `anonymous` users
+- [ ] separate HTTP API handlers from true handlers
+- [ ] add unit and integration tests
+- [ ] use https://codecrumbs.io/ and/or https://bogdan-lyashenko.github.io/js-code-to-svg-flowchart/docs/live-editor to make nice documentation of the API routes
+- [ ] require users to verify their email before continuing
+- [ ] implement single file server endpoint GET/POST/LIST/DELETE. Gracefully don't show files that the user doesn't have access to.
+- [ ] add captcha to create account
+- [ ] obtain API keys to authenticate with Google, Facebook, etc. and enable third-party authentication
+- [ ] add a client-side dashboard
+- [ ] use `next/Link` instead of `mui/link` to pre-cache pages
+- [ ] completely stop using user.username and user.name except in natural language greetings and non-auth logic
+- [ ] add top-level comments to all API routes and maybe also to pages
 
 TODO: Maybe make sidebar have two tabs:
 
@@ -70,3 +70,7 @@ TODO: Maybe make sidebar have two tabs:
 - show all projects: then users open individual projects with
 
 TODO: make tabbed-interface for main content
+
+## Dev notes
+
+I stopped off in `permissions.js:120` to get the server ready for demo.

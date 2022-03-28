@@ -1,5 +1,9 @@
 // This is your Prisma schema file,
 // learn more about it in the docs: https://pris.ly/d/prisma-schema
+// Initialize the database by:
+// 1. In `tsconfig.json` (or wherever you store your compiler options),
+// change the `"isolatedModules": true` to `"isolatedModules": false`
+// 2. Run `npx prisma migrate dev --name init`
 
 datasource db {
   provider = "sqlite"
@@ -16,9 +20,9 @@ model Email {
   needsVerification      Boolean   @default(true)
   verificationCode       String?
   verificationCodeSentOn DateTime?
-  user                   User      @relation(fields: [userId], references: [id])
+  user                   Entity    @relation(fields: [userId], references: [id])
   userId                 String
-  primary                Boolean?
+  primary                Boolean   @default(false)
 }
 
 /// Stores all login attempts (credential based and oath)
@@ -31,17 +35,17 @@ model LoginAttempt {
   timestamp DateTime
   email     String
   success   Boolean
-  user      User     @relation(fields: [userId], references: [id])
+  user      Entity   @relation(fields: [userId], references: [id])
   userId    String
 }
 
 model GroupMembership {
-  id          String   @id @default(cuid())
-  group       Entity   @relation("GroupMembershipGroup", fields: [groupId], references: [id])
-  groupId     String
-  entityRef   Entity   @relation("GroupMembershipEntity", fields: [entityRefId], references: [id])
-  entityRefId String
-  joinedAt    DateTime @default(now())
+  id       String   @id @default(cuid())
+  group    Entity   @relation("GroupMembershipGroup", fields: [groupId], references: [id])
+  groupId  String
+  member   Entity   @relation("GroupMembershipMember", fields: [memberId], references: [id])
+  memberId String
+  joinedAt DateTime @default(now())
 }
 
 /// This model represents a union type between users and groups
@@ -57,20 +61,20 @@ model Entity {
   updatedAt               DateTime             @updatedAt
   deleted                 Boolean              @default(false)
   deletedAt               DateTime?
-  memberOfGroups          GroupMembership[]    @relation("GroupMembershipEntity")
+  memberOfGroups          GroupMembership[]    @relation("GroupMembershipMember")
   permissionsAssignedToMe ExplicitPermission[] @relation("PermissionsAssignedToMe")
 
   /// user-specific attributes
   emails                     Email[]
   loginAttempts              LoginAttempt[]
   pswHash                    String?
-  ownerOfGroups              Group[]              @relation("GroupOwners")
+  ownerOfGroups              Entity[]             @relation("GroupOwners")
   explicitPermissionsCreated ExplicitPermission[] @relation("ExplicitPermissionsCreated") // permissions that the user has added to other files (including ones that the user does not own)
 
   /// group-specific fields
-  owner   Entity? @relation("GroupOwners", fields: [ownerId], references: [id])
-  ownerId String?
-  members GroupMembership?[] @relation("GroupMembershipGroup")
+  owner                    Entity?           @relation("GroupOwners", fields: [ownerId], references: [id])
+  ownerId                  String?
+  groupMembershipRelations GroupMembership[] @relation("GroupMembershipGroup")
 }
 
 model ExplicitPermission {
@@ -80,6 +84,6 @@ model ExplicitPermission {
   appliesToEntityId String
   permissionLevel   String /// 'HIDDEN', 'READ', 'WRITE', 'ADMIN', 'OWNER'
   createdOn         DateTime @default(now())
-  createdBy         User     @relation("ExplicitPermissionsCreated", fields: [createdById], references: [id])
+  createdBy         Entity   @relation("ExplicitPermissionsCreated", fields: [createdById], references: [id])
   createdById       String
 }

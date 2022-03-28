@@ -18,10 +18,12 @@ export default function Home() {
 
   // If session exists, display content
   return <>
+    <a href="/auth/create_account">Create Account</a>
+    <a href="/auth/login">Login</a>
     <div>
       <h1>Protected Page</h1>
       <p>You are logged in</p>
-      <iframe src="/api/examples/jwt" />
+      <iframe src="/api/old/examples/jwt" />
     </div>
   </>
 }

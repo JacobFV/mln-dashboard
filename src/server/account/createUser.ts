@@ -1,4 +1,4 @@
-import { mkdir, mkdirSync } from "fs";
+import { mkdirSync } from "fs";
 import {
   isValidName,
   isValidEmail,
@@ -17,17 +17,17 @@ import sendVerfCode from "./sendVerfCode";
  * @param {string|null} picture: The picture of the user.
  * @param {string|null} password The password of the user.
  */
-async function createUser(userInput: {
+async function createUser(createUserInput: {
   name: string;
   email: string;
   picture?: string;
   password?: string;
 }) {
-  const [nameValid, nameInvalidReason] = isValidName(userInput.name);
-  const [emailValid, emailInvalidReason] = isValidEmail(userInput.email);
+  const [nameValid, nameInvalidReason] = isValidName(createUserInput.name);
+  const [emailValid, emailInvalidReason] = isValidEmail(createUserInput.email);
   const [passwordValid, passwordInvalidReason] =
-    userInput.password != null
-      ? isValidPassword(userInput.password)
+    createUserInput.password != null
+      ? isValidPassword(createUserInput.password)
       : [true, ""];
   if (!nameValid || !emailValid || !passwordValid) {
     throw new Error(
@@ -35,8 +35,8 @@ async function createUser(userInput: {
     );
   }
 
-  if (userInput.picture == null) {
-    userInput.picture = "/public/default_avatar.png"; // TODO: make this asset
+  if (createUserInput.picture == null) {
+    createUserInput.picture = "/public/default_avatar.png"; // TODO: make this asset
   }
 
   // create user in database
@@ -44,8 +44,8 @@ async function createUser(userInput: {
     data: {
       entityRef: {
         create: {
-          name: userInput.name,
-          picture: userInput.picture,
+          name: createUserInput.name,
+          picture: createUserInput.picture,
           memberOfGroups: {},
           explicitlyAssignedPermissions: {},
         },
@@ -53,7 +53,7 @@ async function createUser(userInput: {
       emails: {
         create: [
           {
-            email: userInput.email,
+            email: createUserInput.email,
             primary: true,
           },
         ],
@@ -66,7 +66,7 @@ async function createUser(userInput: {
   // now get the created entityUnion
   let entity = await prisma.entityUnion.findUnique({
     where: {
-      name: userInput.name,
+      name: createUserInput.name,
     },
   });
   if (entity == null) {
@@ -77,7 +77,7 @@ async function createUser(userInput: {
   mkdirSync(`storage/${entity.id}`);
 
   // Send email verification code
-  await sendVerfCode(userInput.email, userInput.name);
+  await sendVerfCode(createUserInput.email, createUserInput.name);
 }
 
 export default createUser;
