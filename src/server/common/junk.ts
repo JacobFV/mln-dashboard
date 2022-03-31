@@ -1,5 +1,5 @@
 import { Prisma } from "@prisma/client";
-import { User as ClientUser } from "../../common/types/[...frontendTypes]";
+import { User as ClientUser } from "../../common/models/[...models]";
 import { User as ServerUser } from "../graphql/User";
 import prisma from "../../prisma/prisma";
 Prisma.EntityUnionScalarFieldEnum;

@@ -2,5 +2,8 @@
   "WillLuke.nextjs.hasPrompted": true,
   "cSpell.words": [
     "versionless"
-  ]
+  ],
+  "files.exclude": {
+    "**/node_modules": true
+  },
 }

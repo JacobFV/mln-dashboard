@@ -1,7 +1,6 @@
 {
   "compilerOptions": {
-    //"target": "es5",
-    "target": "es2018", // typegraphql; or newer if your node.js version supports this
+    "target": "es2018",
     "lib": [
       "dom",
       "dom.iterable",
@@ -17,21 +16,26 @@
     "esModuleInterop": true,
     "module": "esnext",
     "moduleResolution": "node",
-    "resolveJsonModule": true, //, "src/pages/_app.jsx"
-    "isolatedModules": true, //true,
+    "resolveJsonModule": true,
+    // `isolatedModules` needs to temporarily be set as false in order to
+    // seed the database. It will automatically be set to true when you execute
+    // `npm run dev` or a related command.
+    "isolatedModules": true,
     "jsx": "preserve",
     "incremental": true,
-    // typegraphql
+    // the following settings are needed for the `typegraphql` types
     "emitDecoratorMetadata": true,
     "experimentalDecorators": true,
-    "strictPropertyInitialization": false // this is needed for the typegraphql types
+    "strictPropertyInitialization": false
   },
   "include": [
     "src/next-env.d.ts",
     "**/*.ts",
     "**/*.tsx",
     "src/pages/_app.jsx",
-    "src/pages/auth/login.jsx",
+    // I'm not sure if these settings are necessary
+    // and I don't know how they got here
+    "src/pages/account/login.jsx",
     "src/pages/index.jsx",
     "src/pages/_error.jsx"
   ],

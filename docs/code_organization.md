@@ -42,14 +42,16 @@ I'm (kind of) adhering to Google's [JavaScript Style Guide](https://google.githu
 - Use `const` wherever possible
 - Include jsdoc comments for each function/class/etc.
 
+I don't have hard rules on formatting (indentation level, tab vs. space, max length, etc.) yet. Just be reasonable.
+
 ## Documentation
 
 I want to use [codecrumbs](https://codecrumbs.io/) and/or [js-code-to-svg-flowchart](https://bogdan-lyashenko.github.io/js-code-to-svg-flowchart/docs/live-editor) to make visual documentation of the server logic.
 
-When I write filenames, they are relative to this repository root or the `/src` directory; They are not relative to the operating system's root unless explicitly stated.
+Unless otherwise specified, filenames are relative to this repository's root or the `/src` directory; `/` does NOT indicate that a path is relative to the operating system's root.
 
 The overall repo should be versionless, but API endpoints are a necessary exception (since who wants to dig out and update all their old client-side javascript?). API endpoints are versioned by major releases. Following GitHUb's recommendations, minor changes should retain backwards compatibility. Currently, the API is on `v1`. Once I reach a stable alpha, I will move the contents of `/src/pages/api` to `/src/pages/api/v1`.
 
-## Running
+## Tests
 
-When you run `npm run dev`, you are starting a node.js process (the next.js server) which serves the pages located in the `/src/pages` directory. (If you're working in vscode, you can select the `Next.js: debug server-side` or `Next.js: debug full stack` options to enjoy break-point debugging inside the vscode IDE.) Basically, what's going on is that whenever the server receives an HTTP request for a page with the path `/path/to/somewhere`, it executes the default exported javascript function located in `/src/pages/path/to/somewhere.js`. This function can either 1) generates an HTML page, possibly using react, or 2) perform some server-side action and possible return a JSON response. While it is possible to perform server-side rendering with this approach, we really should try to decouple the HTML server from the persistent backend. Not only does this minimize TTL latency but it also allows webpages to be statically rendered to HTML and cached on the server, CDN, or client.
+Tests are placed in the `/test` subdirectory and performed using `mocha`. This section will be expanded once I start using tests.

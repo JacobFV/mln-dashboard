@@ -15,8 +15,8 @@ import Container from '@mui/material/Container';
 import { createTheme, ThemeProvider } from '@mui/material/styles';
 import LockOutlinedIcon from '@mui/icons-material/LockOutlined';
 
-import Copyright from '../../../components/copyright';
-import AppIcon from '../../../components/appIcon';
+import Copyright from '../../components/copyright';
+import AppIcon from '../../components/appIcon';
 
 const theme = createTheme();
 
@@ -26,12 +26,11 @@ const CreateAccount: NextPage = () => {
     const data = new FormData(event.currentTarget);
     // eslint-disable-next-line no-console
     console.log({
-      
       email: data.get('email'),
       password: data.get('password'),
     });
   };
-
+  // TODO use mantine form builder for conformity
   return (
     <ThemeProvider theme={theme}>
       <Container component="main" maxWidth="xs">
@@ -103,7 +102,7 @@ const CreateAccount: NextPage = () => {
             </Button>
             <Grid container justifyContent="flex-end">
               <Grid item>
-                <Link href="/auth/login" variant="body2">
+                <Link href="/account/login" variant="body2">
                   Already have an account? Log in
                 </Link>
               </Grid>

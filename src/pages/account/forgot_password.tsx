@@ -66,12 +66,12 @@ const ForgotPassword: NextPage = () => {
             </Button>
             <Grid container>
               <Grid item>
-                <Link href="/auth/login" variant="body2">
+                <Link href="/account/login" variant="body2">
                   Already have an account? Log in
                 </Link>
               </Grid>
               <Grid item>
-                <Link href="/auth/create_account" variant="body2">
+                <Link href="/account/create_account" variant="body2">
                   Don't have an account? Create one
                 </Link>
               </Grid>
