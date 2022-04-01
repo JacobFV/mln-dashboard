@@ -15,6 +15,11 @@ export default function App({
 }) {
   return (
     <SessionProvider session={session}>
+        <Component {...pageProps} />
+    </SessionProvider>
+  )
+  return (
+    <SessionProvider session={session}>
       <MantineProvider
         theme={{
           loader: 'bars'

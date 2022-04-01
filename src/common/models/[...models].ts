@@ -56,6 +56,12 @@ export interface Entity {
   explicitlyGrantedPermissions: ExplicitPermission[];
 }
 
+export interface LiteUser {
+  name: string;
+  email: string;
+  image: string;
+}
+
 export interface User extends Entity {
   id: string; // public
   name: string; // public
