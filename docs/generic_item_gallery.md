@@ -22,6 +22,9 @@ Solution:
 - `Gallery` is a JSX component
 - `NestedGallery` is a JSX component
 
+Actually the sidebar is a separate component and is already accessible as
+<https://github.com/minop1205/react-dnd-treeview>
+
 --------------------------------------------------------------------------------
 
 LHS "search", "me" (open by default, "my files", "shared with me", "recent", "favorites", "trash"), "organization A", (closed by default, "Org A's files", "shared with Org A", "Recent", ...) "organization B" (...), "trending". This sidebar expands into the files tree view. However the top level icons are  formatted a bit larger. This is a special case of the dynamic Gallery view. "Gallaries" (like "My Files" and "Shared with Me") are specific to each user. Items have properties like:

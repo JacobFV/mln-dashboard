@@ -2,6 +2,9 @@ import Image from "next/image"
 import { Button, Divider, Header, Text } from "@mantine/core"
 import { useSession } from "next-auth/react"
 
+import { appname } from "../common/constants"
+import Favicon from "../../public/favicon.svg"
+
 /** The header component
  *
  * Displays a header with the following components:
@@ -29,7 +32,7 @@ export default () => {
       height={60} p="xs"
     >
       <Button as="a" href="/">
-        <Image src="/favicon2x.png" />
+        <Favicon />
       </Button>
       <Divider />
       {!loggedIn && (

@@ -11,7 +11,8 @@ import {
   ThemeIcon,
 } from '@mantine/core';
 import { Check } from 'tabler-icons-react';
-import image from './image.svg';
+
+import Favicon from "../../public/favicon.svg"
 
 const useStyles = createStyles((theme) => ({
   inner: {
@@ -68,7 +69,7 @@ const useStyles = createStyles((theme) => ({
   },
 }));
 
-export function HeroBullets() {
+export default function HeroBullets() {
   const { classes } = useStyles();
   return (
     <div>
@@ -116,7 +117,7 @@ export function HeroBullets() {
               </Button>
             </Group>
           </div>
-          <Image src={image.src} className={classes.image} />
+          <Favicon />
         </div>
       </Container>
     </div>
