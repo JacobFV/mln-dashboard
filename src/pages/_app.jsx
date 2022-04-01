@@ -1,6 +1,5 @@
 import '../styles/globals.css'
 
-import { Image } from "next"
 import { SessionProvider } from "next-auth/react"
 import { MantineProvider, AppShell } from "@mantine/core"
 
@@ -13,11 +12,6 @@ export default function App({
   Component,
   pageProps: { session, ...pageProps },
 }) {
-  return (
-    <SessionProvider session={session}>
-        <Component {...pageProps} />
-    </SessionProvider>
-  )
   return (
     <SessionProvider session={session}>
       <MantineProvider

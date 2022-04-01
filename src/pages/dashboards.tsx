@@ -2,21 +2,30 @@ import type { NextPage } from 'next'
 import Head from 'next/head'
 import Image from 'next/image'
 import { Box, Card, Container } from '@mantine/core'
-import { useSession } from "next-auth/react";
-import Router from "next/router";
-import { LiteUser } from "../common/models/[...models]";
 
+//import getUser from '../common/utils/getUser'
 //import styles from '../styles/Home.module.css'
 
-export default () => {
+import { useSession } from "next-auth/react";
+import { useRouter } from "next/router";
+import { LiteUser } from "../models/[...models]";
 
+function getUser(): LiteUser {
+  // artificially set cwd path
   const { data: session, status: status } = useSession();
 
   if (!session || !session.user) {
-    Router.push("/account/login");
+    const router = useRouter();
+    router.push("/account/login");
   }
 
-  const user = session!.user! as LiteUser;
+  return session!.user! as LiteUser;
+}
+
+
+export default () => {
+
+  const user = getUser();
 
   return (
     <Container size="xs">

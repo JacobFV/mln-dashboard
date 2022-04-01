@@ -64,6 +64,10 @@ model Entity {
   memberOfGroups          GroupMembership[]    @relation("GroupMembershipMember")
   permissionsAssignedToMe ExplicitPermission[] @relation("PermissionsAssignedToMe")
 
+  // In the future, extract user/group-specific fields onto separate tables
+  // user   User?
+  // group  Group?
+
   /// user-specific attributes
   emails                     Email[]
   loginAttempts              LoginAttempt[]

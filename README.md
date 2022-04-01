@@ -18,6 +18,10 @@ Please see our [Contributing Guide](/CONTRIBUTING) for more information. If you 
 
 Please excuse the mess:
 
+- just make a simple QT page for running and downloading MLN projects
+- copy content from <https://github.com/JacobFV/EasyMLN-old>- and <https://github.com/JacobFV/EasyMLN/blob/main/pages/index.tsx> to `pages/index.tsx`
+- use [these templates](https://ui.mantine.dev/category) for the UI
+
 - filler content in /home
 - get started with organization page
 - create organization page (accessible from account settings)
