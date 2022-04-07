@@ -754,18 +754,35 @@ if __name__== "__main__":
     for l in config['objectives']: print( f' | {l}' )
 
 
-  for obj_num, obj in enumerate( config['objectives']) :
+  """"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+  Evaluating analysis objectives
+  In the config file will be a list of objective strings
 
-    # objective: "infomap,we,mwm,ActorFBLikes-DirectorAvgBudget"
-    #   
-    #    ⬇
-    #
-    # OBJ = {
-    #   "comm_algo": "infomap", 
-    #   "weight_metric": "we", 
-    #   "matching_algo": "mwm", 
-    #   "layers": ["ActorFBLikes", "DirectorAvgBudget"]
-    # }
+    objective: "infomap,we,mwm,foo-bar-baz-zir"
+
+  which will each be converted to a dictionary like
+      
+    OBJ = {
+      "comm_algo": "infomap", 
+      "weight_metric": "we", 
+      "matching_algo": "mwm", 
+      "layers": ['foo', 'bar', 'baz', 'zir']
+    }
+
+  The path to layer 'foo' is stored in config['layer_paths']['foo'].
+  All information needed for objective is stored in OBJ.
+
+  For each objective XX, a folder will be created for all involved files:
+
+    BASE_DIR/Analysis/objXX/
+                        |----- bg/     <-- for generated bipartite graph files
+                        |----- comm/   <-- for generated community files
+  
+  Each generated file will have its path stored in config['layer_paths'].
+
+  """
+
+  for obj_num, obj in enumerate( config['objectives']) :
 
     tok = obj.split( ',' )
     OBJ = {
@@ -775,9 +792,23 @@ if __name__== "__main__":
       "layers": tok[3].split( '-' )
     }
 
+    
+    """"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+    Community detection
+    The objective may contain a series of layers: 
+        
+        OBJ['layers'] = ['foo', 'bar', 'baz', 'zir']
 
-    #---------------------------------------------------------------------------
-    # Community (comm) detection
+    Iterate and run community detection algorithms (e.g. 'infomap'),
+    generating N files:
+
+        foo-bar_we.bg (path: BASE_DIR/Analysis/objXX/bg/foo-bar_we.bg)
+        bar-baz_we.bg (path: BASE_DIR/Analysis/objXX/bg/bar-baz_we.bg)
+        baz-zir_we.bg (path: BASE_DIR/Analysis/objXX/bg/baz-zir_we.bg)
+
+    where XX is the number of the objective being evaluated.
+
+    """
 
     for i, layer in enumerate( OBJ[ 'layers' ] ):
       comm_name = f'{ layer }_{ OBJ["comm_algo"] }.vcomm'
@@ -795,8 +826,22 @@ if __name__== "__main__":
         config['layer_paths'][comm_name] = comm_path
 
 
-    #---------------------------------------------------------------------------
-    # Bipartite graph (bg) generation
+    """"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+    Bipartite graph (bg) generation
+    The objective may contain a series of layers: 
+        
+        OBJ['layers'] = ['foo', 'bar', 'baz', 'zir']
+
+    Iterate and run bipartite graph functions (e.g. 'we') pairwise,
+    generating N-1 files:
+
+        foo-bar_we.bg (path: BASE_DIR/Analysis/objXX/bg/foo-bar_we.bg)
+        bar-baz_we.bg (path: BASE_DIR/Analysis/objXX/bg/bar-baz_we.bg)
+        baz-zir_we.bg (path: BASE_DIR/Analysis/objXX/bg/baz-zir_we.bg)
+
+    where XX is the number of the objective being evaluated.
+
+    """
 
     for i in range( len( OBJ['layers'] ) - 1 ):
 
