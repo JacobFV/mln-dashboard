@@ -16,16 +16,23 @@ body{
 #mainText{
     width: 1000px;
     height: 800px;
-    float: left;
+    float: center;
 }
 
 #fileNames{
     width: 400px;
-    height: 779px;
-    float: center;
+    height: 800px;
+    float: left;
 }
 
 #openFile{
     position: relative;
     
+}
+
+.btnList{
+    background-color: transparent; 
+    outline: none;
+    display: block; 
+    border: solid;
 }
