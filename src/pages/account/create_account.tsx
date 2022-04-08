@@ -15,7 +15,7 @@ import Container from '@mui/material/Container';
 import { createTheme, ThemeProvider } from '@mui/material/styles';
 import LockOutlinedIcon from '@mui/icons-material/LockOutlined';
 
-import Copyright from '../../components/copyright';
+import Copyright from '../../components/layout/copyright';
 import AppIcon from '../../components/appIcon';
 
 const theme = createTheme();

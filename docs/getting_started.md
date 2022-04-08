@@ -1,5 +1,11 @@
 # Getting Started
 
+## Requirements
+
+- **Install node.js and npm**. This server was developed and tested using the node.js v16.13.1 and npm 8.1.2 writing. Follow the directions at [this link](https://nodejs.org/en/download/) to install node.js and npm.
+
+## Installation
+
 1. Clone this repository and install the dependencies:
 
     ```bash
@@ -24,6 +30,8 @@
 
 - If you are using VS Code, you can enjoy break-point debugging within your IDE by debugging with either the `Next.js: debug server-side` or `Next.js: debug full stack` configurations.
 
-- [Sign up](https://github.com/features/copilot/signup) for Github CoPilot if you haven't already. It makes it easy to jump into new languages and frameworks.
+- Also, I recommend the "Nature Rainbow Dark" color scheme with the Next.JS extension pack for VS Code. Combined, they make a really fun developer experience.
+
+- [Sign up](https://github.com/features/copilot/signup) for Github CoPilot if you haven't already. (Click the link for a 5 second intro.) I've found that copilot makes it easy to jump into new languages and frameworks.
 
 - If you are stuck, please contact me at `jacobfv123 [at] gmail [dot] com`.
