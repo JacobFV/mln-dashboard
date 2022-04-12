@@ -18,6 +18,14 @@ Please see our [Contributing Guide](/CONTRIBUTING) for more information. If you 
 
 Please excuse the mess:
 
+- revert next-auth to use the default login page
+- comment out any unstable UI elements
+- make a home page with an create account and login button
+- make the create-user, forgot-password, resend-verification-code, verify pages normal html forms with POST submit actions.
+- make corresponding post api endpoints for those pages that call the server logic
+- make scripts to test the database and get it working
+- write server logic for the create-user, forgot-password, resend-verification-code, verify pages
+
 - just make a simple QT page for running and downloading MLN projects
 - copy content from <https://github.com/JacobFV/EasyMLN-old>- and <https://github.com/JacobFV/EasyMLN/blob/main/pages/index.tsx> to `pages/index.tsx`
 - use [these templates](https://ui.mantine.dev/category) for the UI
