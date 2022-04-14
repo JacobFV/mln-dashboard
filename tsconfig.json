@@ -35,10 +35,10 @@
     "src/pages/_app.jsx",
     // I'm not sure if these settings are necessary
     // and I don't know how they got here
-    "src/pages/account/login.jsx",
+    "src/pages/api/auth/login.jsx",
     "src/pages/index.jsx",
-    "src/pages/_error.jsx"
-  ],
+    "src/pages/_error.jsx",
+    "src/components/appLogoImage.jsx", "src/components/error.jsx"  ],
   "exclude": [
     "node_modules"
   ]

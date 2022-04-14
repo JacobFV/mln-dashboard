@@ -10,6 +10,13 @@
  * who is logging in.
  */
 
+export interface LiteUser {
+  name: string;
+  email: string;
+  image: string;
+}
+
+/*
 /// only visible by the user it belongs to
 export interface Email {
   address: string;
@@ -56,12 +63,6 @@ export interface Entity {
   explicitlyGrantedPermissions: ExplicitPermission[];
 }
 
-export interface LiteUser {
-  name: string;
-  email: string;
-  image: string;
-}
-
 export interface User extends Entity {
   id: string; // public
   name: string; // public
@@ -87,4 +88,4 @@ export interface Group extends Entity {
   updatedAt: Date; // members
   memberOfGroupIds: string[]; // public
   explicitlyGrantedPermissions: ExplicitPermission[]; // members
-}
+}*/

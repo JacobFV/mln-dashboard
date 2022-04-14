@@ -1,5 +1,14 @@
 # Generic Item Gallery
 
+Update: :news: Files are different from projects
+Projects are auto-detected. The gallery view can switch between either projects or files.
+
+This will be used for
+
+- my files
+- shared with me
+- org 1 files
+
 Problem:
 
 dynamically generate gallery for items for

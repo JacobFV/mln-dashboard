@@ -1,13 +1,12 @@
 import Image from "next/image"
 import Link from "next/link"
 import { NextLink } from '@mantine/next';
-import { Burger, Button, Divider, Grid, Header, MediaQuery, Menu, Text } from "@mantine/core"
-import { useSession } from "next-auth/react"
+import { Button, Divider, Grid, Header, MediaQuery, Menu, Text, UnstyledButton } from "@mantine/core"
+import { signIn, useSession } from "next-auth/react"
 
 import { appname } from "../../common/constants"
-import AppLogo from "../appLogo"
+import AppLogoImage from "../appLogoImage"
 import { File, Logout, User } from "tabler-icons-react";
-import { useState } from "react";
 
 /** The header component
  *
@@ -30,113 +29,142 @@ import { useState } from "react";
  *   - Divider
  *   - Profile
  *   - Log out
+ *
+ *
+ * If the user is not logged in and the screen is small:
+ * - App icon
+ * - Gallery
+ * - About
+ * - Horizontal space (rest of content is right-aligned)
+ * - Menu
+ *   - Create account
+ *   - Log in
+ *
+ * If the user is logged in and the screen is small:
+ * - App icon
+ * - Gallery
+ * - About
+ * - Horizontal space (rest of content is right-aligned)
+ * - Menu
+*    - Files
+ *   - Divider
+ *   - Profile
+ *   - Log out
+ *
+ * If the user is not logged in and the screen is medium:
+ * - App icon
+ * - Gallery
+ * - About
+ * - Horizontal space (rest of content is right-aligned)
+ * - Create account
+ * - Log in
+ *
+ * If the user is logged in and the screen is medium:
+ * - App icon
+ * - Gallery
+ * - About
+ * - Horizontal space (rest of content is right-aligned)
+ * - Menu
+ *   - Files
+ *   - Divider
+ *   - Profile
+ *   - Log out
  */
 export default () => {
+
   const { data: session } = useSession()
-  const loggedIn = session && session.user;
+  const loggedIn = session && session!.user;
 
-  const commonTopBarElements = (
+  const galleryButton = (
+    <Text size="md" weight="bold" component={NextLink} href="/gallery">
+      Gallery
+    </Text>
+  )
+  const aboutButton = (
+    <Text size="md" weight="bold" component={NextLink} href="/about">
+      About
+    </Text>
+  )
+
+  const createAccountButton = (
+    <Button color="primary" size="sm" component={NextLink} href="/auth/create-account">
+      Create account
+    </Button>);
+  const logInButton = (
+    < Button color="primary" size="sm" component={NextLink} href="/auth/login" >
+      Log in
+    </Button >);
+  const createAccountMenuItem = (
+    <Menu.Item component={NextLink} href="/auth/create-account">
+      Create account
+    </Menu.Item>);
+  const logInMenuItem = (
+    <Menu.Item component={NextLink} href="/auth/login">
+      Log In
+    </Menu.Item>);
+
+  const profileMenuItem = (
+    <Menu.Item icon={<User size={14} />} component={NextLink} href="/app/profile">
+      Profile
+    </Menu.Item>);
+  const logOutMenuItem = (
+    <Menu.Item icon={<Logout size={14} />} component={NextLink} href="/auth/logout">
+      Log out
+    </Menu.Item>);
+
+  const leftHeaderElements = (
     <>
-      <Text size="md" weight="bold" component={NextLink} href="/gallery">
-        Gallery
-      </Text>
-      <Text size="md" weight="bold" component={NextLink} href="/about">
-        About
-      </Text>
+      {galleryButton}
+      {aboutButton}
     </>
-  );
+  )
+  const rightHeaderElements = loggedIn ? (
+    <Menu>
+      {profileMenuItem}
+      < Divider />
+      {logOutMenuItem}
+    </Menu>
+  ) : (
+    <>
+      <MediaQuery largerThan="sm" styles={{ display: 'none' }}>
+        <>
+          {/* This displays on small */}
+          <Menu>
+            {createAccountMenuItem}
+            < Divider />
+            {logInMenuItem}
+          </Menu>
+        </>
+      </MediaQuery>
+      <MediaQuery smallerThan="md" styles={{ display: 'none' }}>
+        <>
+          {/* This displays on medium */}
+          {createAccountButton}
+          {logInButton}
+        </>
+      </MediaQuery>
+    </>
+  )
 
-  (
-    <Header
+  // TODO: the home image doesn't go home
+
+  return (
+    < Header
       height={60} p="xs"
     >
-      <Link href="/">
-        <Image src={AppLogo} alt={appname} />
-      </Link>
-      <Divider />
-      {!loggedIn && (
-        <Grid>
-          <Grid.Col span={8}>
-            {commonTopBarElements}
-          </Grid.Col>
-          {/* TODO: I need to find a better way to right align this */}
-          <Grid.Col offset={1} span={1.5}>
-            <Button color="primary" size="sm" component={NextLink} href="/register">
-              Create account
-            </Button>
-          </Grid.Col>
-          <Grid.Col span={1.5}>
-            <Button color="primary" size="sm" component={NextLink} href="/login">
-              Log in
-            </Button>
-          </Grid.Col>
-        </Grid>
-      )}
-      {loggedIn && (
-        <Grid>
-          <Grid.Col span={9}>
-            {commonTopBarElements}
-          </Grid.Col>
-          {/* TODO: I need to find a better way to right align this */}
-          <Grid.Col offset={2} span={1}>
-            <Menu>
-              <Menu.Item icon={<File size={14}/>} component={NextLink} href="/files">
-                Files
-              </Menu.Item>
-              <Divider />
-              <Menu.Item icon={<User size={14}/>} component={NextLink} href="/profile">
-                Profile
-              </Menu.Item>
-              <Menu.Item icon={<Logout size={14}/>} component={NextLink} href="/logout">
-                Log out
-              </Menu.Item>
-            </Menu>
-          </Grid.Col>
-        </Grid>
-      )}
-    </Header>
-  );
-  
-  const loggedInMenuItems = (
-    <>
-      <Menu.Item icon={<File size={14}/>} component={NextLink} href="/files">
-        Files
-      </Menu.Item>
-      <Divider />
-      <Menu.Item icon={<User size={14}/>} component={NextLink} href="/profile">
-        Profile
-      </Menu.Item>
-      <Menu.Item icon={<Logout size={14}/>} component={NextLink} href="/logout">
-        Log out
-      </Menu.Item>
-    </>
-  );
-
-  const menuItemsForSmallDisplay = (
-    <>
-      // TODO: I stopped off here
-      <Divider />
-      {loggedIn && loggedInMenuItems}
-    </>
-  );
-
-  // https://mantine.dev/core/app-shell/#responsive-styles
-  return (
-    <Header height={70} p="md">
-      <div style={{ display: 'flex', alignItems: 'center', height: '100%' }}>
-        <MediaQuery largerThan="sm" styles={{ display: 'none' }}>
-          {/* this appears on small displays (actually, it disappears on medium+ ones) */}
-
-        </MediaQuery>
-        <MediaQuery smallerThan="sm" styles={{ display: 'none' }}>
-          {/* this appears on medium and large displays (actually, it disappears on small ones) */}
-          <Menu>
-            {loggedInMenuItems}
-          </Menu>
-        </MediaQuery>
-
-        <Text>Application header</Text>
-      </div>
-    </Header>
+      <Grid>
+        <Grid.Col span={1}>
+          <Button component={Link} to="/">
+            <AppLogoImage />
+          </Button>
+        </Grid.Col>
+        <Grid.Col span={8}>
+          {leftHeaderElements}
+        </Grid.Col>
+        <Grid.Col span={3}>
+          {rightHeaderElements}
+        </Grid.Col>
+      </Grid>
+    </Header >
   )
 }

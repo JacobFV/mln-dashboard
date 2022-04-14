@@ -1,0 +1,59 @@
+// This file contains graphql fragments that are already being used.
+// Make sure typegraphql bindings align with these queries/mutations
+
+fragment UserFragment on User {
+  id
+  name
+  email
+  createdAt
+  updatedAt
+}
+
+
+Query {
+  userByEmail(email: String?) { 
+    # email lookup used here because the email can be any of the user's secondary email
+    # and they may not be verified (not sure how you could get in this situation)
+    id
+    email # this is the primary email
+    name
+    image
+    verified # special field; represents if the user's primary email is verified
+    # TODO: add more fields
+  }
+  # TODO: match database fields
+}
+
+Mutation {
+  createPasswordAuthenticatedUser(email: String!, password: String!, name: String!) {
+    id
+    email
+    name
+    image
+    ...
+  }
+  sendEmailVerfCode(email: String, override: Boolean = False) {
+    success: Boolean
+    response: String
+  }
+  // on failure, "we were unable to send an email verification code to this address"
+  // on success,  "We have sent a verification email to $email if it exists in our database. If you don't receive it, please check your spam folder and make sure your email address is spelled correctly.
+
+
+  verifyEmail(email: String, code: String) {
+    success: Boolean
+    response: String
+  }
+  // on failure, "Sorry, that code didn't work. Make sure to type the code exactly as it appears in the email we sent to $email"
+  // on success, "You can now use $email to log in to your $appname account."
+
+  forgotPassword(email: $email) {
+    response
+  }
+  // response, We have sent a reset password email to ${email} if it exists in our database. If you don't receive it, please check your spam folder and make sure your email address is spelled correctly.
+}
+
+schema {
+  query: Query
+  mutation: Mutation
+}

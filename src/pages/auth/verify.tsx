@@ -9,39 +9,25 @@ import { useRouter } from 'next/router';
 import { useMutation, gql } from "@apollo/client";
 import { useState } from 'react';
 import { useForm } from '@mantine/form';
-import { useHover } from '@mantine/hooks';
 import { Box, Button, Group, LoadingOverlay, TextInput } from '@mantine/core';
 import Link from 'next/link';
 import { exampleEmail, helloEmail, pages, verfCodeExample, verfCodeExplanation, verfCodeRegex } from '../../common/constants';
-import { ArrowRight, Mail, X } from 'tabler-icons-react';
-import AppLogoImage from '../../components/appLogoImage';
+import { ArrowRight, Check, Mail } from 'tabler-icons-react';
+import { showNotification } from '@mantine/notifications';
+import showError from '../../components/showError';
 
 const sendEmailVerfCodeMutation = gql`
 mutation sendEmailVerfCode(email: $email, override: $override) {
-  success: Boolean
-  response: String
+  response
 }`;
 const verifyEmailMutation = gql`
 mutation verifyEmail(email: $email, code: $code) {
-  success
   response
 }`;
-const [ sendEmailVerfCodeMutationFn, {loading: sendEmailVerfCodeMutationLoading} ] = useMutation(
-  sendEmailVerfCodeMutation, {
-  onCompleted: (data) => {
-    console.log(data)
-  },
-  onError: (error) => {
-    console.log(error)
-  }
-})
 
 enum FormState {
   ENTER_EMAIL,
-  SENDING_CODE,
   ENTER_CODE,
-  VERIFYING,
-  ONE_CLICK_VERIFY,
 }
 
 type FormData = {
@@ -51,21 +37,59 @@ type FormData = {
 
 export default () => {
 
-  const router = useRouter()
-  const { email: initialEmail, code } = router.query
+  const [ sendEmailVerfCodeMutationFn, {loading: sendEmailVerfCodeMutationLoading} ] = useMutation(
+    sendEmailVerfCodeMutation, {
+    onCompleted: (data) => {
+      showNotification({
+        title: 'Verification code sent',
+        message: data.response, // should look like this: "We have sent a verification code to $email. If you don't receive it, please check your spam folder.",
+        color: 'blue',
+        icon: <Mail />,
+      })
+      setFormState(FormState.ENTER_CODE)
+    },
+    onError: (error) => {
+      showError(error.message, error.name)
+    }
+  })
+  const [ verifyEmailMutationFn, {loading: verifyEmailMutationLoading} ] = useMutation(
+    verifyEmailMutation, {
+    onCompleted: (data) => {
+      console.log(data)
+      // if success, redirect to gallery with make login = True
+      showNotification({
+        title: "Your email has been verified",
+        message: data.response, // should look like this: "You can now use $email to log in to your $appname account.",
+        color: 'green',
+        icon: <Check />,
+      })
+      router.push(pages.gallery, {query: {login: true}})
+    },
+    onError: (error) => {
+      console.log(error)
+      // if error, "Sorry, that code didn't work. Make sure to type the code exactly as it appears in the email we sent to $email"
+      showError(error.message, error.name)
+    }
+  })
 
-  let initialFormState: FormState
-  if (!initialEmail) {
-    initialFormState = FormState.ENTER_EMAIL
-  } else if (initialEmail && !code) {
-    initialFormState = FormState.ENTER_CODE
-  } else if (initialEmail && code) {
-    initialFormState = FormState.ONE_CLICK_VERIFY
-  } else {
-    throw new Error("unreachable")
+  const handleSubmit = async (values: FormData) => {
+    console.log(values)
+    switch(formState) {
+      case FormState.ENTER_EMAIL:
+        // send verification code to email
+        sendEmailVerfCodeMutationFn({variables: { email: values.email, override: true }})
+        break;
+      case FormState.ENTER_CODE:
+        // verify email with code
+        verifyEmailMutationFn({variables: { email: values.email, code: values.code }})
+        break;
+      default:
+        throw new Error("unreachable")
+    }
   }
 
-  const [formState, setFormState] = useState<FormState>(initialFormState)
+  const router = useRouter()
+  const { email: initialEmail, code } = router.query
 
   const form = useForm<FormData>({
     initialValues: {
@@ -80,57 +104,24 @@ export default () => {
     }
   })
 
-  const handleSubmit = async (values: FormData) => {
-    console.log(values)
-    switch(formState) {
-      case FormState.ENTER_EMAIL:
-        // send verification code to email
-        setFormState(FormState.SENDING_CODE)
-        // TODO: send mutation
-        // TODO: make overlay appear:
-        // "We have sent a verification code to email"
-        // "If you don't receive it, please check your spam folder"
-        sendEmailVerfCodeMutationFn({variables: { email: values.email, override: true }})
-        break;
-      case FormState.ENTER_CODE:
-      case FormState.ONE_CLICK_VERIFY:
-        // verify email with code
-        setFormState(FormState.VERIFYING)
-        // TODO: send mutation
-        const result = useMutation(
-          verifyEmailMutation, {
-            variables: { email: values.email, code: values.code }
-          }
-        )
-        // TODO: make overlay appear
-        // if error, "Sorry, that code didn't work. Make sure to type the code exactly as it appears in the email we sent to $email"
-        // if success, redirect to (login if not logged in or files if logged in) and show overlay, "Your email has been verified"
-        break;
-      case FormState.SENDING_CODE:
-        // cancel send verf code
-        setFormState(FormState.ENTER_EMAIL)
-        // TODO: cancel
-        break
-      case FormState.VERIFYING:
-      default:
-        throw new Error("unreachable")
-    }
-  }
-
-  if(formState === FormState.ONE_CLICK_VERIFY) {
+  let initialFormState: FormState
+  if (!initialEmail) {
+    initialFormState = FormState.ENTER_EMAIL
+  } else if (initialEmail && !code) {
+    initialFormState = FormState.ENTER_CODE
+  } else if (initialEmail && code) {
+    initialFormState = FormState.ENTER_CODE
     handleSubmit(form.values)
+  } else {
+    throw new Error("unreachable")
   }
 
-  const loading =
-    formState === FormState.SENDING_CODE ||
-    formState === FormState.VERIFYING
+  const [formState, setFormState] = useState<FormState>(initialFormState)
+  const loading = sendEmailVerfCodeMutationLoading || verifyEmailMutationLoading
 
   return (
     <Box sx={{ maxWidth: 300 }} mx="auto">
-      <AppLogoImage />
-      <form
-        onSubmit={form.onSubmit(handleSubmit)}
-        disabled={formState === FormState.VERIFYING}>
+      <form onSubmit={form.onSubmit(handleSubmit)}>
         <LoadingOverlay visible={loading} />
         <TextInput
           mt="sm"
@@ -158,31 +149,15 @@ export default () => {
             <Button
               type="submit"
               leftIcon={<Mail size={18}/>}>
-              Send verification code
-            </Button>
-          )}
-          {formState === FormState.SENDING_CODE && (
-            <Button
-              type="submit"
-              ref={hoverRef}
-              {... hovered ? {
-                leftIcon: <X size={18}/>,
-              } : {}}
-              >
-              hovered ? Change email : Sending...
+              {!loading ? 'Send' : 'Sending'} verification code
             </Button>
           )}
           {formState === FormState.ENTER_CODE && (
             <Button
               type="submit"
               leftIcon={<ArrowRight size={18}/>}>
-              Verify email
+              {!loading ? 'Verify' : 'Verifying'} email
             </Button>
-          )}
-          {formState === FormState.VERIFYING && (
-              <Button type="submit">
-                Verifying...
-              </Button>
           )}
         </Group>
       </form>

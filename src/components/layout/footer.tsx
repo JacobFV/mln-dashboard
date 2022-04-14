@@ -4,10 +4,10 @@
 import React from 'react';
 import { createStyles, Anchor, Group, ActionIcon } from '@mantine/core';
 
-import AppLogo from '../appLogo'
+import AppLogoImage from '../appLogoImage'
 import { appname, socialAccounts } from '../../common/constants';
-import Image from 'next/image';
 import { Icon } from 'tabler-icons-react';
+import Copyright from './copyright';
 
 const useStyles = createStyles((theme) => ({
   footer: {
@@ -68,7 +68,7 @@ export default ({ links }: FooterCenteredProps) => {
   return (
     <div className={classes.footer}>
       <div className={classes.inner}>
-        <Image src={AppLogo} alt={appname} />
+        <AppLogoImage />
 
         <Group className={classes.links}>{items}</Group>
 
@@ -77,9 +77,10 @@ export default ({ links }: FooterCenteredProps) => {
             socialAccounts.map((account: { name: string, icon: Icon }) => (
               <ActionIcon key={account.name} size="lg">
                 <account.icon size={18} />
-              </ActionIcon>
+              </ActionIcon>))
           }
         </Group>
+        <Copyright />
       </div>
     </div>
   );

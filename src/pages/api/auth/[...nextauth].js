@@ -94,8 +94,8 @@ export default NextAuth({
   pages: {
     // signIn: '/auth/signin',  // Displays signin buttons
     // signOut: '/auth/signout', // Displays form with sign out button
-    // error: '/auth/error', // Error code passed in query string as ?error=
-    // verifyRequest: '/auth/verify-request', // Used for check email page
+    error: '/account/error', // Error code passed in query string as ?error=
+    verifyRequest: '/account/verify-request', // Used for check email page
     // newUser: null // If set, new users will be directed here on first sign in
   },
 
@@ -152,8 +152,6 @@ export default NextAuth({
     // async jwt({ token, user, account, profile, isNewUser }) { return token }
   },
 
-  debug: true,
-
   // Events are useful for logging
   // https://next-auth.js.org/configuration/events
   events: {
@@ -192,9 +190,9 @@ export default NextAuth({
   theme: {
     colorScheme: "auto",
     brandColor: "", // Hex color code
-    logo: "", // Absolute URL to image
+    logo: "/public/favicon.png", // Absolute URL to image
   },
 
   // Enable debug messages in the console if you are having problems
-  debug: false,
+  debug: true,
 });

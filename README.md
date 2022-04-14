@@ -18,6 +18,13 @@ Please see our [Contributing Guide](/CONTRIBUTING) for more information. If you 
 
 Please excuse the mess:
 
+- make sure all next links use the `to` attribute instead of `href`
+- write /auth/error, /auth/sign-in, /auth/profile
+- implement markdown-react for pages
+- implement middleware in _app
+- implement middleware in getUser
+- write error pages
+
 - revert next-auth to use the default login page
 - comment out any unstable UI elements
 - make a home page with an create account and login button

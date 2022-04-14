@@ -1,7 +1,7 @@
+// https://github.com/mantinedev/ui.mantine.dev/tree/master/components/HeroBullets/HeroBullets.tsx
 import React from 'react';
 import {
   createStyles,
-  Image,
   Container,
   Title,
   Button,
@@ -9,10 +9,11 @@ import {
   Text,
   List,
   ThemeIcon,
+  Image,
 } from '@mantine/core';
 import { Check } from 'tabler-icons-react';
 
-import Favicon from "../../public/favicon.svg"
+import { appLogoSVG } from '../common/constants';
 
 const useStyles = createStyles((theme) => ({
   inner: {
@@ -69,7 +70,7 @@ const useStyles = createStyles((theme) => ({
   },
 }));
 
-export default function HeroBullets() {
+export default () => {
   const { classes } = useStyles();
   return (
     <div>
@@ -95,16 +96,16 @@ export default function HeroBullets() {
               }
             >
               <List.Item>
-                <b>Cloud based</b> – make your data, configs, and other project artifacts 
+                <b>Cloud based</b> &emdash; make your data, configs, and other project artifacts
                 public or share with specific people
               </List.Item>
               <List.Item>
-                <b>Researcher-oriented</b> – Experiments are recorded by default for 
+                <b>Researcher-oriented</b> &emdash; Experiments are recorded by default for
                 reproducibility and later analysis
               </List.Item>
               <List.Item>
-                <b>Free and open source</b> – MLN Dashboard is released MIT license, 
-                you can use Mantine in any project
+                <b>Free and open source</b> &emdash; MLN Dashboard is released under the MIT license,
+                so you can modify and redistribute it to suit your needs
               </List.Item>
             </List>
 
@@ -117,7 +118,7 @@ export default function HeroBullets() {
               </Button>
             </Group>
           </div>
-          <Favicon />
+          <Image src={appLogoSVG.src} className={classes.image} />
         </div>
       </Container>
     </div>

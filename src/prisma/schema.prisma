@@ -17,7 +17,7 @@ generator client {
 model Email {
   id                     String    @id @default(cuid())
   email                  String    @unique
-  needsVerification      Boolean   @default(true)
+  needsVerification      Boolean   @default(true) /// email should not be used until verified
   verificationCode       String?
   verificationCodeSentOn DateTime?
   user                   Entity    @relation(fields: [userId], references: [id])
