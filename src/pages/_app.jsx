@@ -34,11 +34,9 @@ export default function App({
       <SessionProvider session={session}>
         <MantineProvider theme={{loader: 'bars'}}>
           <NotificationsProvider>
-            {<AppShell padding="md" header={<Header />}>
-              <main>
-                <Component {...pageProps} />
-              </main>
-            </AppShell>}
+            <AppShell padding="md" header={<Header />}>
+              <Component {...pageProps} />
+            </AppShell>
           </NotificationsProvider>
         </MantineProvider>
       </SessionProvider>

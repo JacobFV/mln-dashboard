@@ -43,6 +43,7 @@ export const pages = {
     forgotPassword: "/auth/forgot-password",
     resetPassword: "/auth/reset-password",
     signIn: "/auth/sign-in",
+    signOut: "/auth/sign-out",
     profile: "/auth/profile",
     verify: "/auth/verify", // for users and emails
   },

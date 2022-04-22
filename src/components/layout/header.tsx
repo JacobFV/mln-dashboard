@@ -1,12 +1,12 @@
-import Image from "next/image"
-import Link from "next/link"
-import { NextLink } from '@mantine/next';
-import { Button, Divider, Grid, Header, MediaQuery, Menu, Text, UnstyledButton } from "@mantine/core"
-import { signIn, useSession } from "next-auth/react"
+// https://github.com/mantinedev/ui.mantine.dev/tree/master/components/HeaderMenu/HeaderMenu.tsx
 
-import { appname } from "../../common/constants"
+import Link from "next/link"
+import { Button, Divider, Grid, Header, MediaQuery, Menu, Text } from "@mantine/core"
+import { useSession } from "next-auth/react"
+
+import { pages } from "../../common/constants";
 import AppLogoImage from "../appLogoImage"
-import { File, Logout, User } from "tabler-icons-react";
+import { Logout, User } from "tabler-icons-react";
 
 /** The header component
  *
@@ -76,45 +76,81 @@ export default () => {
   const loggedIn = session && session!.user;
 
   const galleryButton = (
-    <Text size="md" weight="bold" component={NextLink} href="/gallery">
+    <Text<typeof Link>
+      size="md"
+      weight="bold"
+      component={Link}
+      href={pages.gallery}>
       Gallery
     </Text>
   )
+  const learnButton = (
+    <Text<typeof Link>
+      size="md"
+      weight="bold"
+      component={Link}
+      href={pages.learn}>
+      Learn
+    </Text>
+  )
   const aboutButton = (
-    <Text size="md" weight="bold" component={NextLink} href="/about">
+    <Text<typeof Link>
+      size="md"
+      weight="bold"
+      component={Link}
+      href={pages.about}>
       About
     </Text>
   )
 
   const createAccountButton = (
-    <Button color="primary" size="sm" component={NextLink} href="/auth/create-account">
+    <Button<typeof Link>
+      color="primary"
+      size="sm"
+      component={Link}
+      href={pages.auth.createAccount}>
       Create account
     </Button>);
-  const logInButton = (
-    < Button color="primary" size="sm" component={NextLink} href="/auth/login" >
-      Log in
-    </Button >);
+  const signInButton = (
+    <Button<typeof Link>
+      color="primary"
+      size="sm"
+      component={Link}
+      href={pages.auth.signIn}>
+      Sign in
+    </Button>);
   const createAccountMenuItem = (
-    <Menu.Item component={NextLink} href="/auth/create-account">
+    <Menu.Item<typeof Link>
+      component={Link}
+      href={pages.auth.createAccount}>
       Create account
     </Menu.Item>);
-  const logInMenuItem = (
-    <Menu.Item component={NextLink} href="/auth/login">
-      Log In
+  const signInMenuItem = (
+    <Menu.Item<typeof Link>
+      component={Link}
+      href={pages.auth.signIn}>
+      Sign In
     </Menu.Item>);
 
   const profileMenuItem = (
-    <Menu.Item icon={<User size={14} />} component={NextLink} href="/app/profile">
+    <Menu.Item<typeof Link>
+      icon={<User size={14} />}
+      component={Link}
+      href={pages.auth.profile}>
       Profile
     </Menu.Item>);
-  const logOutMenuItem = (
-    <Menu.Item icon={<Logout size={14} />} component={NextLink} href="/auth/logout">
-      Log out
+  const signOutMenuItem = (
+    <Menu.Item<typeof Link>
+    icon={<Logout size={14} />}
+    component={Link}
+    href={pages.auth.signOut}>
+      Sign out
     </Menu.Item>);
 
   const leftHeaderElements = (
     <>
       {galleryButton}
+      {learnButton}
       {aboutButton}
     </>
   )
@@ -122,7 +158,7 @@ export default () => {
     <Menu>
       {profileMenuItem}
       < Divider />
-      {logOutMenuItem}
+      {signOutMenuItem}
     </Menu>
   ) : (
     <>
@@ -132,7 +168,7 @@ export default () => {
           <Menu>
             {createAccountMenuItem}
             < Divider />
-            {logInMenuItem}
+            {signInMenuItem}
           </Menu>
         </>
       </MediaQuery>
@@ -140,7 +176,7 @@ export default () => {
         <>
           {/* This displays on medium */}
           {createAccountButton}
-          {logInButton}
+          {signInButton}
         </>
       </MediaQuery>
     </>
@@ -154,7 +190,7 @@ export default () => {
     >
       <Grid>
         <Grid.Col span={1}>
-          <Button component={Link} to="/">
+          <Button component={Link} href={pages.index}>
             <AppLogoImage />
           </Button>
         </Grid.Col>

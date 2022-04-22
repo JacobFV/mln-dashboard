@@ -2,6 +2,7 @@
   "recommendations": [
     "ibrahimcesar.ibrahimcesar-nextjs-developer-pack",
     "prisma.prisma",
-    "GitHub.copilot"
+    "github.copilot",
+    "Saikumarchinna.rainbow"
   ]
 }

@@ -53,6 +53,8 @@ export default function getUser(props: GetUserProps): {
     props.checkVerified ||
     props.extraUserKeys.length > 0
   ) {
+    // TODO: cache results for each key combination,
+    // similar to how useSession doesn't perform a GET on each call
     const { loading, error, data } = useQuery(
       gql`query userByEmail($email: String!) {
         ${props.extraUserKeys.concat(["verified"]).join("\n")}
