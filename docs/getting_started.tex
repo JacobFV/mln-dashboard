@@ -1,0 +1,89 @@
+\hypertarget{getting-started}{%
+\section{Getting Started}\label{getting-started}}
+
+\hypertarget{requirements}{%
+\subsection{Requirements}\label{requirements}}
+
+\begin{itemize}
+\tightlist
+\item
+  \textbf{Install node.js and npm}. This server was developed and tested
+  using the node.js v16.13.1 and npm 8.1.2 writing. Follow the
+  directions at \href{https://nodejs.org/en/download/}{this link} to
+  install node.js and npm.
+\end{itemize}
+
+\hypertarget{installation}{%
+\subsection{Installation}\label{installation}}
+
+\begin{enumerate}
+\def\labelenumi{\arabic{enumi}.}
+\item
+  Clone this repository and install the dependencies:
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\FunctionTok{git}\NormalTok{ clone https://github.com/JacobFV/mln-dashboard.git}
+\BuiltInTok{cd}\NormalTok{  mln-dashboard}
+\ExtensionTok{npm}\NormalTok{ install}
+\end{Highlighting}
+\end{Shaded}
+\item
+  Next, rename \texttt{.env.example} to \texttt{.env}. Then follow the
+  directions included as comments in \texttt{.env} to set up your
+  environment. Most of these variables are required for the application
+  to run. If you do not want to use one of the auth providers, you will
+  need to comment it out in the
+  \texttt{/src/pages/api/auth/{[}...nextauth{]}.js} file.
+\item
+  Initialize the database by 1) changing
+  \texttt{"isolatedModules":\ true} to
+  \texttt{"isolatedModules":\ false} in \texttt{tsconfig.json} and then
+  2) running \texttt{npx\ prisma\ migrate\ dev\ -\/-name\ init}. Make
+  sure you see the console display \texttt{seeding\ database} so you
+  know that the database is working. You can inspect the database by
+  running \texttt{npx\ prisma\ studio}.
+\item
+  You should now be able to run the application by running
+  \texttt{npm\ run\ dev}. Click on the URL shown in the terminal to get
+  started!
+\end{enumerate}
+
+\hypertarget{getting-help}{%
+\subsection{Getting Help}\label{getting-help}}
+
+\begin{itemize}
+\item
+  Before you start programming or seriously reading the code, I
+  recommend setting aside an hour to read
+  \href{https://nextjs.org/learn/foundations/from-javascript-to-react}{this
+  guide on react},
+  \href{https://nextjs.org/learn/foundations/from-react-to-nextjs}{this
+  guide on next.js}, and
+  \href{https://nextjs.org/learn/foundations/how-nextjs-works}{this
+  guide on advanced next.js features}.
+\item
+  Make sure you can get the server running before you make any changes
+  to the code.
+\item
+  Prisma Studio is your friend. Run \texttt{npx\ prisma\ studio} to see
+  what the database looks like.
+\item
+  If you are using VS Code, you can enjoy break-point debugging within
+  your IDE by debugging with either the
+  \texttt{Next.js:\ debug\ server-side} or
+  \texttt{Next.js:\ debug\ full\ stack} configurations.
+\item
+  Also, if you are using vscode, you will notice the following
+  extensions are recommended: ``NextJS Developer Extensions Pack'',
+  ``Prisma'', and ``Rainbow Theme''. Combined, I find they dramatically
+  improve the development experience.
+\item
+  \href{https://github.com/features/copilot/signup}{Sign up} for
+  \href{https://copilot.github.com/}{Github CoPilot} if you haven't
+  already. My experience is that copilot makes it easy to jump into new
+  languages and frameworks.
+\item
+  If you are stuck, please contact me at
+  \texttt{jacobfv123\ {[}at{]}\ gmail\ {[}dot{]}\ com}.
+\end{itemize}
