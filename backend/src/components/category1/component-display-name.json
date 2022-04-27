@@ -1,0 +1,26 @@
+{
+  "collectionName": "components_category1_component_display_names",
+  "info": {
+    "displayName": "ComponentDisplayName",
+    "icon": "atom"
+  },
+  "options": {},
+  "attributes": {
+    "rtf": {
+      "type": "richtext"
+    },
+    "psw": {
+      "type": "password"
+    },
+    "img": {
+      "allowedTypes": [
+        "images",
+        "files",
+        "videos",
+        "audios"
+      ],
+      "type": "media",
+      "multiple": false
+    }
+  }
+}
