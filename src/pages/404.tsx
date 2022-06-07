@@ -7,8 +7,7 @@ export default () => {
 
 
   return (<>
-    <Center><code>400</code>: We've looked everywhere</Center>
+    <Center><code>404</code>: We've looked everywhere</Center>
     <p>Sorry, we could not find {router.route}.</p>
-    <p>You will be redirected back {!prevURL ? 'home ' : ' '}in {delay.toString(0)} seconds.</p>
   </>)
 }

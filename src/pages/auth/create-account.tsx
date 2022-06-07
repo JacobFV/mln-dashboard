@@ -9,13 +9,12 @@ import { helloEmail, exampleEmail, pages } from '../../common/constants'
 import { Check } from 'tabler-icons-react';
 import showError from '../../components/showError';
 
-const createPasswordAuthenticatedUserMutation = gql`
-mutation createPasswordAuthenticatedUser(email: String!, password: String!, name: String!) {
+const CREATE_CREDENTIAL_AUTHENTICATED_USER = gql`
+mutation createCredentialAuthenticatedUser(email: String!, password: String!, name: String!) {
   id
   email
   name
   image
-  ...
 }`
 
 class FormType {
@@ -28,34 +27,36 @@ class FormType {
 
 export default () => {
   const [mutationFn, { loading }] = useMutation(
-    createPasswordAuthenticatedUserMutation, {
-      onCompleted: (data) => {
-        // show notification now, because the user will have to go to their email and back before they get to see the real welcome page.
-        showNotification({
-          title: 'Account created',
-          message: 'You can now sign in with your new password. Make sure to store it in a secure place.',
-          color: 'green',
-          icon: <Check />,
-        })
-        // TODO: handle this
-        // 3. invoke signIn API call with email and password
-        // 4. then push the verify page on the stack (unless I use getUser which handles that automatically)
-      },
-      onError: (error) => {
-        showError(error.message, error.name)
-      }
-    })
+    CREATE_CREDENTIAL_AUTHENTICATED_USER, {
+    onCompleted: (data) => {
+      // show notification now, because the user will have to go to their email and back before they get to see the real welcome page.
+      showNotification({
+        title: 'Account created',
+        message: 'You can now sign in with your new password. Make sure to store it in a secure place.',
+        color: 'green',
+        icon: <Check />,
+      })
+      // TODO: handle this
+      // 3. invoke signIn API call with email and password
+      // 4. then push the verify page on the stack (unless I use getUser which handles that automatically)
+    },
+    onError: (error) => {
+      showError(error.message, error.name)
+    }
+  })
 
   function tryCreateUser(values: FormType) {
     // 0 assume that mantine/form has already validated the data
     // 1 send create user mutation
-    mutationFn({variables: {
-      name: values.name,
-      email: values.email,
-      password: values.password,
-      receiveUpdates: values.receiveUpdates,
-      agreesToTermsOfService: values.agreesToTermsOfService
-    }})
+    mutationFn({
+      variables: {
+        name: values.name,
+        email: values.email,
+        password: values.password,
+        receiveUpdates: values.receiveUpdates,
+        agreesToTermsOfService: values.agreesToTermsOfService
+      }
+    })
     // 2. rest is handled in the mutation onCompleted callback
   }
 
@@ -92,7 +93,7 @@ export default () => {
           label="Name"
           required
           {...form.getInputProps('name')}
-          />
+        />
 
         <TextInput
           mt="sm"
@@ -101,7 +102,7 @@ export default () => {
           placeholder={helloEmail ?? exampleEmail}
           required
           {...form.getInputProps('email')}
-          />
+        />
 
         <TextInput
           mt="sm"
@@ -110,7 +111,7 @@ export default () => {
           autoComplete='new-password'
           required
           {...form.getInputProps('password')}
-          />
+        />
 
         <Checkbox
           mt="md"
@@ -129,7 +130,7 @@ export default () => {
         </Group>
       </form>
       <Box mt="md">
-        <Link  href={pages.auth.signIn}>
+        <Link href={pages.auth.signIn}>
           Already have an account? Sign In
         </Link>
       </Box>

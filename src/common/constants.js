@@ -10,6 +10,7 @@ import {
   BrandFacebook,
 } from "tabler-icons-react";
 
+
 // Please fill in the following variables:
 export const verfCodeExpiration = 60 * 60 * 24; // 24 hours
 export const verfCodeLength = 6;

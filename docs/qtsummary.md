@@ -170,7 +170,6 @@ At its current state, we are employing the following client-side stack:
 - mantine: supplies high-level user interface components
 - apollo/client: used for communicating with the server
 
-
 # Backend
 
 When you're talking about a reasonably complex server like this one, the term 'backend' is kind of vague. I'm going to describe it in three classes:
@@ -402,7 +401,7 @@ query {
   apps: [App!]!
 }
 mutate {
-  createPasswordAuthenticatedUser(email: String, name: String, password: String) {
+  createCredentialAuthenticatedUser(email: String, name: String, password: String) {
      result: String
   }
   // send email with verification code to user
@@ -747,7 +746,7 @@ NOTE: This function does not perform any sanity checks on the user parameters si
 
 # File Permissions
 
-Ideally, we want to implement a Google-Drive-kind-of sharing architecture where **users and groups can own and share files and directories with fine-tuned permission levels (hidden, read, write, admin, owner)**. For brevity, this document refers to both files and directories as "resources". A resource can only have one owner. The current *owner* can change the owner and administrate files; all users with an *admin* permission level can delete, move, rename, and share, and they also have write permissions; all users with *write* permissions can edit files, and they also have read permissions; and all users with *read* permissions can read, copy, and download files. A resource can also be explicitly marked as 'hidden' for some particular entity. Users inherit the permissions of the group(s) they belong to with conflicts determined by a least restrictive union.
+Ideally, we want to implement a Google-Drive-kind-of sharing architecture where **users and groups can own and share files and directories with fine-tuned permission levels (hidden, read, write, admin, owner)**. For brevity, this document refers to both files and directories as "resources". A resource can only have one owner. The current _owner_ can change the owner and administrate files; all users with an _admin_ permission level can delete, move, rename, and share, and they also have write permissions; all users with _write_ permissions can edit files, and they also have read permissions; and all users with _read_ permissions can read, copy, and download files. A resource can also be explicitly marked as 'hidden' for some particular entity. Users inherit the permissions of the group(s) they belong to with conflicts determined by a least restrictive union.
 
 Initially, a newly created or uploaded file is owned by the user or group who created or uploaded it. That owner can then share the file with other users or groups, giving them read-only access.
 

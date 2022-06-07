@@ -25,6 +25,7 @@
     "@prisma/client": "^3.11.1",
     "@sendgrid/mail": "^7.6.2",
     "@testdeck/mocha": "^0.2.0",
+    "apollo-server-micro": "^3.7.0",
     "bcryptjs": "^2.4.3",
     "chai": "^4.3.6",
     "class-validator": "^0.13.2",

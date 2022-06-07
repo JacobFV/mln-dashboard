@@ -38,7 +38,10 @@
     "src/pages/api/auth/login.jsx",
     "src/pages/index.jsx",
     "src/pages/_error.jsx",
-    "src/components/appLogoImage.jsx", "src/components/error.jsx"  ],
+    "src/components/appLogoImage.jsx",
+    "src/components/error.jsx",
+    "src/common/constants.js"
+  ],
   "exclude": [
     "node_modules"
   ]

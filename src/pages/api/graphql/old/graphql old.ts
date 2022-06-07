@@ -3,7 +3,7 @@ import * as tq from "type-graphql";
 import { UserResolver } from "../../server/graphql/UserResolver";
 import { ApolloServer } from "apollo-server";
 import { DateTimeResolver } from "graphql-scalars";
-import { context } from "../../../server/graphql/context";
+import { context } from "../../../../server/graphql/context";
 import { GraphQLScalarType } from "graphql";
 
 const app = async () => {

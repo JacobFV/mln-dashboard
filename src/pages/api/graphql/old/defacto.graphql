@@ -19,18 +19,17 @@ Query {
     name
     image
     verified # special field; represents if the user's primary email is verified
-    # TODO: add more fields
+    // TODO: add more fields
   }
-  # TODO: match database fields
+  // TODO: match database fields
 }
 
 Mutation {
-  createPasswordAuthenticatedUser(email: String!, password: String!, name: String!) {
+  createCredentialAuthenticatedUser(email: String!, password: String!, name: String!) {
     id
     email
     name
     image
-    ...
   }
   sendEmailVerfCode(email: String, override: Boolean = False) {
     success: Boolean

@@ -239,7 +239,7 @@ query {
   apps: [App!]!
 }
 mutate {
-  createPasswordAuthenticatedUser(email: String, name: String, password: String) {
+  createCredentialAuthenticatedUser(email: String, name: String, password: String) {
      result: String
   }
   // send email with verification code to user
